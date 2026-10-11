@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 // ThuthukaSA branding already on the page itself.
 const LOA_RPA_TITLE = "Letter of Authority & Risk Profile | ThuthukaSA";
 const LOA_RPA_DESCRIPTION =
-  "Complete your Letter of Authority and Risk Profile Analysis with ThuthukaSA (FSP No. 47992), your appointed Financial Services Provider via A-Win. Takes about 5 minutes.";
+  "Complete your Letter of Authority and Risk Profile Analysis with ThuthukaSA (FSP No. 47992), your appointed Financial Services Provider. Takes about 5 minutes.";
 const LOA_RPA_IMAGE = "https://awin.co.za/email-assets/thuthuka-logo.png";
 
 export const Route = createFileRoute("/loa-rpa")({
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/loa-rpa")({
       { name: "robots", content: "noindex" },
       { property: "og:title", content: LOA_RPA_TITLE },
       { property: "og:description", content: LOA_RPA_DESCRIPTION },
-      { property: "og:site_name", content: "ThuthukaSA, via A-Win" },
+      { property: "og:site_name", content: "ThuthukaSA" },
       { property: "og:image", content: LOA_RPA_IMAGE },
       { name: "twitter:title", content: LOA_RPA_TITLE },
       { name: "twitter:description", content: LOA_RPA_DESCRIPTION },
@@ -275,7 +275,7 @@ function LoaRpaPage() {
             emailed you a confirmation. No further action is needed right now.
           </p>
           <Button asChild className="mt-6">
-            <Link to="/">Back to home</Link>
+            <a href="https://thuthuka-sa.co.za">Visit ThuthukaSA</a>
           </Button>
         </div>
       </section>
@@ -287,7 +287,7 @@ function LoaRpaPage() {
       <section className="page-header px-4 py-16 md:py-20">
         <div className="relative mx-auto max-w-3xl">
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
-            <Link to="/" className="hover:text-accent transition-colors">Home</Link>
+            <span>ThuthukaSA</span>
             <ChevronRight className="h-3 w-3" />
             <span className="text-accent">LOA &amp; Risk Profile</span>
           </nav>
@@ -299,7 +299,7 @@ function LoaRpaPage() {
             />
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-accent">ThuthukaSA (FSP No. 47992)</p>
-              <p className="text-sm text-foreground/70">Your appointed Financial Services Provider, via A-Win</p>
+              <p className="text-sm text-foreground/70">Your appointed Financial Services Provider</p>
             </div>
           </div>
           <h1 className="mt-4 font-serif text-foreground">Letter of Authority &amp; Risk Profile</h1>

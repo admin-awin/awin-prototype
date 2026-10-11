@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 // See loa-rpa.tsx for why every social/title tag is overridden here, not
 // just <title> — this link is shared directly with ThuthukaSA clients too.
 const LOA_TITLE = "Letter of Authority | ThuthukaSA";
-const LOA_DESCRIPTION = "Complete your Letter of Authority with ThuthukaSA (FSP No. 47992), your appointed Financial Services Provider via A-Win.";
+const LOA_DESCRIPTION = "Complete your Letter of Authority with ThuthukaSA (FSP No. 47992), your appointed Financial Services Provider.";
 const LOA_IMAGE = "https://awin.co.za/email-assets/thuthuka-logo.png";
 
 export const Route = createFileRoute("/loa")({
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/loa")({
       { name: "robots", content: "noindex" },
       { property: "og:title", content: LOA_TITLE },
       { property: "og:description", content: LOA_DESCRIPTION },
-      { property: "og:site_name", content: "ThuthukaSA, via A-Win" },
+      { property: "og:site_name", content: "ThuthukaSA" },
       { property: "og:image", content: LOA_IMAGE },
       { name: "twitter:title", content: LOA_TITLE },
       { name: "twitter:description", content: LOA_DESCRIPTION },
@@ -191,7 +191,7 @@ function LoaOnlyPage() {
             further action is needed right now.
           </p>
           <Button asChild className="mt-6">
-            <Link to="/">Back to home</Link>
+            <a href="https://thuthuka-sa.co.za">Visit ThuthukaSA</a>
           </Button>
         </div>
       </section>
@@ -203,7 +203,7 @@ function LoaOnlyPage() {
       <section className="page-header px-4 py-16 md:py-20">
         <div className="relative mx-auto max-w-2xl">
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
-            <Link to="/" className="hover:text-accent transition-colors">Home</Link>
+            <span>ThuthukaSA</span>
             <ChevronRight className="h-3 w-3" />
             <span className="text-accent">Letter of Authority</span>
           </nav>
@@ -215,7 +215,7 @@ function LoaOnlyPage() {
             />
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-accent">ThuthukaSA (FSP No. 47992)</p>
-              <p className="text-sm text-foreground/70">Your appointed Financial Services Provider, via A-Win</p>
+              <p className="text-sm text-foreground/70">Your appointed Financial Services Provider</p>
             </div>
           </div>
           <h1 className="mt-4 font-serif text-foreground">Letter of Authority</h1>

@@ -31,6 +31,8 @@ export function SiteLayout() {
   // nav, no A-Win footer, so it never reads as just another page of the
   // member site. It builds its own header/chrome entirely.
   const bareLayout = location.pathname === "/tksa";
+  // ThuthukaSA's client-facing LOA/RPA forms: ThuthukaSA chrome only.
+  const thuthukaLayout = location.pathname === "/loa" || location.pathname === "/loa-rpa";
 
   if (bareLayout) {
     return (
@@ -39,6 +41,26 @@ export function SiteLayout() {
         <Outlet />
         <ScrollToTop />
       </>
+    );
+  }
+
+  if (thuthukaLayout) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <header className="border-b border-border bg-card">
+          <div className="container mx-auto flex items-center gap-3 px-4 py-3">
+            <img src="/email-assets/thuthuka-logo.png" alt="ThuthukaSA" className="h-10 w-auto" />
+            <span className="font-serif text-lg text-foreground">ThuthukaSA</span>
+          </div>
+        </header>
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <footer className="border-t border-border bg-card py-6 text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} ThuthukaSA · Authorised Financial Services Provider (FSP No. 47992)
+        </footer>
+        <ScrollToTop />
+      </div>
     );
   }
 
