@@ -14,12 +14,11 @@ const glassButtonVariants = cva(
       },
     },
     defaultVariants: { size: "default" },
-  }
+  },
 );
 
 export interface GlassButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof glassButtonVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof glassButtonVariants> {
   contentClassName?: string;
 }
 
@@ -31,7 +30,7 @@ export const GlassButton = React.forwardRef<HTMLButtonElement, GlassButtonProps>
         glassButtonVariants({ size }),
         "border-0 text-foreground/95",
         "[background:transparent]",
-        className
+        className,
       )}
       {...props}
     >
@@ -43,20 +42,21 @@ export const GlassButton = React.forwardRef<HTMLButtonElement, GlassButtonProps>
           WebkitBackdropFilter: "blur(14px) saturate(180%)",
           boxShadow:
             "inset 0 0 0 1px rgba(255,255,255,0.12), inset 1.8px 3px 0 -2px rgba(255,255,255,0.6), inset -2px -2px 0 -2px rgba(255,255,255,0.4), inset 0 3px 4px -2px rgba(0,0,0,0.18), 0 1px 5px 0 rgba(0,0,0,0.1), 0 6px 16px 0 rgba(0,0,0,0.1)",
-          transition: "background-color 400ms cubic-bezier(1,0,0.4,1), box-shadow 400ms cubic-bezier(1,0,0.4,1)",
+          transition:
+            "background-color 400ms cubic-bezier(1,0,0.4,1), box-shadow 400ms cubic-bezier(1,0,0.4,1)",
         }}
       />
       <span
         className={cn(
           "relative z-10 flex w-full items-center justify-center gap-[inherit] select-none",
-          contentClassName
+          contentClassName,
         )}
         style={{ textShadow: "0 1px 2px rgba(0,0,0,0.2)" }}
       >
         {children}
       </span>
     </button>
-  )
+  ),
 );
 GlassButton.displayName = "GlassButton";
 

@@ -62,8 +62,8 @@ export function WCWGallery() {
             Graça Machel Trust · Women Creating Wealth Program Graduation
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-            Moments from the WCW Summit, celebrating A-Win members, mentors and the
-            sisterhood building generational wealth across Africa.
+            Moments from the WCW Summit, celebrating A-Win members, mentors and the sisterhood
+            building generational wealth across Africa.
           </p>
         </div>
 
@@ -89,7 +89,9 @@ export function WCWGallery() {
           ))}
         </div>
 
-        <h3 className="mt-12 font-serif text-xl text-foreground">Video highlights (paired with photos above)</h3>
+        <h3 className="mt-12 font-serif text-xl text-foreground">
+          Video highlights (paired with photos above)
+        </h3>
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
           {videos.map((v) => (
             <button
@@ -121,15 +123,9 @@ export function WCWGallery() {
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
         <DialogContent className="max-w-4xl border-0 bg-background p-0">
-          <DialogTitle className="sr-only">
-            {selected?.caption ?? "WCW Summit media"}
-          </DialogTitle>
+          <DialogTitle className="sr-only">{selected?.caption ?? "WCW Summit media"}</DialogTitle>
           {selected?.kind === "image" && (
-            <img
-              src={selected.src}
-              alt={selected.caption}
-              className="h-auto w-full rounded-lg"
-            />
+            <img src={selected.src} alt={selected.caption} className="h-auto w-full rounded-lg" />
           )}
           {selected?.kind === "video" && (
             <video
@@ -141,9 +137,7 @@ export function WCWGallery() {
             />
           )}
           {selected && (
-            <p className="px-4 pb-4 pt-2 text-sm text-muted-foreground">
-              {selected.caption}
-            </p>
+            <p className="px-4 pb-4 pt-2 text-sm text-muted-foreground">{selected.caption}</p>
           )}
         </DialogContent>
       </Dialog>

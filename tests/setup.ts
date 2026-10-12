@@ -23,7 +23,9 @@ if (!globalThis.IntersectionObserver) {
     observe() {}
     unobserve() {}
     disconnect() {}
-    takeRecords() { return []; }
+    takeRecords() {
+      return [];
+    }
   } as unknown as typeof IntersectionObserver;
 }
 if (!Element.prototype.scrollIntoView) {

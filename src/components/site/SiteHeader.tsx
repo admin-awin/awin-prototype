@@ -14,7 +14,7 @@ const NAV = [
   { to: "/membership", label: "Membership" },
   { to: "/events", label: "Events & Gallery" },
   { to: "/members", label: "Our Members" },
-  
+
   { to: "/info", label: "FAQ" },
   { to: "/contact", label: "Contact" },
 ] as const;
@@ -31,7 +31,10 @@ export function SiteHeader() {
           <Link to="/" className="flex items-center" aria-label="A-Win home">
             <button
               type="button"
-              onClick={(e) => { e.preventDefault(); cycle(); }}
+              onClick={(e) => {
+                e.preventDefault();
+                cycle();
+              }}
               className="group relative rounded-full p-1 transition-all duration-500 ease-out hover:scale-110 active:scale-95"
               aria-label={`Change theme (current: ${variant}). Click to cycle.`}
               title="Click logo to change theme"
@@ -84,7 +87,12 @@ export function SiteHeader() {
             </>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm" className="text-foreground hover:text-primary">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="text-foreground hover:text-primary"
+              >
                 <Link to="/auth">Member Login</Link>
               </Button>
               <Button
@@ -170,7 +178,10 @@ export function SiteHeader() {
                   </Link>
                   <button
                     type="button"
-                    onClick={() => { setOpen(false); signOut(); }}
+                    onClick={() => {
+                      setOpen(false);
+                      signOut();
+                    }}
                     className="rounded-lg bg-[#E8960A] px-4 py-3 text-sm font-semibold text-white hover:bg-[#C97D08]"
                   >
                     Sign Out

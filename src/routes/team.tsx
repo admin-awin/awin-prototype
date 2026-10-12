@@ -9,7 +9,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   Carousel,
   CarouselContent,
@@ -25,9 +31,16 @@ export const Route = createFileRoute("/team")({
   head: () => ({
     meta: [
       { title: "Our Members | A-Win" },
-      { name: "description", content: "Meet A-Win members: psychologists, coaches, attorneys, accountants, property and financial specialists, medical pros, entrepreneurs and educators. Search by category or name." },
+      {
+        name: "description",
+        content:
+          "Meet A-Win members: psychologists, coaches, attorneys, accountants, property and financial specialists, medical pros, entrepreneurs and educators. Search by category or name.",
+      },
       { property: "og:title", content: "A-Win · Our Members" },
-      { property: "og:description", content: "Discover the women behind the African Women Investment Network." },
+      {
+        property: "og:description",
+        content: "Discover the women behind the African Women Investment Network.",
+      },
     ],
   }),
   component: MembersPage,
@@ -82,12 +95,14 @@ const COMMITTEES = [
 ] as const;
 
 function initials(name: string) {
-  return name
-    .replace(/\[|\]/g, "")
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? "")
-    .join("") || "?";
+  return (
+    name
+      .replace(/\[|\]/g, "")
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase() ?? "")
+      .join("") || "?"
+  );
 }
 
 function MemberCard({ m, onOpen }: { m: Member; onOpen: (m: Member) => void }) {
@@ -117,7 +132,9 @@ function MemberCard({ m, onOpen }: { m: Member; onOpen: (m: Member) => void }) {
         <CardContent className="p-4 flex flex-col gap-2 flex-1">
           <h3 className="font-serif text-lg font-bold text-foreground leading-tight">{m.name}</h3>
           {m.category && (
-            <Badge className="self-start bg-accent text-accent-foreground text-[11px]">{m.category}</Badge>
+            <Badge className="self-start bg-accent text-accent-foreground text-[11px]">
+              {m.category}
+            </Badge>
           )}
           <div className="mt-auto pt-2">
             <span className="inline-flex items-center text-xs font-semibold text-accent-deep">
@@ -130,7 +147,15 @@ function MemberCard({ m, onOpen }: { m: Member; onOpen: (m: Member) => void }) {
   );
 }
 
-function CommitteeCard({ m, committeeKey, onOpen }: { m: Member; committeeKey: string; onOpen: (m: Member) => void }) {
+function CommitteeCard({
+  m,
+  committeeKey,
+  onOpen,
+}: {
+  m: Member;
+  committeeKey: string;
+  onOpen: (m: Member) => void;
+}) {
   return (
     <button
       type="button"
@@ -152,7 +177,9 @@ function CommitteeCard({ m, committeeKey, onOpen }: { m: Member; committeeKey: s
           {initials(m.name)}
         </div>
       )}
-      <div className="mt-3 font-serif text-base font-semibold text-foreground leading-tight">{m.name || "[Name]"}</div>
+      <div className="mt-3 font-serif text-base font-semibold text-foreground leading-tight">
+        {m.name || "[Name]"}
+      </div>
       <div className="mt-1 text-xs font-medium uppercase tracking-wider text-accent">
         {positionForCommittee(m, committeeKey) || "[Position]"}
       </div>
@@ -173,10 +200,12 @@ export function MembersPage() {
     (async () => {
       const { data } = await supabase
         .from("team_members")
-        .select("id, name, title, bio, photo_url, profile_card_url, category, expertise, location, contact_email, website, linkedin_url, social_url, portfolio_images, committee, committee_position, committee_order, website_committee_position, website_committee_order, property_committee_position, property_committee_order, video_url" as any)
+        .select(
+          "id, name, title, bio, photo_url, profile_card_url, category, expertise, location, contact_email, website, linkedin_url, social_url, portfolio_images, committee, committee_position, committee_order, website_committee_position, website_committee_order, property_committee_position, property_committee_order, video_url" as any,
+        )
         .eq("published", true)
         .order("order_index");
-      const rows = ((data ?? []) as unknown) as Member[];
+      const rows = (data ?? []) as unknown as Member[];
 
       // Collect every image reference; signPortfolioUrls passes http(s) URLs through unchanged
       // and returns fresh signed URLs for storage keys in the private bucket.
@@ -217,7 +246,11 @@ export function MembersPage() {
   const isAvailable = (m: Member) =>
     Boolean(
       (m.profile_card_url || m.photo_url) &&
-        (m.contact_email || m.website || m.linkedin_url || m.social_url || (m.expertise && m.expertise.length > 0)),
+      (m.contact_email ||
+        m.website ||
+        m.linkedin_url ||
+        m.social_url ||
+        (m.expertise && m.expertise.length > 0)),
     );
 
   const committeeMembers = useMemo(() => {
@@ -226,7 +259,10 @@ export function MembersPage() {
       if (!m.committee) return;
       // A member can sit on more than one committee — `committee` is a
       // comma-separated list of keys (e.g. "main,website"), not one value.
-      for (const key of m.committee.split(",").map((s) => s.trim()).filter(Boolean)) {
+      for (const key of m.committee
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)) {
         if (!map.has(key)) map.set(key, []);
         map.get(key)!.push(m);
       }
@@ -242,15 +278,21 @@ export function MembersPage() {
     const q = query.trim().toLowerCase();
     return generalMembers.filter((m) => {
       if (!q) return true;
-      const hay = [m.name, m.title, m.bio ?? "", m.location ?? "", m.category ?? "", (m.expertise ?? []).join(" ")].join(" ").toLowerCase();
+      const hay = [
+        m.name,
+        m.title,
+        m.bio ?? "",
+        m.location ?? "",
+        m.category ?? "",
+        (m.expertise ?? []).join(" "),
+      ]
+        .join(" ")
+        .toLowerCase();
       return hay.includes(q);
     });
   }, [team, generalMembers, query]);
 
-  const availableCount = useMemo(
-    () => (filtered ?? []).filter(isAvailable).length,
-    [filtered],
-  );
+  const availableCount = useMemo(() => (filtered ?? []).filter(isAvailable).length, [filtered]);
 
   const byCategory = useMemo(() => {
     const map = new Map<string, Member[]>();
@@ -292,9 +334,7 @@ export function MembersPage() {
     const populated = Array.from(counts.entries())
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
       .map(([c]) => c);
-    const empty = (CATEGORIES as readonly string[]).filter(
-      (c) => c !== "All" && !counts.has(c),
-    );
+    const empty = (CATEGORIES as readonly string[]).filter((c) => c !== "All" && !counts.has(c));
     // "Available" first (current talent), then "All", then populated categories, then empties.
     return ["Available", "All", ...populated, ...empty];
   }, [generalMembers]);
@@ -307,22 +347,25 @@ export function MembersPage() {
   const activeCategories =
     category === "All" || category === "Available" ? populatedCategories : [category];
 
-
   return (
     <>
       <section className="page-header px-4 py-20 md:py-24">
         <div className="relative mx-auto max-w-5xl">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
-            <Link to="/" className="hover:text-accent">Home</Link>
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
+          >
+            <Link to="/" className="hover:text-accent">
+              Home
+            </Link>
             <ChevronRight className="h-3 w-3" />
             <span className="font-medium text-accent">Our Members</span>
           </nav>
           <h1 className="mt-5 font-serif text-foreground">Our Members</h1>
           <p className="mt-5 max-w-2xl text-foreground/80 md:text-lg">
-            A-Win brings together women from all walks of life, united by one goal:
-            building wealth together. Whether you are a professional, an entrepreneur,
-            a student, or simply someone who wants to change their relationship with
-            money, you belong here.
+            A-Win brings together women from all walks of life, united by one goal: building wealth
+            together. Whether you are a professional, an entrepreneur, a student, or simply someone
+            who wants to change their relationship with money, you belong here.
           </p>
         </div>
       </section>
@@ -354,7 +397,8 @@ export function MembersPage() {
           <h2 className="font-serif text-2xl text-foreground">Our Members</h2>
           <h3 className="mt-2 font-serif text-lg text-foreground">Find a Member by Service</h3>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Some of our members offer professional services. Use the filter below to connect with them.
+            Some of our members offer professional services. Use the filter below to connect with
+            them.
           </p>
 
           {byLocation.length > 0 && (
@@ -371,7 +415,10 @@ export function MembersPage() {
           )}
 
           <div className="relative mt-5 w-full">
-            <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            />
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -407,7 +454,12 @@ export function MembersPage() {
                           : "border-border bg-background text-muted-foreground hover:bg-secondary",
                   )}
                 >
-                  {isAvail && <span className="mr-1 inline-block size-1.5 rounded-full bg-accent align-middle" aria-hidden="true" />}
+                  {isAvail && (
+                    <span
+                      className="mr-1 inline-block size-1.5 rounded-full bg-accent align-middle"
+                      aria-hidden="true"
+                    />
+                  )}
                   {isAvail ? "Available now" : c}
                   {hasMembers && <span className="ml-1.5 text-[10px] opacity-75">{count}</span>}
                 </button>
@@ -433,7 +485,11 @@ export function MembersPage() {
                   ? "Try a different search or pick another category."
                   : "Our membership directory will appear here as members join. Be the first by joining today."
               }
-              action={{ label: query ? "Clear search" : "Become a Member", onClick: query ? () => setQuery("") : undefined, href: query ? undefined : "/membership" }}
+              action={{
+                label: query ? "Clear search" : "Become a Member",
+                onClick: query ? () => setQuery("") : undefined,
+                href: query ? undefined : "/membership",
+              }}
             />
           ) : (
             <div className="space-y-14">
@@ -464,7 +520,10 @@ export function MembersPage() {
                     >
                       <CarouselContent className="-ml-4">
                         {list.map((m) => (
-                          <CarouselItem key={m.id} className="basis-[85%] pl-4 sm:basis-1/2 lg:basis-1/2 xl:basis-[40%]">
+                          <CarouselItem
+                            key={m.id}
+                            className="basis-[85%] pl-4 sm:basis-1/2 lg:basis-1/2 xl:basis-[40%]"
+                          >
                             <MemberCard m={m} onOpen={setActive} />
                           </CarouselItem>
                         ))}
@@ -480,12 +539,13 @@ export function MembersPage() {
         </div>
       </section>
 
-
       {filtered && filtered.length > 0 && (
         <section className="border-t border-border bg-secondary/40 py-12">
           <div className="mx-auto max-w-6xl px-4">
             <h2 className="font-serif text-2xl text-foreground">Directory · A–Z</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Jump straight to a member by surname or first name.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Jump straight to a member by surname or first name.
+            </p>
             <div className="mt-6 space-y-6">
               {directoryAZ.map(([letter, list]) => (
                 <div key={letter}>
@@ -501,7 +561,9 @@ export function MembersPage() {
                           className="block w-full rounded-md px-2 py-1.5 text-left text-sm text-foreground hover:bg-background hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           <span className="font-medium">{m.name}</span>
-                          {m.category && <span className="text-muted-foreground"> · {m.category}</span>}
+                          {m.category && (
+                            <span className="text-muted-foreground"> · {m.category}</span>
+                          )}
                         </button>
                       </li>
                     ))}
@@ -532,7 +594,9 @@ export function MembersPage() {
                     </DialogTitle>
                     <DialogDescription className="mt-2 flex flex-wrap items-center gap-2">
                       {active.category && (
-                        <Badge className="bg-accent text-accent-foreground">{active.category}</Badge>
+                        <Badge className="bg-accent text-accent-foreground">
+                          {active.category}
+                        </Badge>
                       )}
                       {active.committee_position && (
                         <Badge variant="outline">{active.committee_position}</Badge>
@@ -657,7 +721,11 @@ export function MembersPage() {
               <div className="sticky bottom-0 z-10 border-t border-border bg-background/95 px-5 py-3 backdrop-blur-md sm:px-8">
                 <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-2">
                   {active.linkedin_url && (
-                    <Button asChild size="sm" className="bg-[#0A66C2] text-white hover:bg-[#0a5dab]">
+                    <Button
+                      asChild
+                      size="sm"
+                      className="bg-[#0A66C2] text-white hover:bg-[#0a5dab]"
+                    >
                       <a href={active.linkedin_url} target="_blank" rel="noopener noreferrer">
                         <Linkedin className="size-4 mr-1.5" /> LinkedIn
                       </a>
@@ -739,7 +807,9 @@ function DownloadsSection() {
 
   const download = async (d: PublicDoc) => {
     setBusyId(d.id);
-    const { data, error } = await supabase.storage.from("documents").createSignedUrl(d.file_path, 60);
+    const { data, error } = await supabase.storage
+      .from("documents")
+      .createSignedUrl(d.file_path, 60);
     setBusyId(null);
     if (error || !data) return;
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
@@ -749,22 +819,35 @@ function DownloadsSection() {
     <section className="border-t border-border py-12">
       <div className="mx-auto max-w-6xl px-4">
         <h2 className="font-serif text-2xl text-foreground">Downloads</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Meeting minutes, newsletters, and other public resources.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Meeting minutes, newsletters, and other public resources.
+        </p>
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           {grouped.map(([folder, items]) => (
             <div key={folder}>
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-accent">{folder}</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-accent">
+                {folder}
+              </h3>
               <div className="mt-2 space-y-2">
                 {items.map((d) => (
-                  <div key={d.id} className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
+                  <div
+                    key={d.id}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
+                  >
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium">{d.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {formatDocSize(d.size_bytes)}{d.size_bytes ? " · " : ""}
+                        {formatDocSize(d.size_bytes)}
+                        {d.size_bytes ? " · " : ""}
                         {new Date(d.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                    <Button size="sm" variant="outline" disabled={busyId === d.id} onClick={() => download(d)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={busyId === d.id}
+                      onClick={() => download(d)}
+                    >
                       Download
                     </Button>
                   </div>

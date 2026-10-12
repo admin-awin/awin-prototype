@@ -85,7 +85,9 @@ function payloadSummary(req: ApprovalRequest): string {
     case "site_settings_update":
       return `Key: ${p.key}`;
     case "team_member_upsert":
-      return p.id ? `Editing: ${p.payload?.name ?? p.id}` : `New profile: ${p.payload?.name ?? "unnamed"}`;
+      return p.id
+        ? `Editing: ${p.payload?.name ?? p.id}`
+        : `New profile: ${p.payload?.name ?? "unnamed"}`;
     case "team_member_delete":
       return `Profile: ${p.name}`;
     case "settings_danger_action":
@@ -100,7 +102,10 @@ function payloadSummary(req: ApprovalRequest): string {
 function ApprovalsPage() {
   const [requests, setRequests] = useState<ApprovalRequest[] | null>(null);
   const [tab, setTab] = useState<"pending" | "history">("pending");
-  const [deciding, setDeciding] = useState<{ req: ApprovalRequest; decision: "approve" | "reject" } | null>(null);
+  const [deciding, setDeciding] = useState<{
+    req: ApprovalRequest;
+    decision: "approve" | "reject";
+  } | null>(null);
   const [decisionReason, setDecisionReason] = useState("");
   const [busy, setBusy] = useState(false);
   // Only ever populated from this call's own live response, never from a
@@ -119,7 +124,9 @@ function ApprovalsPage() {
     }
   }, [callList]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const pending = (requests ?? []).filter((r) => r.status === "pending");
   const history = (requests ?? []).filter((r) => r.status !== "pending");
@@ -130,27 +137,39 @@ function ApprovalsPage() {
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Approvals</h1>
         <p className="text-sm text-muted-foreground">
-          Two-person approval: sensitive actions (deleting a member or application, granting or revoking
-          the admin role) are filed here by one admin and must be approved by a <em>different</em> admin
-          before they take effect.
+          Two-person approval: sensitive actions (deleting a member or application, granting or
+          revoking the admin role) are filed here by one admin and must be approved by a{" "}
+          <em>different</em> admin before they take effect.
         </p>
       </div>
 
       <div className="flex gap-2">
-        <Button size="sm" variant={tab === "pending" ? "default" : "outline"} onClick={() => setTab("pending")}>
+        <Button
+          size="sm"
+          variant={tab === "pending" ? "default" : "outline"}
+          onClick={() => setTab("pending")}
+        >
           Pending ({pending.length})
         </Button>
-        <Button size="sm" variant={tab === "history" ? "default" : "outline"} onClick={() => setTab("history")}>
+        <Button
+          size="sm"
+          variant={tab === "history" ? "default" : "outline"}
+          onClick={() => setTab("history")}
+        >
           History
         </Button>
       </div>
 
       {requests === null ? (
-        <div className="flex justify-center py-12"><Loader2 className="size-6 animate-spin text-muted-foreground" /></div>
+        <div className="flex justify-center py-12">
+          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        </div>
       ) : shown.length === 0 ? (
-        <Card><CardContent className="py-10 text-center text-sm text-muted-foreground">
-          {tab === "pending" ? "No pending requests." : "No decided requests yet."}
-        </CardContent></Card>
+        <Card>
+          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+            {tab === "pending" ? "No pending requests." : "No decided requests yet."}
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-3">
           {shown.map((req) => (
@@ -161,7 +180,9 @@ function ApprovalsPage() {
                     <Badge variant="outline">{ACTION_LABELS[req.action_type]}</Badge>
                     <StatusBadge status={req.status} />
                     {req.is_own_request && req.status === "pending" && (
-                      <Badge variant="outline" className="text-muted-foreground">Your request</Badge>
+                      <Badge variant="outline" className="text-muted-foreground">
+                        Your request
+                      </Badge>
                     )}
                   </div>
                   <p className="text-sm font-medium">{payloadSummary(req)}</p>
@@ -171,17 +192,23 @@ function ApprovalsPage() {
                   </p>
                   <p className="text-xs text-muted-foreground italic">"{req.reason}"</p>
                   {req.decision_reason && (
-                    <p className="text-xs text-muted-foreground">Decision note: "{req.decision_reason}"</p>
+                    <p className="text-xs text-muted-foreground">
+                      Decision note: "{req.decision_reason}"
+                    </p>
                   )}
-                  {req.status === "executed" && req.result?.email && req.result.emailSent !== undefined && (
-                    <div className="rounded-lg border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
-                      {req.result.emailSent
-                        ? `${req.result.email} was emailed a link to set their password and sign in.`
-                        : `The set-password email to ${req.result.email} couldn't be sent — ask them to use “Forgot password?” on the sign-in page.`}
-                    </div>
-                  )}
+                  {req.status === "executed" &&
+                    req.result?.email &&
+                    req.result.emailSent !== undefined && (
+                      <div className="rounded-lg border border-border bg-muted/30 p-2.5 text-xs text-muted-foreground">
+                        {req.result.emailSent
+                          ? `${req.result.email} was emailed a link to set their password and sign in.`
+                          : `The set-password email to ${req.result.email} couldn't be sent — ask them to use “Forgot password?” on the sign-in page.`}
+                      </div>
+                    )}
                   <details className="text-xs">
-                    <summary className="cursor-pointer text-muted-foreground">View full details before deciding</summary>
+                    <summary className="cursor-pointer text-muted-foreground">
+                      View full details before deciding
+                    </summary>
                     <pre className="mt-1.5 max-w-full overflow-x-auto rounded-md border border-border bg-muted/40 p-2 whitespace-pre-wrap break-all">
                       {JSON.stringify(req.payload, null, 2)}
                     </pre>
@@ -191,7 +218,8 @@ function ApprovalsPage() {
                   <div className="flex gap-2">
                     {isTksaRequest(req) ? (
                       <p className="flex max-w-56 items-center gap-1.5 text-xs text-muted-foreground">
-                        <ShieldAlert className="size-3.5 shrink-0" /> Decided by ThuthukaSA's approver on the ThuthukaSA dashboard, not here
+                        <ShieldAlert className="size-3.5 shrink-0" /> Decided by ThuthukaSA's
+                        approver on the ThuthukaSA dashboard, not here
                       </p>
                     ) : req.is_own_request ? (
                       <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -203,13 +231,19 @@ function ApprovalsPage() {
                           size="sm"
                           variant="outline"
                           className="text-destructive hover:text-destructive"
-                          onClick={() => { setDeciding({ req, decision: "reject" }); setDecisionReason(""); }}
+                          onClick={() => {
+                            setDeciding({ req, decision: "reject" });
+                            setDecisionReason("");
+                          }}
                         >
                           <XCircle className="size-4 mr-1.5" /> Reject
                         </Button>
                         <Button
                           size="sm"
-                          onClick={() => { setDeciding({ req, decision: "approve" }); setDecisionReason(""); }}
+                          onClick={() => {
+                            setDeciding({ req, decision: "approve" });
+                            setDecisionReason("");
+                          }}
                         >
                           <CheckCircle2 className="size-4 mr-1.5" /> Approve
                         </Button>
@@ -230,7 +264,8 @@ function ApprovalsPage() {
               {deciding?.decision === "approve" ? "Approve" : "Reject"} request
             </DialogTitle>
             <DialogDescription>
-              {deciding && ACTION_LABELS[deciding.req.action_type]} · {deciding && payloadSummary(deciding.req)}
+              {deciding && ACTION_LABELS[deciding.req.action_type]} ·{" "}
+              {deciding && payloadSummary(deciding.req)}
               {deciding?.decision === "approve" && " — this executes immediately once confirmed."}
             </DialogDescription>
           </DialogHeader>
@@ -240,11 +275,17 @@ function ApprovalsPage() {
               value={decisionReason}
               onChange={(e) => setDecisionReason(e.target.value)}
               rows={2}
-              placeholder={deciding?.decision === "approve" ? "e.g. Confirmed with the member directly" : "e.g. Not enough justification, ask requester to follow up"}
+              placeholder={
+                deciding?.decision === "approve"
+                  ? "e.g. Confirmed with the member directly"
+                  : "e.g. Not enough justification, ask requester to follow up"
+              }
             />
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDeciding(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setDeciding(null)}>
+              Cancel
+            </Button>
             <Button
               variant={deciding?.decision === "reject" ? "destructive" : "default"}
               disabled={busy || decisionReason.trim().length < 5}
@@ -259,10 +300,23 @@ function ApprovalsPage() {
                       decision_reason: decisionReason.trim(),
                     },
                   });
-                  toast.success(deciding.decision === "approve" ? "Approved and executed" : "Rejected");
-                  if (deciding.decision === "approve" && res.result?.email && typeof res.result.emailSent === "boolean") {
-                    if (res.result.emailSent) toast.success(`${res.result.email} has been emailed a link to set their password — nothing to pass on.`);
-                    else toast.warning(`Couldn't email ${res.result.email} — ask them to use “Forgot password?” on the sign-in page.`, { duration: 15000 });
+                  toast.success(
+                    deciding.decision === "approve" ? "Approved and executed" : "Rejected",
+                  );
+                  if (
+                    deciding.decision === "approve" &&
+                    res.result?.email &&
+                    typeof res.result.emailSent === "boolean"
+                  ) {
+                    if (res.result.emailSent)
+                      toast.success(
+                        `${res.result.email} has been emailed a link to set their password — nothing to pass on.`,
+                      );
+                    else
+                      toast.warning(
+                        `Couldn't email ${res.result.email} — ask them to use “Forgot password?” on the sign-in page.`,
+                        { duration: 15000 },
+                      );
                   }
                   setDeciding(null);
                   load();
@@ -279,7 +333,6 @@ function ApprovalsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
@@ -288,7 +341,8 @@ function ApprovalsPage() {
 function isTksaRequest(req: ApprovalRequest) {
   return (
     req.action_type === "advisor_account_bootstrap" ||
-    ((req.action_type === "role_grant" || req.action_type === "role_revoke") && (req.payload as { role?: string })?.role === "advisor")
+    ((req.action_type === "role_grant" || req.action_type === "role_revoke") &&
+      (req.payload as { role?: string })?.role === "advisor")
   );
 }
 

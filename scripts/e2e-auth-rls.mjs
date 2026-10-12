@@ -51,12 +51,23 @@ const admin = await signIn(ADMIN).catch((e) => (check("admin sign-in", false, e.
 if (admin) {
   check("admin sign-in", true, admin.user.id);
   const c = clientFor(admin.session);
-  const { data: isAdmin, error } = await c.rpc("has_role", { _user_id: admin.user.id, _role: "admin" });
-  check("has_role(admin, admin) === true", !error && isAdmin === true, error?.message ?? String(isAdmin));
+  const { data: isAdmin, error } = await c.rpc("has_role", {
+    _user_id: admin.user.id,
+    _role: "admin",
+  });
+  check(
+    "has_role(admin, admin) === true",
+    !error && isAdmin === true,
+    error?.message ?? String(isAdmin),
+  );
 
   // 3. Admin can list team_members
   const { data: rows, error: readErr } = await c.from("team_members").select("id").limit(1);
-  check("admin reads team_members via RLS", !readErr, readErr?.message ?? `rows=${rows?.length ?? 0}`);
+  check(
+    "admin reads team_members via RLS",
+    !readErr,
+    readErr?.message ?? `rows=${rows?.length ?? 0}`,
+  );
 }
 
 // 2b. Member has_role should be false

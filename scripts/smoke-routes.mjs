@@ -44,8 +44,13 @@ console.log(`\n${results.length - failed.length}/${results.length} passed`);
 if (failed.length) {
   console.log("\nFailures:");
   for (const f of failed) {
-    console.log(`  ${f.path} → ${f.status}${f.error ? ` (${f.error})` : ""}${f.critical ? "  [CRITICAL]" : ""}`);
-    if (f.status === 404) console.log(`    Hint: Vercel may be serving static dist/ instead of .vercel/output. Check nitro preset + Vercel "Output Directory" override is BLANK.`);
+    console.log(
+      `  ${f.path} → ${f.status}${f.error ? ` (${f.error})` : ""}${f.critical ? "  [CRITICAL]" : ""}`,
+    );
+    if (f.status === 404)
+      console.log(
+        `    Hint: Vercel may be serving static dist/ instead of .vercel/output. Check nitro preset + Vercel "Output Directory" override is BLANK.`,
+      );
   }
 }
 process.exit(fatal.length ? 1 : 0);

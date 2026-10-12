@@ -65,7 +65,8 @@ const REQUIRED_BUCKETS = ["member-portfolios", "onboarding-uploads"];
     for (const b of REQUIRED_BUCKETS) {
       check(`bucket exists: ${b}`, names.has(b));
       const bucket = buckets?.find((x) => x.name === b);
-      if (bucket) check(`  bucket ${b} is private`, bucket.public === false, `public=${bucket.public}`);
+      if (bucket)
+        check(`  bucket ${b} is private`, bucket.public === false, `public=${bucket.public}`);
     }
   }
 }
@@ -106,9 +107,18 @@ const sql = fs
 
 const rlsChecks = [
   ["RLS on public.user_roles", /alter\s+table[^;]*user_roles[^;]*enable\s+row\s+level\s+security/],
-  ["RLS on public.team_members", /alter\s+table[^;]*team_members[^;]*enable\s+row\s+level\s+security/],
-  ["RLS on public.portfolio_items", /alter\s+table[^;]*portfolio_items[^;]*enable\s+row\s+level\s+security/],
-  ["GRANT select on user_roles to authenticated", /grant\s+select\s+on\s+public\.user_roles\s+to\s+authenticated/],
+  [
+    "RLS on public.team_members",
+    /alter\s+table[^;]*team_members[^;]*enable\s+row\s+level\s+security/,
+  ],
+  [
+    "RLS on public.portfolio_items",
+    /alter\s+table[^;]*portfolio_items[^;]*enable\s+row\s+level\s+security/,
+  ],
+  [
+    "GRANT select on user_roles to authenticated",
+    /grant\s+select\s+on\s+public\.user_roles\s+to\s+authenticated/,
+  ],
   ["storage policy: member_portfolios_admin_all", /member_portfolios_admin_all/],
   ["storage policy: onboarding_owner_insert", /onboarding_owner_insert/],
   ["trigger or function has_role", /function\s+public\.has_role/],

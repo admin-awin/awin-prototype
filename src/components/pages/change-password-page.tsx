@@ -16,7 +16,10 @@ const schema = z
     password: z.string().min(8, "At least 8 characters").max(72),
     confirm: z.string().min(8).max(72),
   })
-  .refine((v) => v.password === v.confirm, { message: "Passwords do not match", path: ["confirm"] });
+  .refine((v) => v.password === v.confirm, {
+    message: "Passwords do not match",
+    path: ["confirm"],
+  });
 
 function ChangePasswordPage({ forced = false }: { forced?: boolean }) {
   const { user, isAdmin, isAdvisor, forcePasswordChange, clearForcePasswordChange } = useAuth();
@@ -56,7 +59,9 @@ function ChangePasswordPage({ forced = false }: { forced?: boolean }) {
       // error code to tell the user what's actually wrong.
       const code = (updateError as { code?: string }).code;
       if (code === "current_password_invalid") {
-        toast.error("That current/temporary password is incorrect — check for typos, or use \"Forgot password?\" on the sign-in page instead.");
+        toast.error(
+          'That current/temporary password is incorrect — check for typos, or use "Forgot password?" on the sign-in page instead.',
+        );
       } else {
         toast.error(updateError.message || "Could not change password");
       }
@@ -68,25 +73,39 @@ function ChangePasswordPage({ forced = false }: { forced?: boolean }) {
     // change but the DB flag stayed true, so the *next* login re-entered
     // this same form forever — exactly the "keeps asking for a new
     // password" loop. Now it's visible and retried once instead of silent.
-    let { error: flagError } = await supabase.from("profiles").update({ force_password_change: false }).eq("id", user.id);
+    let { error: flagError } = await supabase
+      .from("profiles")
+      .update({ force_password_change: false })
+      .eq("id", user.id);
     if (flagError) {
-      ({ error: flagError } = await supabase.from("profiles").update({ force_password_change: false }).eq("id", user.id));
+      ({ error: flagError } = await supabase
+        .from("profiles")
+        .update({ force_password_change: false })
+        .eq("id", user.id));
     }
     if (flagError) {
-      toast.error("Password changed, but couldn't confirm it here — if you're asked to change it again next login, that's why. Try again or contact an admin.");
+      toast.error(
+        "Password changed, but couldn't confirm it here — if you're asked to change it again next login, that's why. Try again or contact an admin.",
+      );
     }
     clearForcePasswordChange();
 
     // Confirmation emails — fire and forget, the change already succeeded.
     void import("@/lib/email.functions").then(({ sendPasswordChangedEmail }) =>
       sendPasswordChangedEmail({
-        data: { email: user.email!, fullName: (user.user_metadata?.full_name as string) || user.email! },
+        data: {
+          email: user.email!,
+          fullName: (user.user_metadata?.full_name as string) || user.email!,
+        },
       }).catch(() => {}),
     );
 
     setBusy(false);
     toast.success("Password changed");
-    navigate({ to: search.next || (isAdvisor ? "/tksa" : isAdmin ? "/admin" : "/portal"), replace: true });
+    navigate({
+      to: search.next || (isAdvisor ? "/tksa" : isAdmin ? "/admin" : "/portal"),
+      replace: true,
+    });
   };
 
   const mustChange = forced || forcePasswordChange;
@@ -95,35 +114,69 @@ function ChangePasswordPage({ forced = false }: { forced?: boolean }) {
     <div className="container mx-auto flex min-h-[70vh] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md border-border bg-card text-card-foreground shadow-[var(--shadow-elegant)]">
         <CardHeader>
-          <CardTitle className="font-serif text-2xl text-center text-foreground">Change Password</CardTitle>
+          <CardTitle className="font-serif text-2xl text-center text-foreground">
+            Change Password
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {mustChange && (
             <div className="mb-5 flex items-start gap-2 rounded-lg border border-accent/40 bg-accent/10 p-3 text-sm text-foreground">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent-deep" />
-              <p>Your password was reset by an administrator. Enter the temporary password you were given below, then set your own.</p>
+              <p>
+                Your password was reset by an administrator. Enter the temporary password you were
+                given below, then set your own.
+              </p>
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="currentPassword" className="text-foreground">{mustChange ? "Temporary Password" : "Current Password"}</Label>
-              <Input id="currentPassword" name="currentPassword" type="password" required
+              <Label htmlFor="currentPassword" className="text-foreground">
+                {mustChange ? "Temporary Password" : "Current Password"}
+              </Label>
+              <Input
+                id="currentPassword"
+                name="currentPassword"
+                type="password"
+                required
                 placeholder="••••••••"
-                className="bg-background text-foreground placeholder:text-muted-foreground" />
+                className="bg-background text-foreground placeholder:text-muted-foreground"
+              />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-foreground">New Password</Label>
-              <Input id="password" name="password" type="password" required minLength={8} maxLength={72}
+              <Label htmlFor="password" className="text-foreground">
+                New Password
+              </Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                minLength={8}
+                maxLength={72}
                 placeholder="••••••••"
-                className="bg-background text-foreground placeholder:text-muted-foreground" />
+                className="bg-background text-foreground placeholder:text-muted-foreground"
+              />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="confirm" className="text-foreground">Confirm New Password</Label>
-              <Input id="confirm" name="confirm" type="password" required minLength={8} maxLength={72}
+              <Label htmlFor="confirm" className="text-foreground">
+                Confirm New Password
+              </Label>
+              <Input
+                id="confirm"
+                name="confirm"
+                type="password"
+                required
+                minLength={8}
+                maxLength={72}
                 placeholder="••••••••"
-                className="bg-background text-foreground placeholder:text-muted-foreground" />
+                className="bg-background text-foreground placeholder:text-muted-foreground"
+              />
             </div>
-            <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={busy}>
+            <Button
+              type="submit"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              disabled={busy}
+            >
               {busy && <Loader2 className="size-4 animate-spin mr-2" />}
               Change Password
             </Button>

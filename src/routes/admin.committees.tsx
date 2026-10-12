@@ -42,12 +42,24 @@ const COMMITTEES: Array<{ key: string; label: string }> = [
 // still shares the original pair — add another dedicated pair only when a
 // further committee actually needs it, don't build it speculatively.
 const committeeKeys = (committee: string | null): string[] =>
-  (committee ?? "").split(",").map((s) => s.trim()).filter(Boolean);
-const inCommittee = (committee: string | null, key: string) => committeeKeys(committee).includes(key);
+  (committee ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+const inCommittee = (committee: string | null, key: string) =>
+  committeeKeys(committee).includes(key);
 const orderCol = (key: string) =>
-  (key === "website" ? "website_committee_order" : key === "property" ? "property_committee_order" : "committee_order") as const;
+  (key === "website"
+    ? "website_committee_order"
+    : key === "property"
+      ? "property_committee_order"
+      : "committee_order") as const;
 const positionCol = (key: string) =>
-  (key === "website" ? "website_committee_position" : key === "property" ? "property_committee_position" : "committee_position") as const;
+  (key === "website"
+    ? "website_committee_position"
+    : key === "property"
+      ? "property_committee_position"
+      : "committee_position") as const;
 const orderFor = (m: M, key: string) => {
   if (key === "website") return m.website_committee_order ?? m.committee_order ?? 0;
   if (key === "property") return m.property_committee_order ?? m.committee_order ?? 0;
@@ -67,7 +79,9 @@ function CommitteesPage() {
   const load = async () => {
     const { data } = await supabase
       .from("team_members")
-      .select("id, name, photo_url, profile_card_url, committee, committee_position, committee_order, website_committee_position, website_committee_order, property_committee_position, property_committee_order")
+      .select(
+        "id, name, photo_url, profile_card_url, committee, committee_position, committee_order, website_committee_position, website_committee_order, property_committee_position, property_committee_order",
+      )
       .order("committee_order");
     const list = (data as M[]) ?? [];
 
@@ -88,7 +102,13 @@ function CommitteesPage() {
       }
     }
     const swap = (v: string | null) => (v && urlMap[v]) || v;
-    setRows(list.map((m) => ({ ...m, photo_url: swap(m.photo_url), profile_card_url: swap(m.profile_card_url) })));
+    setRows(
+      list.map((m) => ({
+        ...m,
+        photo_url: swap(m.photo_url),
+        profile_card_url: swap(m.profile_card_url),
+      })),
+    );
   };
   useEffect(() => {
     load();
@@ -107,8 +127,14 @@ function CommitteesPage() {
     const b = peers[swapIdx];
     setSaving(m.id);
     await Promise.all([
-      supabase.from("team_members").update({ [col]: orderFor(b, committeeKey) }).eq("id", a.id),
-      supabase.from("team_members").update({ [col]: orderFor(a, committeeKey) }).eq("id", b.id),
+      supabase
+        .from("team_members")
+        .update({ [col]: orderFor(b, committeeKey) })
+        .eq("id", a.id),
+      supabase
+        .from("team_members")
+        .update({ [col]: orderFor(a, committeeKey) })
+        .eq("id", b.id),
     ]);
     setSaving(null);
     load();
@@ -127,11 +153,21 @@ function CommitteesPage() {
 
   const removeFromCommittee = async (m: M, committeeKey: string) => {
     const label = COMMITTEES.find((c) => c.key === committeeKey)?.label ?? committeeKey;
-    if (!confirm(`Remove ${m.name} from ${label}? Their member record and any other committees stay.`)) return;
+    if (
+      !confirm(`Remove ${m.name} from ${label}? Their member record and any other committees stay.`)
+    )
+      return;
     const remaining = committeeKeys(m.committee).filter((k) => k !== committeeKey);
-    const clearWebsiteCols = committeeKey === "website" ? { website_committee_position: null, website_committee_order: null } : {};
-    const clearPropertyCols = committeeKey === "property" ? { property_committee_position: null, property_committee_order: null } : {};
-    const clearSharedCols = remaining.length === 0 ? { committee_position: null, committee_order: 0 } : {};
+    const clearWebsiteCols =
+      committeeKey === "website"
+        ? { website_committee_position: null, website_committee_order: null }
+        : {};
+    const clearPropertyCols =
+      committeeKey === "property"
+        ? { property_committee_position: null, property_committee_order: null }
+        : {};
+    const clearSharedCols =
+      remaining.length === 0 ? { committee_position: null, committee_order: 0 } : {};
     const { error } = await supabase
       .from("team_members")
       .update({
@@ -202,7 +238,12 @@ function CommitteesPage() {
                         className="size-full object-cover"
                       />
                     ) : (
-                      m.name.split(" ").map((s) => s[0]).join("").slice(0, 2).toUpperCase()
+                      m.name
+                        .split(" ")
+                        .map((s) => s[0])
+                        .join("")
+                        .slice(0, 2)
+                        .toUpperCase()
                     )}
                   </div>
                   <div className="min-w-0 flex-1">

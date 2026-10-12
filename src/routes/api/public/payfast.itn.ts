@@ -8,9 +8,8 @@ export const Route = createFileRoute("/api/public/payfast/itn")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { parseOrderedForm, orderedToObject, pfSignature } = await import(
-          "@/lib/payfast.server"
-        );
+        const { parseOrderedForm, orderedToObject, pfSignature } =
+          await import("@/lib/payfast.server");
         const { processItnPayload } = await import("@/lib/payfast-process.server");
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 

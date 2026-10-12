@@ -4,8 +4,14 @@ import { render, screen } from "@testing-library/react";
 // Router mocks — AdminLayout uses Link, Outlet, useNavigate, useRouterState
 const navigate = vi.fn();
 vi.mock("@tanstack/react-router", () => ({
-  Link: ({ children, to, ...rest }: { children: React.ReactNode; to: string } & Record<string, unknown>) => (
-    <a href={to} {...rest}>{children}</a>
+  Link: ({
+    children,
+    to,
+    ...rest
+  }: { children: React.ReactNode; to: string } & Record<string, unknown>) => (
+    <a href={to} {...rest}>
+      {children}
+    </a>
   ),
   Outlet: () => <div data-testid="outlet">PROTECTED CONTENT</div>,
   useNavigate: () => navigate,

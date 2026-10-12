@@ -26,13 +26,14 @@ export function EmptyState({ icon, title, description, action, className }: Empt
         {icon ?? <Inbox className="h-8 w-8" />}
       </div>
       <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-      {description ? (
-        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-      ) : null}
+      {description ? <p className="mt-2 text-sm text-muted-foreground">{description}</p> : null}
       {action ? (
         <div className="mt-5">
           {action.href ? (
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-[var(--accent-deep)]">
+            <Button
+              asChild
+              className="bg-accent text-accent-foreground hover:bg-[var(--accent-deep)]"
+            >
               <a href={action.href}>{action.label}</a>
             </Button>
           ) : (

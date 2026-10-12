@@ -2,12 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { asset } from "@/lib/cdn";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  ArrowRight,
-  MapPin,
-  Check,
-  Calendar,
-} from "lucide-react";
+import { ArrowRight, MapPin, Check, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +18,6 @@ const hikeImg2 = asset("hike-2026/hike-00.44.5922.jpeg");
 const hikeImg3 = asset("hike-2026/hike-00.44.5966.jpeg");
 const hikeImg4 = asset("hike-2026/hike-00.45.001.jpeg");
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -36,8 +30,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "A-Win | African Women Investment Network" },
       {
         property: "og:description",
-        content:
-          "Join a community of women building wealth, knowledge, and legacy together.",
+        content: "Join a community of women building wealth, knowledge, and legacy together.",
       },
     ],
   }),
@@ -70,7 +63,9 @@ function useHomepageStats() {
           supported: v.supported || DEFAULT_STATS.supported,
         });
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
   return stats;
 }
@@ -123,9 +118,11 @@ function useUpcomingEvents(limit = 4) {
       .limit(limit)
       .then(({ data }) => {
         if (cancelled) return;
-        setEvents(((data ?? []) as HomeEvent[]));
+        setEvents((data ?? []) as HomeEvent[]);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [limit]);
   return events;
 }
@@ -142,7 +139,7 @@ function useFeaturedMembers(limit = 6) {
         .eq("published", true)
         .order("order_index", { ascending: true })
         .limit(limit * 3);
-      const rows = ((data ?? []) as unknown) as HomeMember[];
+      const rows = (data ?? []) as unknown as HomeMember[];
       const withImg = rows.filter((m) => m.profile_card_url || m.photo_url).slice(0, limit);
       const pool = withImg.length ? withImg : rows.slice(0, limit);
 
@@ -169,13 +166,14 @@ function useFeaturedMembers(limit = 6) {
       }));
       if (!cancelled) setMembers(resolved);
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [limit, sign]);
   return members;
 }
 
 // Articles removed — Portfolio carousel replaces News section
-
 
 // Admin-editable free text ("50+ Women", "Est. 2025", "Growing Together") —
 // animate the leading number when there is one, otherwise render as-is.
@@ -200,7 +198,6 @@ function Index() {
       {/* HERO with animated A-Win logos */}
       <LogoHero />
 
-
       {/* COMMUNITY STATS STRIP */}
       <section id="mission" className="border-b border-border bg-card py-14">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 sm:grid-cols-4">
@@ -210,7 +207,9 @@ function Index() {
               className="border-border/60 text-center shadow-[var(--shadow-elegant)]"
             >
               <CardContent className="p-6">
-                <div className="font-serif text-xl md:text-2xl text-primary"><StatValue value={s.value} /></div>
+                <div className="font-serif text-xl md:text-2xl text-primary">
+                  <StatValue value={s.value} />
+                </div>
                 <div className="mt-2 text-xs uppercase tracking-wider text-muted-foreground">
                   {s.label}
                 </div>
@@ -232,11 +231,10 @@ function Index() {
             </span>
             <h2 className="mt-3 font-serif text-foreground">Every Woman Belongs Here</h2>
             <p className="mt-5 text-muted-foreground leading-relaxed">
-              A-Win welcomes every woman, regardless of profession, background,
-              or where she is starting from. The common thread is a commitment
-              to saving and investing over consumerism and debt. Together we
-              break the debt cycle, build collective wealth, and create
-              generational change for our families and communities.
+              A-Win welcomes every woman, regardless of profession, background, or where she is
+              starting from. The common thread is a commitment to saving and investing over
+              consumerism and debt. Together we break the debt cycle, build collective wealth, and
+              create generational change for our families and communities.
             </p>
             <Link
               to="/about"
@@ -272,9 +270,9 @@ function Index() {
             </span>
             <h2 className="mt-3 font-serif">One Membership · Built for Long Term Wealth</h2>
             <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-              A-Win follows a single, transparent membership model. A small annual
-              fee plus a monthly contribution toward collective investments, reviewed
-              annually by the community.
+              A-Win follows a single, transparent membership model. A small annual fee plus a
+              monthly contribution toward collective investments, reviewed annually by the
+              community.
             </p>
           </div>
 
@@ -302,8 +300,12 @@ function Index() {
                   Monthly Contribution
                 </div>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-serif text-4xl text-primary">{membership.contribution}</span>
-                  <span className="text-sm text-muted-foreground">{membership.contributionCadence} minimum</span>
+                  <span className="font-serif text-4xl text-primary">
+                    {membership.contribution}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {membership.contributionCadence} minimum
+                  </span>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
                   Directed into collective investment opportunities curated for women investors.
@@ -336,7 +338,6 @@ function Index() {
         </div>
       </section>
 
-
       {/* UPCOMING EVENTS */}
       <section className="py-20">
         <div className="mx-auto max-w-6xl px-4">
@@ -358,7 +359,9 @@ function Index() {
           {upcomingEvents.length === 0 ? (
             <div className="mt-10 rounded-2xl border border-dashed border-border bg-secondary/40 p-10 text-center text-muted-foreground">
               <Calendar className="mx-auto h-8 w-8 opacity-60" aria-hidden="true" />
-              <p className="mt-3 text-sm">No upcoming events yet. Check back soon or view the full calendar.</p>
+              <p className="mt-3 text-sm">
+                No upcoming events yet. Check back soon or view the full calendar.
+              </p>
               <Button asChild variant="outline" className="mt-4">
                 <Link to="/events">Open events page</Link>
               </Button>
@@ -371,8 +374,13 @@ function Index() {
                   const day = String(d.getDate()).padStart(2, "0");
                   const month = d.toLocaleString("en-ZA", { month: "short" }).toUpperCase();
                   const weekday = d.toLocaleString("en-ZA", { weekday: "long" });
-                  const fullDate = d.toLocaleString("en-ZA", { day: "numeric", month: "long", year: "numeric" });
-                  const cover = e.image_url || EVENT_FALLBACK_IMAGES[i % EVENT_FALLBACK_IMAGES.length];
+                  const fullDate = d.toLocaleString("en-ZA", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  });
+                  const cover =
+                    e.image_url || EVENT_FALLBACK_IMAGES[i % EVENT_FALLBACK_IMAGES.length];
                   return (
                     <Card
                       key={e.id}
@@ -385,7 +393,8 @@ function Index() {
                           className="h-full w-full object-cover"
                           loading="lazy"
                           onError={(ev) => {
-                            const fallback = EVENT_FALLBACK_IMAGES[i % EVENT_FALLBACK_IMAGES.length];
+                            const fallback =
+                              EVENT_FALLBACK_IMAGES[i % EVENT_FALLBACK_IMAGES.length];
                             if (ev.currentTarget.src !== fallback) ev.currentTarget.src = fallback;
                           }}
                         />
@@ -416,7 +425,6 @@ function Index() {
               </div>
             </div>
           )}
-
         </div>
       </section>
 
@@ -431,7 +439,8 @@ function Index() {
                 </span>
                 <h2 className="mt-3 font-serif">Our Members</h2>
                 <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-                  Real women, real stories. Explore the professionals, entrepreneurs and everyday builders shaping A-Win.
+                  Real women, real stories. Explore the professionals, entrepreneurs and everyday
+                  builders shaping A-Win.
                 </p>
               </div>
               <Link
@@ -447,11 +456,7 @@ function Index() {
                 {featuredMembers.map((m) => {
                   const img = m.profile_card_url || m.photo_url;
                   return (
-                    <Link
-                      key={m.id}
-                      to="/members"
-                      className="group w-64 shrink-0 snap-start"
-                    >
+                    <Link key={m.id} to="/members" className="group w-64 shrink-0 snap-start">
                       <Card className="h-full overflow-hidden border-border/60 shadow-[var(--shadow-elegant)] transition-transform hover:-translate-y-1 hover:shadow-[var(--shadow-gold-glow)]">
                         <div className="aspect-[3/4] w-full bg-secondary">
                           {img ? (

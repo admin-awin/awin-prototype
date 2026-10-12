@@ -26,22 +26,62 @@ export function SiteFooter() {
         <div>
           <h4 className="font-serif text-base font-semibold text-white">Quick Links</h4>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><Link to="/about" className="text-white/85 hover:text-[#E8960A]">About</Link></li>
-            <li><Link to="/why-a-win" className="text-white/85 hover:text-[#E8960A]">Why A-Win</Link></li>
-            <li><Link to="/membership" className="text-white/85 hover:text-[#E8960A]">Membership</Link></li>
-            <li><Link to="/events" className="text-white/85 hover:text-[#E8960A]">Events &amp; Gallery</Link></li>
-            <li><Link to="/members" className="text-white/85 hover:text-[#E8960A]">Our Members</Link></li>
-            <li><Link to="/info" className="text-white/85 hover:text-[#E8960A]">FAQ &amp; Privacy</Link></li>
-            <li><Link to="/contact" className="text-white/85 hover:text-[#E8960A]">Contact</Link></li>
+            <li>
+              <Link to="/about" className="text-white/85 hover:text-[#E8960A]">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link to="/why-a-win" className="text-white/85 hover:text-[#E8960A]">
+                Why A-Win
+              </Link>
+            </li>
+            <li>
+              <Link to="/membership" className="text-white/85 hover:text-[#E8960A]">
+                Membership
+              </Link>
+            </li>
+            <li>
+              <Link to="/events" className="text-white/85 hover:text-[#E8960A]">
+                Events &amp; Gallery
+              </Link>
+            </li>
+            <li>
+              <Link to="/members" className="text-white/85 hover:text-[#E8960A]">
+                Our Members
+              </Link>
+            </li>
+            <li>
+              <Link to="/info" className="text-white/85 hover:text-[#E8960A]">
+                FAQ &amp; Privacy
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="text-white/85 hover:text-[#E8960A]">
+                Contact
+              </Link>
+            </li>
           </ul>
         </div>
 
         <div>
           <h4 className="font-serif text-base font-semibold text-white">Membership</h4>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><Link to="/membership" className="text-white/85 hover:text-[#E8960A]">Become a Member</Link></li>
-            <li><Link to="/membership" hash="fees" className="text-white/85 hover:text-[#E8960A]">Fees &amp; Benefits</Link></li>
-            <li><Link to="/auth" className="text-white/85 hover:text-[#E8960A]">Member Login</Link></li>
+            <li>
+              <Link to="/membership" className="text-white/85 hover:text-[#E8960A]">
+                Become a Member
+              </Link>
+            </li>
+            <li>
+              <Link to="/membership" hash="fees" className="text-white/85 hover:text-[#E8960A]">
+                Fees &amp; Benefits
+              </Link>
+            </li>
+            <li>
+              <Link to="/auth" className="text-white/85 hover:text-[#E8960A]">
+                Member Login
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -50,16 +90,23 @@ export function SiteFooter() {
           <ul className="mt-4 inline-flex flex-col gap-3 text-sm text-white/85 md:flex md:items-start">
             <li className="flex items-start gap-2">
               <Mail className="mt-0.5 h-4 w-4 text-[#E8960A]" />
-              <a href="mailto:info@awin.co.za" className="hover:text-[#E8960A]">info@awin.co.za</a>
+              <a href="mailto:info@awin.co.za" className="hover:text-[#E8960A]">
+                info@awin.co.za
+              </a>
             </li>
             <li className="flex items-start gap-2">
               <Phone className="mt-0.5 h-4 w-4 text-[#E8960A]" />
-              <a href="tel:+27692450228" className="hover:text-[#E8960A]">+27 69 245 0228</a>
+              <a href="tel:+27692450228" className="hover:text-[#E8960A]">
+                +27 69 245 0228
+              </a>
             </li>
             <li className="flex items-start gap-2 text-white/60 text-xs">
               <span className="mt-0.5 w-4 shrink-0" />
               <span>
-                Alt: <a href="tel:+27722369002" className="hover:text-[#E8960A]">+27 72 236 9002</a>
+                Alt:{" "}
+                <a href="tel:+27722369002" className="hover:text-[#E8960A]">
+                  +27 72 236 9002
+                </a>
               </span>
             </li>
             <li className="flex items-start gap-2">

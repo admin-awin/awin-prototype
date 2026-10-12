@@ -5,7 +5,6 @@ import { Link } from "@tanstack/react-router";
 import { useLogoTheme } from "@/lib/logo-theme";
 import { GlassButton } from "@/components/ui/glass-button";
 
-
 /** Words pull up from the bottom with stagger */
 function WordsPullUp({
   text,
@@ -57,7 +56,7 @@ function FloatingLogo({
   // Stable deterministic random per index
   const { startX, startY, scale, duration, rotateRange } = useMemo(() => {
     const seed = (index + 1) * 9301 + 49297;
-    const r = (n: number) => ((Math.sin(seed * (n + 1)) + 1) / 2);
+    const r = (n: number) => (Math.sin(seed * (n + 1)) + 1) / 2;
     return {
       startX: r(1) * 100,
       startY: r(2) * 100,
@@ -112,31 +111,17 @@ export function LogoHero() {
       ref={sectionRef}
       className="relative isolate flex min-h-[calc(100dvh-7rem)] items-center justify-center overflow-hidden px-4 py-20 text-hero-foreground md:min-h-[calc(100dvh-8rem)] md:py-24"
     >
-
       {/* Brand gradient backdrop */}
-      <div
-        className="absolute inset-0 -z-30"
-        style={{ background: "var(--gradient-hero)" }}
-      />
+      <div className="absolute inset-0 -z-30" style={{ background: "var(--gradient-hero)" }} />
       {/* Warm radial wash — subtler so it doesn't clash with non-warm themes */}
       <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_30%_20%,var(--accent),transparent_55%)] opacity-20" />
 
       {/* Animated floating logos with parallax */}
-      <motion.div
-        style={{ y: bgY }}
-        className="absolute inset-0 -z-10 overflow-hidden"
-      >
+      <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10 overflow-hidden">
         {Array.from({ length: logoCount }).map((_, i) => (
-          <FloatingLogo
-            key={i}
-            src={src}
-            filter={filter}
-            index={i}
-            total={logoCount}
-          />
+          <FloatingLogo key={i} src={src} filter={filter} index={i} total={logoCount} />
         ))}
       </motion.div>
-
 
       {/* Hero feature logo, slow pulse */}
       <motion.img
@@ -181,10 +166,9 @@ export function LogoHero() {
           transition={{ duration: 0.8, delay: 0.9 }}
           className="mx-auto mt-6 max-w-2xl text-base md:text-lg text-hero-muted drop-shadow-[0_2px_16px_rgba(0,0,0,0.72)]"
         >
-          A-Win is a stokvel and investment community born from the Graça
-          Machel Trust Women Creating Wealth program. We are ordinary South
-          African women choosing to save, invest, and grow, together. Every
-          woman belongs here.
+          A-Win is a stokvel and investment community born from the Graça Machel Trust Women
+          Creating Wealth program. We are ordinary South African women choosing to save, invest, and
+          grow, together. Every woman belongs here.
         </motion.p>
 
         <motion.div
@@ -194,13 +178,19 @@ export function LogoHero() {
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
           <Link to="/membership">
-            <GlassButton size="lg" className="border border-hero-border bg-hero-surface text-hero-foreground shadow-[var(--shadow-gold-glow)]">
+            <GlassButton
+              size="lg"
+              className="border border-hero-border bg-hero-surface text-hero-foreground shadow-[var(--shadow-gold-glow)]"
+            >
               Join A-Win
               <ArrowRight className="ml-1 h-4 w-4" />
             </GlassButton>
           </Link>
           <Link to="/members">
-            <GlassButton size="lg" className="border border-hero-border bg-hero-surface text-hero-foreground shadow-[var(--shadow-gold-glow)]">
+            <GlassButton
+              size="lg"
+              className="border border-hero-border bg-hero-surface text-hero-foreground shadow-[var(--shadow-gold-glow)]"
+            >
               Meet Our Members
             </GlassButton>
           </Link>

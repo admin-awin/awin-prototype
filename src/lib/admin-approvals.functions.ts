@@ -26,7 +26,9 @@ export const listPendingApprovals = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("pending_approvals")
-      .select("id, action_type, payload, reason, status, requested_by, requested_at, decided_by, decided_at, decision_reason, result")
+      .select(
+        "id, action_type, payload, reason, status, requested_by, requested_at, decided_by, decided_at, decision_reason, result",
+      )
       .order("requested_at", { ascending: false })
       .limit(100);
     if (error) throw new Error(error.message);
@@ -79,7 +81,9 @@ export const decideApproval = createServerFn({ method: "POST" })
     // /tksa (decideTksaRequest) — never by a general A-Win admin here.
     if (isTksaApproval(row)) throw new Error(TKSA_ONLY_DECISION);
     if (row.requested_by === context.userId) {
-      throw new Error("A second, different admin must approve this request — you cannot approve your own request");
+      throw new Error(
+        "A second, different admin must approve this request — you cannot approve your own request",
+      );
     }
 
     const actor = { userId: context.userId, email: context.claims?.email ?? null };
@@ -175,8 +179,13 @@ export const decideApproval = createServerFn({ method: "POST" })
       // the real value only ever goes out once, in this call's own return
       // value, to the admin who is approving it right now.
       const storedResult =
-        result && typeof result === "object" && "tempPassword" in (result as Record<string, unknown>)
-          ? { ...(result as Record<string, unknown>), tempPassword: "[redacted — shown once at approval time]" }
+        result &&
+        typeof result === "object" &&
+        "tempPassword" in (result as Record<string, unknown>)
+          ? {
+              ...(result as Record<string, unknown>),
+              tempPassword: "[redacted — shown once at approval time]",
+            }
           : result;
 
       await supabaseAdmin

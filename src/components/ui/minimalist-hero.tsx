@@ -35,7 +35,15 @@ const NavLink = ({ href, children }: { href: string; children: React.ReactNode }
   </a>
 );
 
-const SocialIcon = ({ href, icon: Icon, label }: { href: string; icon: LucideIcon; label: string }) => (
+const SocialIcon = ({
+  href,
+  icon: Icon,
+  label,
+}: {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+}) => (
   <a
     href={href}
     target="_blank"

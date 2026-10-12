@@ -6,7 +6,11 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getStorageOverview, deleteStorageFile, FREE_TIER_STORAGE_BYTES } from "@/lib/admin-storage.functions";
+import {
+  getStorageOverview,
+  deleteStorageFile,
+  FREE_TIER_STORAGE_BYTES,
+} from "@/lib/admin-storage.functions";
 
 export const Route = createFileRoute("/admin/storage")({
   head: () => ({ meta: [{ title: "Storage | A-Win Admin" }] }),
@@ -45,7 +49,9 @@ function StoragePage() {
       toast.error(e instanceof Error ? e.message : "Failed to load storage overview");
     }
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const remove = async (bucket: string, path: string) => {
     if (!confirm(`Delete ${path} from ${bucket}? This cannot be undone.`)) return;
@@ -63,7 +69,11 @@ function StoragePage() {
   };
 
   if (!data) {
-    return <div className="flex justify-center py-12"><Loader2 className="size-6 animate-spin text-muted-foreground" /></div>;
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   const pctUsed = (data.totalBytes / FREE_TIER_STORAGE_BYTES) * 100;
@@ -77,14 +87,19 @@ function StoragePage() {
         </p>
       </div>
 
-      <Card className={pctUsed > 80 ? "border-destructive/50" : pctUsed > 50 ? "border-amber-500/50" : undefined}>
+      <Card
+        className={
+          pctUsed > 80 ? "border-destructive/50" : pctUsed > 50 ? "border-amber-500/50" : undefined
+        }
+      >
         <CardContent className="pt-6 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-semibold">
               <HardDrive className="size-4" /> Total usage
             </div>
             <span className="text-sm font-medium">
-              {formatBytes(data.totalBytes)} <span className="text-muted-foreground">/ 1 GB free-tier limit</span>
+              {formatBytes(data.totalBytes)}{" "}
+              <span className="text-muted-foreground">/ 1 GB free-tier limit</span>
             </span>
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
@@ -95,8 +110,11 @@ function StoragePage() {
           </div>
           <p className="text-xs text-muted-foreground">
             {pctUsed.toFixed(1)}% of the Supabase free-tier storage cap used.
-            {pctUsed > 80 && " Getting close — worth clearing unused files or upgrading the plan soon."}
-            {pctUsed <= 80 && pctUsed > 50 && " Comfortable for now, but video uploads add up fast — keep an eye on it."}
+            {pctUsed > 80 &&
+              " Getting close — worth clearing unused files or upgrading the plan soon."}
+            {pctUsed <= 80 &&
+              pctUsed > 50 &&
+              " Comfortable for now, but video uploads add up fast — keep an eye on it."}
             {pctUsed <= 50 && " Comfortable headroom for now."}
           </p>
         </CardContent>
@@ -104,15 +122,25 @@ function StoragePage() {
 
       <Card>
         <CardContent className="pt-6 space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold"><Database className="size-4" /> By bucket</div>
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <Database className="size-4" /> By bucket
+          </div>
           <div className="space-y-2">
             {data.buckets.map((b) => (
-              <div key={b.bucket_id} className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
+              <div
+                key={b.bucket_id}
+                className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
+              >
                 <div className="min-w-0">
                   <p className="font-mono text-sm font-medium">{b.bucket_id}</p>
-                  <p className="text-xs text-muted-foreground">{BUCKET_LABELS[b.bucket_id] ?? ""} · {b.file_count} file{b.file_count === 1 ? "" : "s"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {BUCKET_LABELS[b.bucket_id] ?? ""} · {b.file_count} file
+                    {b.file_count === 1 ? "" : "s"}
+                  </p>
                 </div>
-                <span className="shrink-0 text-sm font-medium tabular-nums">{formatBytes(b.total_bytes)}</span>
+                <span className="shrink-0 text-sm font-medium tabular-nums">
+                  {formatBytes(b.total_bytes)}
+                </span>
               </div>
             ))}
           </div>
@@ -126,20 +154,35 @@ function StoragePage() {
               <AlertTriangle className="size-4" /> Possibly unused in Photo Gallery
             </div>
             <p className="text-xs text-muted-foreground">
-              These files in the gallery bucket aren't referenced by any event photo/video, team member photo,
-              card, or video that this page knows about. Review before deleting — a file used somewhere this
-              check doesn't cover would also show up here.
+              These files in the gallery bucket aren't referenced by any event photo/video, team
+              member photo, card, or video that this page knows about. Review before deleting — a
+              file used somewhere this check doesn't cover would also show up here.
             </p>
             <div className="space-y-1.5">
               {data.unreferencedGallery.map((f) => {
                 const key = `gallery/${f.name}`;
                 return (
-                  <div key={f.name} className="flex items-center justify-between gap-3 rounded-md border border-border p-2.5">
+                  <div
+                    key={f.name}
+                    className="flex items-center justify-between gap-3 rounded-md border border-border p-2.5"
+                  >
                     <span className="truncate font-mono text-xs">{f.name}</span>
                     <div className="flex shrink-0 items-center gap-2">
-                      <span className="text-xs tabular-nums text-muted-foreground">{formatBytes(f.bytes)}</span>
-                      <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" disabled={busyKey === key} onClick={() => remove("gallery", f.name)}>
-                        {busyKey === key ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
+                      <span className="text-xs tabular-nums text-muted-foreground">
+                        {formatBytes(f.bytes)}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive"
+                        disabled={busyKey === key}
+                        onClick={() => remove("gallery", f.name)}
+                      >
+                        {busyKey === key ? (
+                          <Loader2 className="size-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="size-3.5" />
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -157,20 +200,40 @@ function StoragePage() {
             {data.largestFiles.map((f) => {
               const key = `${f.bucket_id}/${f.name}`;
               return (
-                <div key={key} className="flex items-center justify-between gap-3 rounded-md border border-border p-2.5">
+                <div
+                  key={key}
+                  className="flex items-center justify-between gap-3 rounded-md border border-border p-2.5"
+                >
                   <div className="min-w-0 flex items-center gap-2">
-                    <Badge variant="outline" className="shrink-0 font-mono text-[10px]">{f.bucket_id}</Badge>
+                    <Badge variant="outline" className="shrink-0 font-mono text-[10px]">
+                      {f.bucket_id}
+                    </Badge>
                     <span className="truncate font-mono text-xs">{f.name}</span>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <span className="text-xs tabular-nums text-muted-foreground">{formatBytes(f.bytes)}</span>
+                    <span className="text-xs tabular-nums text-muted-foreground">
+                      {formatBytes(f.bytes)}
+                    </span>
                     {f.bucket_id === "loa-rpa-documents" ? (
-                      <span title="FAIS-regulated — delete via the submission itself, which requires a second admin's approval" className="text-muted-foreground">
+                      <span
+                        title="FAIS-regulated — delete via the submission itself, which requires a second admin's approval"
+                        className="text-muted-foreground"
+                      >
                         <Lock className="size-3.5" />
                       </span>
                     ) : (
-                      <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" disabled={busyKey === key} onClick={() => remove(f.bucket_id, f.name)}>
-                        {busyKey === key ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive"
+                        disabled={busyKey === key}
+                        onClick={() => remove(f.bucket_id, f.name)}
+                      >
+                        {busyKey === key ? (
+                          <Loader2 className="size-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="size-3.5" />
+                        )}
                       </Button>
                     )}
                   </div>

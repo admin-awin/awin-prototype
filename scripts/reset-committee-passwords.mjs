@@ -28,7 +28,8 @@ const EMAILS = [
 
 // One shared temp password for all 5 — must be changed on first login
 // (enforced by profiles.force_password_change + the /change-password gate).
-const TEMP_PASSWORD = process.env.COMMITTEE_TEMP_PASSWORD || `AWin!Temp#${crypto.randomInt(1000, 9999)}`;
+const TEMP_PASSWORD =
+  process.env.COMMITTEE_TEMP_PASSWORD || `AWin!Temp#${crypto.randomInt(1000, 9999)}`;
 
 const { data: list, error: listError } = await sb.auth.admin.listUsers({ perPage: 200 });
 if (listError) {
@@ -61,4 +62,6 @@ for (const email of EMAILS) {
 }
 
 console.log(`\nShared temp password: ${TEMP_PASSWORD}`);
-console.log("Give this to the committee out-of-band (not email/Slack in plaintext). Each account will be forced to set its own new password on next sign-in.");
+console.log(
+  "Give this to the committee out-of-band (not email/Slack in plaintext). Each account will be forced to set its own new password on next sign-in.",
+);

@@ -31,7 +31,7 @@ export const Route = createFileRoute("/why-a-win")({
       {
         name: "description",
         content:
-          "Why A-Win exists, in the words of founder Phumelele Ndumo: financial advisor, author of \"From Debt to Riches\", and founder of ThuthukaSA. A movement of African women choosing wealth over debt.",
+          'Why A-Win exists, in the words of founder Phumelele Ndumo: financial advisor, author of "From Debt to Riches", and founder of ThuthukaSA. A movement of African women choosing wealth over debt.',
       },
       { property: "og:title", content: "Why A-Win · Building Wealth, Together" },
       {
@@ -51,7 +51,7 @@ const FOUNDER_PHOTO =
 // business, regulatory registration, qualifications and authorship — so the
 // page leads with credibility (people buy the person before the idea).
 const CREDENTIALS = [
-  { icon: Award, label: "Author · \"From Debt to Riches\"" },
+  { icon: Award, label: 'Author · "From Debt to Riches"' },
   { icon: Building2, label: "Founder · ThuthukaSA" },
   { icon: ShieldCheck, label: "FSP No. 47992" },
   { icon: GraduationCap, label: "Masters in Business Leadership" },
@@ -102,8 +102,13 @@ function WhyAWinPage() {
   return (
     <>
       <div className="border-b border-border bg-card px-4 py-3">
-        <nav aria-label="Breadcrumb" className="mx-auto flex max-w-5xl items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
-          <Link to="/" className="hover:text-accent transition-colors">Home</Link>
+        <nav
+          aria-label="Breadcrumb"
+          className="mx-auto flex max-w-5xl items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
+        >
+          <Link to="/" className="hover:text-accent transition-colors">
+            Home
+          </Link>
           <ChevronRight className="h-3 w-3" />
           <span className="font-medium text-accent">Why A-Win</span>
         </nav>
@@ -126,14 +131,15 @@ function WhyAWinPage() {
       />
 
       {/* FOUNDER CREDIBILITY */}
-      <section id="meet-the-founder" className="border-b border-border bg-secondary/30 py-16 md:py-20">
+      <section
+        id="meet-the-founder"
+        className="border-b border-border bg-secondary/30 py-16 md:py-20"
+      >
         <div className="mx-auto max-w-5xl px-4">
           <span className="text-xs font-semibold uppercase tracking-widest text-accent">
             Meet the founder
           </span>
-          <h2 className="mt-3 font-serif text-foreground">
-            Why her? Because she has walked it.
-          </h2>
+          <h2 className="mt-3 font-serif text-foreground">Why her? Because she has walked it.</h2>
           <div className="mt-6 grid gap-8 md:grid-cols-[0.8fr_1.2fr]">
             <div className="flex flex-col items-center text-center md:items-start md:text-left">
               <img
@@ -141,24 +147,28 @@ function WhyAWinPage() {
                 alt="Phumelele Ndumo"
                 className="size-40 rounded-full object-cover ring-4 ring-accent/30 shadow-[var(--shadow-elegant)]"
               />
-              <div className="mt-4 font-serif text-xl font-semibold text-foreground">Phumelele Ndumo</div>
-              <div className="text-sm font-medium text-accent">Founder of A-Win · Financial Advisor</div>
+              <div className="mt-4 font-serif text-xl font-semibold text-foreground">
+                Phumelele Ndumo
+              </div>
+              <div className="text-sm font-medium text-accent">
+                Founder of A-Win · Financial Advisor
+              </div>
             </div>
 
             <div>
               <p className="text-lg leading-relaxed text-foreground/90">
-                Phumelele Ndumo is a financial advisor, best-selling author, and entrepreneur
-                who has spent her career making wealth-building accessible to ordinary people.
-                She is the author of the South African best-seller{" "}
+                Phumelele Ndumo is a financial advisor, best-selling author, and entrepreneur who
+                has spent her career making wealth-building accessible to ordinary people. She is
+                the author of the South African best-seller{" "}
                 <em>"From Debt to Riches: Steps to Financial Success"</em>, and the founder of{" "}
                 <strong className="text-foreground">ThuthukaSA</strong>, an authorised Financial
                 Services Provider (FSP No. 47992). She holds a BCom, a Higher Diploma in Computer
                 Auditing, and a Masters in Business Leadership.
               </p>
               <p className="mt-4 leading-relaxed text-muted-foreground">
-                She has been in business since 2009, a long and often lonely journey that shaped
-                her belief that women succeed faster when they build together. A-Win is that
-                belief, put into practice.
+                She has been in business since 2009, a long and often lonely journey that shaped her
+                belief that women succeed faster when they build together. A-Win is that belief, put
+                into practice.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-2">
@@ -200,8 +210,8 @@ function WhyAWinPage() {
             </span>
             <h2 className="mt-3 font-serif text-foreground">Six convictions, one movement</h2>
             <p className="mt-4 text-muted-foreground">
-              In her own words: "I am often asked why I started A-Win." These are the reasons:
-              the change she is building, one member at a time.
+              In her own words: "I am often asked why I started A-Win." These are the reasons: the
+              change she is building, one member at a time.
             </p>
           </div>
 
@@ -225,13 +235,18 @@ function WhyAWinPage() {
       </section>
 
       {/* STAT BAND */}
-      <section className="relative overflow-hidden py-16 text-primary-foreground" style={{ background: "var(--gradient-hero)" }}>
+      <section
+        className="relative overflow-hidden py-16 text-primary-foreground"
+        style={{ background: "var(--gradient-hero)" }}
+      >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,var(--accent),transparent_55%)] opacity-15" />
         <div className="relative mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-2 lg:grid-cols-4">
           {STATS.map((s) => (
             <div key={s.label} className="text-center">
               {/* hero-foreground, not accent: orange on green measured 2.4:1 and vanished */}
-              <div className="font-serif text-4xl font-semibold text-hero-foreground md:text-5xl">{s.figure}</div>
+              <div className="font-serif text-4xl font-semibold text-hero-foreground md:text-5xl">
+                {s.figure}
+              </div>
               <div className="mt-2 text-sm text-hero-muted">{s.label}</div>
             </div>
           ))}
@@ -246,26 +261,39 @@ function WhyAWinPage() {
               <span className="text-xs font-semibold uppercase tracking-widest text-accent">
                 Our first collective investment
               </span>
-              <h2 className="mt-3 font-serif text-foreground">A Cape Town Airbnb, owned together</h2>
+              <h2 className="mt-3 font-serif text-foreground">
+                A Cape Town Airbnb, owned together
+              </h2>
               <p className="mt-5 leading-relaxed text-muted-foreground">
                 A-Win's diverse members are its greatest asset. Among the founding group are women
                 from Cape Town who already run profitable Airbnbs in their own right. They are
-                guiding the community toward its first shared asset: an Airbnb the members will
-                own collectively.
+                guiding the community toward its first shared asset: an Airbnb the members will own
+                collectively.
               </p>
               <p className="mt-4 leading-relaxed text-muted-foreground">
-                It is the model in miniature: harnessing collective knowledge, pooling capital
-                that grows monthly, and applying jointly for funding as women with money behind them.
+                It is the model in miniature: harnessing collective knowledge, pooling capital that
+                grows monthly, and applying jointly for funding as women with money behind them.
               </p>
             </div>
             <div className="rounded-3xl border border-border bg-secondary/40 p-8 shadow-[var(--shadow-elegant)]">
               <Landmark className="h-10 w-10 text-accent" />
               <div className="mt-4 font-serif text-2xl text-foreground">Collective ownership</div>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
-                <li className="flex gap-2"><span className="text-accent">→</span> Members' monthly contributions pooled and invested</li>
-                <li className="flex gap-2"><span className="text-accent">→</span> Guided by members who run Airbnbs profitably</li>
-                <li className="flex gap-2"><span className="text-accent">→</span> Joint funding applications, stronger together</li>
-                <li className="flex gap-2"><span className="text-accent">→</span> Returns that build generational wealth</li>
+                <li className="flex gap-2">
+                  <span className="text-accent">→</span> Members' monthly contributions pooled and
+                  invested
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-accent">→</span> Guided by members who run Airbnbs
+                  profitably
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-accent">→</span> Joint funding applications, stronger
+                  together
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-accent">→</span> Returns that build generational wealth
+                </li>
               </ul>
             </div>
           </div>
@@ -282,11 +310,15 @@ function WhyAWinPage() {
               className="h-60 w-44 shrink-0 rounded-l-sm rounded-r-lg object-cover shadow-[0_18px_35px_-12px_rgba(0,0,0,0.55)] ring-1 ring-black/25"
             />
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-accent">The authority behind the idea</span>
-              <h2 className="mt-3 font-serif text-foreground">She wrote the book on it, literally.</h2>
+              <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+                The authority behind the idea
+              </span>
+              <h2 className="mt-3 font-serif text-foreground">
+                She wrote the book on it, literally.
+              </h2>
               <p className="mt-4 leading-relaxed text-muted-foreground">
-                Phumelele's best-seller <em>"From Debt to Riches: Steps to Financial Success"</em> has
-                helped countless South Africans turn their finances around. A-Win is that same
+                Phumelele's best-seller <em>"From Debt to Riches: Steps to Financial Success"</em>{" "}
+                has helped countless South Africans turn their finances around. A-Win is that same
                 philosophy, made collective: the leap from personal financial success to shared,
                 community-built wealth.
               </p>
@@ -300,8 +332,8 @@ function WhyAWinPage() {
         <div className="mx-auto max-w-3xl px-4 text-center">
           <Quote className="mx-auto h-10 w-10 text-accent/60" />
           <blockquote className="mt-6 font-serif text-2xl leading-snug text-foreground md:text-3xl">
-            "Entrepreneurship is a team sport, and we are most likely to succeed individually in
-            our businesses if we work together in a cooperative and supportive manner."
+            "Entrepreneurship is a team sport, and we are most likely to succeed individually in our
+            businesses if we work together in a cooperative and supportive manner."
           </blockquote>
           <div className="mt-6 text-sm font-medium uppercase tracking-widest text-accent">
             Phumelele Ndumo · Founder, A-Win
@@ -310,16 +342,23 @@ function WhyAWinPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative overflow-hidden px-4 py-20 text-primary-foreground" style={{ background: "var(--gradient-hero)" }}>
+      <section
+        className="relative overflow-hidden px-4 py-20 text-primary-foreground"
+        style={{ background: "var(--gradient-hero)" }}
+      >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,var(--accent),transparent_60%)] opacity-20" />
         <div className="relative mx-auto max-w-3xl text-center">
           <h2 className="font-serif">Her invitation is simple.</h2>
           <p className="mx-auto mt-5 max-w-xl text-primary-foreground/95 md:text-lg">
-            "Hopefully after reading this, you too will join us, and if you are not a woman,
-            you will refer your loved ones." Every woman belongs here.
+            "Hopefully after reading this, you too will join us, and if you are not a woman, you
+            will refer your loved ones." Every woman belongs here.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button
+              asChild
+              size="lg"
+              className="bg-accent text-accent-foreground hover:bg-accent/90"
+            >
               <Link to="/membership">
                 Become a Member <ArrowRight className="ml-1 h-4 w-4" />
               </Link>

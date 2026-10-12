@@ -1,6 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Upload, Eye, EyeOff, ArrowUp, ArrowDown, Trash2, ImagePlus, Plus, FolderX, Video as VideoIcon } from "lucide-react";
+import {
+  Loader2,
+  Upload,
+  Eye,
+  EyeOff,
+  ArrowUp,
+  ArrowDown,
+  Trash2,
+  ImagePlus,
+  Plus,
+  FolderX,
+  Video as VideoIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase as sb } from "@/integrations/supabase/client";
 const supabase = sb as any;
@@ -36,7 +48,11 @@ const labelize = (id: string) =>
     .join(" ");
 
 const slugifyCategory = (s: string) =>
-  s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 
 type Row = {
   id: string;
@@ -78,19 +94,29 @@ function GalleryAdminPage() {
   const loadCategories = useCallback(async () => {
     const [{ data }, { data: hiddenSetting }] = await Promise.all([
       supabase.from("event_gallery").select("category"),
-      supabase.from("site_settings").select("value").eq("key", "gallery_hidden_categories").maybeSingle(),
+      supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "gallery_hidden_categories")
+        .maybeSingle(),
     ]);
     const hidden = new Set((hiddenSetting?.value as { ids?: string[] } | null)?.ids ?? []);
-    const existing = Array.from(new Set(((data as { category: string }[]) ?? []).map((r) => r.category)));
+    const existing = Array.from(
+      new Set(((data as { category: string }[]) ?? []).map((r) => r.category)),
+    );
     setCategories(() => {
       const base = SEED_CATEGORIES.filter((c) => !hidden.has(c.id));
       const known = new Set(base.map((c) => c.id));
-      const extra = existing.filter((id) => !known.has(id) && !hidden.has(id)).map((id) => ({ id, label: labelize(id) }));
+      const extra = existing
+        .filter((id) => !known.has(id) && !hidden.has(id))
+        .map((id) => ({ id, label: labelize(id) }));
       return [...base, ...extra];
     });
   }, []);
 
-  useEffect(() => { loadCategories(); }, [loadCategories]);
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
 
   const load = useCallback(async () => {
     const { data, error } = await supabase
@@ -108,7 +134,9 @@ function GalleryAdminPage() {
     setUrls(map);
   }, [cat]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const addCategory = () => {
     const id = slugifyCategory(newCategoryName);
@@ -126,7 +154,12 @@ function GalleryAdminPage() {
     const target = categories.find((c) => c.id === cat);
     if (!target) return;
     const photoCount = rows?.length ?? 0;
-    if (!confirm(`Delete "${target.label}"? This permanently deletes ${photoCount} photo${photoCount === 1 ? "" : "s"} in it. This cannot be undone.`)) return;
+    if (
+      !confirm(
+        `Delete "${target.label}"? This permanently deletes ${photoCount} photo${photoCount === 1 ? "" : "s"} in it. This cannot be undone.`,
+      )
+    )
+      return;
     setDeletingCategory(true);
     try {
       if (rows?.length) {
@@ -137,9 +170,17 @@ function GalleryAdminPage() {
       // survives a reload; custom categories just stop existing once their
       // last photo is gone, so no setting write is needed for those.
       if (SEED_CATEGORIES.some((c) => c.id === cat)) {
-        const { data: current } = await supabase.from("site_settings").select("value").eq("key", "gallery_hidden_categories").maybeSingle();
-        const hidden = Array.from(new Set([...(((current?.value as { ids?: string[] } | null)?.ids) ?? []), cat]));
-        await supabase.from("site_settings").upsert({ key: "gallery_hidden_categories", value: { ids: hidden } });
+        const { data: current } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "gallery_hidden_categories")
+          .maybeSingle();
+        const hidden = Array.from(
+          new Set([...((current?.value as { ids?: string[] } | null)?.ids ?? []), cat]),
+        );
+        await supabase
+          .from("site_settings")
+          .upsert({ key: "gallery_hidden_categories", value: { ids: hidden } });
       }
       const remaining = categories.filter((c) => c.id !== cat);
       setCategories(remaining);
@@ -160,22 +201,32 @@ function GalleryAdminPage() {
     try {
       const ext = file.name.split(".").pop()?.toLowerCase() ?? (isVideo ? "mp4" : "jpg");
       const path = pathFor(cat, `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`);
-      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, { contentType: file.type });
+      const { error: upErr } = await supabase.storage
+        .from(BUCKET)
+        .upload(path, file, { contentType: file.type });
       if (upErr) throw upErr;
 
       const nextOrder = ((rows ?? []).at(-1)?.sort_order ?? 0) + 10;
       const { error: insErr } = await supabase.from("event_gallery").insert({
-        category: cat, storage_path: path, caption: caption || null,
-        event_label: eventLabel || null, sort_order: nextOrder, is_visible: true,
+        category: cat,
+        storage_path: path,
+        caption: caption || null,
+        event_label: eventLabel || null,
+        sort_order: nextOrder,
+        is_visible: true,
         media_type: isVideo ? "video" : "photo",
       });
       if (insErr) throw insErr;
       toast.success(isVideo ? "Video added" : "Image added");
-      setFile(null); setCaption(""); setEventLabel("");
+      setFile(null);
+      setCaption("");
+      setEventLabel("");
       await load();
     } catch (e: any) {
       toast.error(e.message);
-    } finally { setBusy(false); }
+    } finally {
+      setBusy(false);
+    }
   };
 
   const toggleVisible = async (r: Row) => {
@@ -209,12 +260,20 @@ function GalleryAdminPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Event gallery</h1>
-        <p className="text-sm text-muted-foreground">Upload, reorder and toggle visibility of gallery images per category.</p>
+        <p className="text-sm text-muted-foreground">
+          Upload, reorder and toggle visibility of gallery images per category.
+        </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
         <Tabs value={cat} onValueChange={setCat}>
-          <TabsList>{categories.map((c) => <TabsTrigger key={c.id} value={c.id}>{c.label}</TabsTrigger>)}</TabsList>
+          <TabsList>
+            {categories.map((c) => (
+              <TabsTrigger key={c.id} value={c.id}>
+                {c.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
         </Tabs>
         {addingCategory ? (
           <div className="flex items-center gap-1.5">
@@ -222,12 +281,26 @@ function GalleryAdminPage() {
               autoFocus
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") addCategory(); if (e.key === "Escape") setAddingCategory(false); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") addCategory();
+                if (e.key === "Escape") setAddingCategory(false);
+              }}
               placeholder="New category name"
               className="h-9 w-44"
             />
-            <Button size="sm" onClick={addCategory}>Add</Button>
-            <Button size="sm" variant="ghost" onClick={() => { setAddingCategory(false); setNewCategoryName(""); }}>Cancel</Button>
+            <Button size="sm" onClick={addCategory}>
+              Add
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setAddingCategory(false);
+                setNewCategoryName("");
+              }}
+            >
+              Cancel
+            </Button>
           </div>
         ) : (
           <Button size="sm" variant="outline" onClick={() => setAddingCategory(true)}>
@@ -235,32 +308,62 @@ function GalleryAdminPage() {
           </Button>
         )}
         {cat && (
-          <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" disabled={deletingCategory} onClick={removeCategory}>
-            {deletingCategory ? <Loader2 className="size-3.5 mr-1 animate-spin" /> : <FolderX className="size-3.5 mr-1" />} Delete category
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-destructive hover:text-destructive"
+            disabled={deletingCategory}
+            onClick={removeCategory}
+          >
+            {deletingCategory ? (
+              <Loader2 className="size-3.5 mr-1 animate-spin" />
+            ) : (
+              <FolderX className="size-3.5 mr-1" />
+            )}{" "}
+            Delete category
           </Button>
         )}
       </div>
 
       <Card>
         <CardContent className="space-y-3 pt-6">
-          <div className="flex items-center gap-2 text-sm font-semibold"><ImagePlus className="size-4" /> Add photo or video</div>
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <ImagePlus className="size-4" /> Add photo or video
+          </div>
           <div className="grid gap-3 md:grid-cols-4">
             <div className="md:col-span-2">
               <Label>Photo or video file</Label>
-              <Input type="file" accept="image/*,video/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+              <Input
+                type="file"
+                accept="image/*,video/*"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              />
               <p className="mt-1 text-xs text-muted-foreground">Videos up to 50 MB.</p>
             </div>
             <div>
               <Label>Event label</Label>
-              <Input value={eventLabel} onChange={(e) => setEventLabel(e.target.value)} placeholder="A-Win Hike · April 2026" />
+              <Input
+                value={eventLabel}
+                onChange={(e) => setEventLabel(e.target.value)}
+                placeholder="A-Win Hike · April 2026"
+              />
             </div>
             <div>
               <Label>Caption</Label>
-              <Input value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="Sisterhood on the trail" />
+              <Input
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Sisterhood on the trail"
+              />
             </div>
           </div>
           <Button onClick={upload} disabled={!file || busy}>
-            {busy ? <Loader2 className="mr-1 size-4 animate-spin" /> : <Upload className="mr-1 size-4" />} Upload
+            {busy ? (
+              <Loader2 className="mr-1 size-4 animate-spin" />
+            ) : (
+              <Upload className="mr-1 size-4" />
+            )}{" "}
+            Upload
           </Button>
         </CardContent>
       </Card>
@@ -268,9 +371,13 @@ function GalleryAdminPage() {
       <Card>
         <CardContent className="pt-6">
           {rows === null ? (
-            <div className="flex justify-center py-8"><Loader2 className="size-5 animate-spin" /></div>
+            <div className="flex justify-center py-8">
+              <Loader2 className="size-5 animate-spin" />
+            </div>
           ) : rows.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No images in this category yet.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              No images in this category yet.
+            </p>
           ) : (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
               {rows.map((r, i) => (
@@ -278,12 +385,24 @@ function GalleryAdminPage() {
                   <div className="relative aspect-square bg-muted">
                     {urls[r.id] ? (
                       r.media_type === "video" ? (
-                        <video src={urls[r.id]} className="h-full w-full object-cover" muted playsInline preload="metadata" />
+                        <video
+                          src={urls[r.id]}
+                          className="h-full w-full object-cover"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
                       ) : (
-                        <img src={urls[r.id]} alt={r.caption ?? ""} className="h-full w-full object-cover" />
+                        <img
+                          src={urls[r.id]}
+                          alt={r.caption ?? ""}
+                          className="h-full w-full object-cover"
+                        />
                       )
                     ) : (
-                      <div className="flex h-full items-center justify-center"><Loader2 className="size-4 animate-spin text-muted-foreground" /></div>
+                      <div className="flex h-full items-center justify-center">
+                        <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                      </div>
                     )}
                     {r.media_type === "video" && (
                       <div className="absolute right-2 top-2 rounded-full bg-background/80 p-1.5">
@@ -298,18 +417,50 @@ function GalleryAdminPage() {
                   </div>
                   <div className="space-y-1 p-2">
                     <div className="truncate text-xs font-semibold">{r.event_label ?? "—"}</div>
-                    <div className="truncate text-[11px] text-muted-foreground">{r.caption ?? ""}</div>
+                    <div className="truncate text-[11px] text-muted-foreground">
+                      {r.caption ?? ""}
+                    </div>
                     <div className="flex flex-wrap items-center gap-1 pt-1">
-                      <Button size="icon" variant="ghost" className="size-7" onClick={() => move(r, -1)} disabled={i === 0} title="Move up">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="size-7"
+                        onClick={() => move(r, -1)}
+                        disabled={i === 0}
+                        title="Move up"
+                      >
                         <ArrowUp className="size-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="size-7" onClick={() => move(r, 1)} disabled={i === rows.length - 1} title="Move down">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="size-7"
+                        onClick={() => move(r, 1)}
+                        disabled={i === rows.length - 1}
+                        title="Move down"
+                      >
                         <ArrowDown className="size-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="size-7" onClick={() => toggleVisible(r)} title={r.is_visible ? "Hide" : "Show"}>
-                        {r.is_visible ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="size-7"
+                        onClick={() => toggleVisible(r)}
+                        title={r.is_visible ? "Hide" : "Show"}
+                      >
+                        {r.is_visible ? (
+                          <Eye className="size-3.5" />
+                        ) : (
+                          <EyeOff className="size-3.5" />
+                        )}
                       </Button>
-                      <Button size="icon" variant="ghost" className="ml-auto size-7 text-destructive" onClick={() => remove(r)} title="Delete">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="ml-auto size-7 text-destructive"
+                        onClick={() => remove(r)}
+                        title="Delete"
+                      >
                         <Trash2 className="size-3.5" />
                       </Button>
                     </div>

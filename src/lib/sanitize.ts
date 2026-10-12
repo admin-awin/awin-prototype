@@ -7,7 +7,9 @@
 
 export function sanitizeText(input: string | null | undefined): string {
   if (!input) return "";
-  return String(input).trim().replace(/[<>'"`;]/g, "");
+  return String(input)
+    .trim()
+    .replace(/[<>'"`;]/g, "");
 }
 
 export function sanitizeOptionalText(input: string | null | undefined): string | null {
@@ -16,7 +18,9 @@ export function sanitizeOptionalText(input: string | null | undefined): string |
 }
 
 export function sanitizeEmail(input: string | null | undefined): string {
-  const trimmed = String(input ?? "").trim().toLowerCase();
+  const trimmed = String(input ?? "")
+    .trim()
+    .toLowerCase();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(trimmed)) throw new Error("Invalid email format");
   if (trimmed.length > 255) throw new Error("Email too long");
@@ -24,11 +28,17 @@ export function sanitizeEmail(input: string | null | undefined): string {
 }
 
 export function sanitizeIdNumber(input: string | null | undefined): string {
-  return String(input ?? "").trim().replace(/\D/g, "").slice(0, 13);
+  return String(input ?? "")
+    .trim()
+    .replace(/\D/g, "")
+    .slice(0, 13);
 }
 
 export function sanitizePhone(input: string | null | undefined): string {
-  return String(input ?? "").trim().replace(/[^\d+\s()-]/g, "").slice(0, 20);
+  return String(input ?? "")
+    .trim()
+    .replace(/[^\d+\s()-]/g, "")
+    .slice(0, 20);
 }
 
 export function sanitizeUrl(input: string | null | undefined): string | null {
@@ -44,7 +54,9 @@ export function sanitizeUrl(input: string | null | undefined): string | null {
 }
 
 /** Friendly message for Postgres unique-violation (code 23505). */
-export function isDuplicateError(err: { code?: string; message?: string } | null | undefined): boolean {
+export function isDuplicateError(
+  err: { code?: string; message?: string } | null | undefined,
+): boolean {
   if (!err) return false;
   if (err.code === "23505") return true;
   return /duplicate key|already exists|unique constraint/i.test(err.message ?? "");

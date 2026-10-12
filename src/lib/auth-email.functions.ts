@@ -18,11 +18,18 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
     const { rateLimitOk } = await import("./email.server");
     const { normalizeEmail, sendSetPasswordEmail } = await import("./auth-email.server");
     const email = normalizeEmail(data.email);
-    if (!(await rateLimitOk(`pwreset:${email}`, 5, 3600)) || !(await rateLimitOk(`pwreset-ip:${clientIp()}`, 20, 3600))) {
+    if (
+      !(await rateLimitOk(`pwreset:${email}`, 5, 3600)) ||
+      !(await rateLimitOk(`pwreset-ip:${clientIp()}`, 20, 3600))
+    ) {
       throw new Error("Too many reset requests — please wait a while and try again");
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: profile } = await supabaseAdmin.from("profiles").select("id").eq("email", email).maybeSingle();
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
     if (profile) await sendSetPasswordEmail(supabaseAdmin, email, "reset");
     return { ok: true as const };
   });
@@ -42,11 +49,18 @@ export const signUpMember = createServerFn({ method: "POST" })
     const { rateLimitOk } = await import("./email.server");
     const { normalizeEmail, signUpAndSendConfirmation } = await import("./auth-email.server");
     const email = normalizeEmail(data.email);
-    if (!(await rateLimitOk(`signup:${email}`, 5, 3600)) || !(await rateLimitOk(`signup-ip:${clientIp()}`, 20, 3600))) {
+    if (
+      !(await rateLimitOk(`signup:${email}`, 5, 3600)) ||
+      !(await rateLimitOk(`signup-ip:${clientIp()}`, 20, 3600))
+    ) {
       throw new Error("Too many attempts — please wait a while and try again");
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const res = await signUpAndSendConfirmation(supabaseAdmin, { email, password: data.password, fullName: data.full_name });
+    const res = await signUpAndSendConfirmation(supabaseAdmin, {
+      email,
+      password: data.password,
+      fullName: data.full_name,
+    });
     if (!res.ok) throw new Error(res.error);
     return res;
   });

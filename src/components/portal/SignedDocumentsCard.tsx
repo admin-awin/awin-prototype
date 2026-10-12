@@ -57,7 +57,9 @@ export function SignedDocumentsCard({ userId }: { userId: string }) {
         setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   if (loading) {
@@ -76,7 +78,9 @@ export function SignedDocumentsCard({ userId }: { userId: string }) {
     <Card>
       <CardHeader>
         <CardTitle>Your Signed Documents</CardTitle>
-        <CardDescription>Certificates and forms generated for you, ready to download.</CardDescription>
+        <CardDescription>
+          Certificates and forms generated for you, ready to download.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
         {docs.membershipCertUrl && (
@@ -106,8 +110,12 @@ export function SignedDocumentsCard({ userId }: { userId: string }) {
             <div className="flex items-center gap-3 min-w-0">
               <FileText className="size-5 text-primary shrink-0" />
               <div className="min-w-0">
-                <p className="font-medium text-sm truncate">Letter of Authority &amp; Risk Profile</p>
-                <p className="text-xs text-muted-foreground">Your signed LOA &amp; RPA submission</p>
+                <p className="font-medium text-sm truncate">
+                  Letter of Authority &amp; Risk Profile
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Your signed LOA &amp; RPA submission
+                </p>
               </div>
             </div>
             <ExternalLink className="size-4 text-muted-foreground shrink-0" />

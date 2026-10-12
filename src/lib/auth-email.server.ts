@@ -41,7 +41,13 @@ export async function sendSetPasswordEmail(
   const { sendEmail } = await import("./email.server");
   const { setPasswordEmail } = await import("./email-templates.server");
   const name = fullName ?? (data.user?.user_metadata?.full_name as string | undefined) ?? null;
-  const mail = setPasswordEmail(kind, name, email, await authLink(data.properties.hashed_token, "recovery"), data.properties.email_otp);
+  const mail = setPasswordEmail(
+    kind,
+    name,
+    email,
+    await authLink(data.properties.hashed_token, "recovery"),
+    data.properties.email_otp,
+  );
   return sendEmail({ to: email, toName: name ?? email, ...mail });
 }
 
@@ -55,7 +61,10 @@ export async function sendSetPasswordEmail(
 export async function signUpAndSendConfirmation(
   supabaseAdmin: any,
   input: { email: string; password: string; fullName: string },
-): Promise<{ ok: true; status: "confirmation_sent" | "existing_unconfirmed" | "already_registered" } | { ok: false; error: string }> {
+): Promise<
+  | { ok: true; status: "confirmation_sent" | "existing_unconfirmed" | "already_registered" }
+  | { ok: false; error: string }
+> {
   const email = normalizeEmail(input.email);
   const { data, error } = await supabaseAdmin.auth.admin.generateLink({
     type: "signup",
@@ -66,7 +75,11 @@ export async function signUpAndSendConfirmation(
 
   if (error) {
     // Already registered — confirmed or not? Look at the profile's auth row.
-    const { data: profile } = await supabaseAdmin.from("profiles").select("id").eq("email", email).maybeSingle();
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
     if (!profile) return { ok: false, error: error.message };
     const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(profile.id);
     if (authUser?.user && !authUser.user.email_confirmed_at) {
@@ -78,8 +91,16 @@ export async function signUpAndSendConfirmation(
 
   const { sendEmail } = await import("./email.server");
   const { confirmSignupEmail } = await import("./email-templates.server");
-  const mail = confirmSignupEmail(input.fullName, await authLink(data.properties.hashed_token, "signup"));
+  const mail = confirmSignupEmail(
+    input.fullName,
+    await authLink(data.properties.hashed_token, "signup"),
+  );
   const sent = await sendEmail({ to: email, toName: input.fullName, ...mail });
-  if (!sent.ok) return { ok: false, error: "Account created, but the confirmation email could not be sent. Use “Forgot password?” to get in." };
+  if (!sent.ok)
+    return {
+      ok: false,
+      error:
+        "Account created, but the confirmation email could not be sent. Use “Forgot password?” to get in.",
+    };
   return { ok: true, status: "confirmation_sent" };
 }

@@ -28,10 +28,15 @@ function MessagesPage() {
   const [tab, setTab] = useState<"inbox" | "unread" | "archived">("inbox");
 
   const load = async () => {
-    const { data } = await supabase.from("contact_messages").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase
+      .from("contact_messages")
+      .select("*")
+      .order("created_at", { ascending: false });
     setMessages((data as Message[]) ?? []);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const filtered = (messages ?? []).filter((m) => {
     if (tab === "archived") return m.is_archived;
@@ -71,9 +76,15 @@ function MessagesPage() {
       </Tabs>
 
       {messages === null ? (
-        <div className="py-8 flex justify-center"><Loader2 className="size-5 animate-spin" /></div>
+        <div className="py-8 flex justify-center">
+          <Loader2 className="size-5 animate-spin" />
+        </div>
       ) : filtered.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No messages.</CardContent></Card>
+        <Card>
+          <CardContent className="py-12 text-center text-muted-foreground">
+            No messages.
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-3">
           {filtered.map((m) => (
@@ -83,23 +94,47 @@ function MessagesPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">{m.subject}</h3>
-                      {!m.is_read && !m.is_archived && <Badge className="bg-accent text-accent-foreground">New</Badge>}
+                      {!m.is_read && !m.is_archived && (
+                        <Badge className="bg-accent text-accent-foreground">New</Badge>
+                      )}
                     </div>
-                    <p className="text-sm text-muted-foreground">{m.name} · {m.email}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {m.name} · {m.email}
+                    </p>
                   </div>
-                  <span className="text-xs text-muted-foreground">{new Date(m.created_at).toLocaleString()}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(m.created_at).toLocaleString()}
+                  </span>
                 </div>
                 <p className="text-sm bg-muted/40 rounded p-3 whitespace-pre-wrap">{m.message}</p>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Button size="sm" variant="outline" asChild>
-                    <a href={`mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject)}`}>Reply</a>
+                    <a href={`mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject)}`}>
+                      Reply
+                    </a>
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => update(m.id, { is_read: !m.is_read })}>
-                    {m.is_read ? <Mail className="size-4 mr-1" /> : <MailOpen className="size-4 mr-1" />}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => update(m.id, { is_read: !m.is_read })}
+                  >
+                    {m.is_read ? (
+                      <Mail className="size-4 mr-1" />
+                    ) : (
+                      <MailOpen className="size-4 mr-1" />
+                    )}
                     Mark {m.is_read ? "unread" : "read"}
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => update(m.id, { is_archived: !m.is_archived })}>
-                    {m.is_archived ? <ArchiveRestore className="size-4 mr-1" /> : <Archive className="size-4 mr-1" />}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => update(m.id, { is_archived: !m.is_archived })}
+                  >
+                    {m.is_archived ? (
+                      <ArchiveRestore className="size-4 mr-1" />
+                    ) : (
+                      <Archive className="size-4 mr-1" />
+                    )}
                     {m.is_archived ? "Unarchive" : "Archive"}
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => del(m.id)}>

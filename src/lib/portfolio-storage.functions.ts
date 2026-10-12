@@ -15,7 +15,12 @@ type MirrorSummary = {
   updated: number;
   dry_run: boolean;
   ran_at: string;
-  planned_uploads?: Array<{ member_id: string; kind: string; remote_url: string; target_key: string }>;
+  planned_uploads?: Array<{
+    member_id: string;
+    kind: string;
+    remote_url: string;
+    target_key: string;
+  }>;
   planned_updates?: Array<{ member_id: string; fields: string[] }>;
   failures?: Array<{ member_id: string; remote_url?: string; error: string }>;
 };
@@ -103,9 +108,7 @@ const saveStatus = async (patch: Record<string, unknown>) => {
     .eq("key", STATUS_KEY)
     .maybeSingle();
   const next = { ...((existing?.value as object | null) ?? {}), ...patch };
-  await supabaseAdmin
-    .from("site_settings")
-    .upsert({ key: STATUS_KEY, value: next as never });
+  await supabaseAdmin.from("site_settings").upsert({ key: STATUS_KEY, value: next as never });
 };
 
 /**
@@ -164,7 +167,12 @@ export const mirrorPortfolioAssets = createServerFn({ method: "POST" })
       }
       if (dryRun) {
         const key = `${memberId}/${kind}-${index}.jpg`;
-        summary.planned_uploads!.push({ member_id: memberId, kind, remote_url: remoteUrl, target_key: key });
+        summary.planned_uploads!.push({
+          member_id: memberId,
+          kind,
+          remote_url: remoteUrl,
+          target_key: key,
+        });
         summary.uploaded += 1;
         return key;
       }
@@ -183,7 +191,11 @@ export const mirrorPortfolioAssets = createServerFn({ method: "POST" })
         return key;
       } catch (e) {
         summary.failed += 1;
-        summary.failures!.push({ member_id: memberId, remote_url: remoteUrl, error: (e as Error).message });
+        summary.failures!.push({
+          member_id: memberId,
+          remote_url: remoteUrl,
+          error: (e as Error).message,
+        });
         return null;
       }
     };
@@ -201,9 +213,18 @@ export const mirrorPortfolioAssets = createServerFn({ method: "POST" })
 
       const patch: Record<string, unknown> = {};
       const changedFields: string[] = [];
-      if (newPhoto && newPhoto !== m.photo_url) { patch.photo_url = newPhoto; changedFields.push("photo_url"); }
-      if (newCard && newCard !== m.profile_card_url) { patch.profile_card_url = newCard; changedFields.push("profile_card_url"); }
-      if (portfolio.length > 0) { patch.portfolio_images = portfolio; changedFields.push("portfolio_images"); }
+      if (newPhoto && newPhoto !== m.photo_url) {
+        patch.photo_url = newPhoto;
+        changedFields.push("photo_url");
+      }
+      if (newCard && newCard !== m.profile_card_url) {
+        patch.profile_card_url = newCard;
+        changedFields.push("profile_card_url");
+      }
+      if (portfolio.length > 0) {
+        patch.portfolio_images = portfolio;
+        changedFields.push("portfolio_images");
+      }
 
       if (changedFields.length === 0) continue;
 

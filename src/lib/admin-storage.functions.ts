@@ -43,7 +43,12 @@ export const getStorageOverview = createServerFn({ method: "GET" })
     const largestFiles = [...objects]
       .sort((a, b) => b.size - a.size)
       .slice(0, 25)
-      .map((o) => ({ bucket_id: o.bucket_id, name: o.name, bytes: o.size, created_at: o.created_at }));
+      .map((o) => ({
+        bucket_id: o.bucket_id,
+        name: o.name,
+        bytes: o.size,
+        created_at: o.created_at,
+      }));
 
     const totalBytes = objects.reduce((sum, o) => sum + o.size, 0);
 
@@ -84,7 +89,13 @@ export const getStorageOverview = createServerFn({ method: "GET" })
 // they're FAIS-regulated records. This generic storage-cleanup tool must
 // never be able to bypass that by deleting the file directly.
 const deleteSchema = z.object({
-  bucket: z.enum(["gallery", "member-portfolios", "onboarding-uploads", "event-gallery", "documents"]),
+  bucket: z.enum([
+    "gallery",
+    "member-portfolios",
+    "onboarding-uploads",
+    "event-gallery",
+    "documents",
+  ]),
   path: z.string().trim().min(1),
 });
 

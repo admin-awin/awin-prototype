@@ -10,7 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { SignaturePad } from "@/components/site/SignaturePad";
 import { sendLoaRpaReceivedEmail } from "@/lib/email.functions";
@@ -52,7 +58,9 @@ export const Route = createFileRoute("/loa-rpa")({
 async function sha256(text: string) {
   const buf = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest("SHA-256", buf);
-  return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 const DOC_VERSION = "loa-rpa-v1.0-2026";
@@ -62,7 +70,8 @@ const INCOME_STEP = 1000;
 const INVEST_MIN = 500;
 const INVEST_MAX = 20000;
 const INVEST_STEP = 250;
-const formatRand = (v: number, max: number) => (v >= max ? `R${max.toLocaleString()}+` : `R${v.toLocaleString()}`);
+const formatRand = (v: number, max: number) =>
+  v >= max ? `R${max.toLocaleString()}+` : `R${v.toLocaleString()}`;
 const formatIncome = (v: number) => formatRand(v, INCOME_MAX);
 const formatInvestAmount = (v: number) => formatRand(v, INVEST_MAX);
 
@@ -73,7 +82,11 @@ function LoaRpaPage() {
   const [applicationId, setApplicationId] = useState<string | null>(null);
 
   const source = useMemo<"whatsapp" | "website">(
-    () => (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("src") === "whatsapp" ? "whatsapp" : "website"),
+    () =>
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("src") === "whatsapp"
+        ? "whatsapp"
+        : "website",
     [],
   );
 
@@ -107,7 +120,10 @@ function LoaRpaPage() {
   const composeChildrenAnswer = (has: string, count: number, ages: string[]) => {
     if (has === "No") return "No";
     if (has !== "Yes") return "";
-    const filledAges = ages.slice(0, count).map((a) => a.trim()).filter(Boolean);
+    const filledAges = ages
+      .slice(0, count)
+      .map((a) => a.trim())
+      .filter(Boolean);
     const agesStr = filledAges.length ? ` — ages: ${filledAges.join(", ")}` : "";
     return `Yes, ${count}${agesStr}`;
   };
@@ -153,7 +169,8 @@ function LoaRpaPage() {
   const idValid = /^\d{13}$/.test(loa.idNumber.replace(/\s+/g, ""));
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const phoneValid = /^[+\d\s()-]{8,}$/.test(phone);
-  const signatureValid = signatureType === "typed" ? typedSignature.trim().length > 2 : drawnSignature.length > 0;
+  const signatureValid =
+    signatureType === "typed" ? typedSignature.trim().length > 2 : drawnSignature.length > 0;
 
   const detailsInvalid = !nameValid || !idValid || !phoneValid || !emailValid;
   const loaInvalid = !loaAgree;
@@ -161,7 +178,8 @@ function LoaRpaPage() {
 
   const canSubmit = !detailsInvalid && !loaInvalid && !signInvalid && !submitting;
 
-  const setRpaField = (key: keyof RpaData) => (value: string) => setRpa((r) => ({ ...r, [key]: value }));
+  const setRpaField = (key: keyof RpaData) => (value: string) =>
+    setRpa((r) => ({ ...r, [key]: value }));
 
   const handleSubmitClick = () => {
     if (submitting) return;
@@ -176,7 +194,11 @@ function LoaRpaPage() {
       if (!privacyConsent) missing.push("Privacy consent");
       if (!signatureValid) missing.push("Signature");
       toast.error("Please complete: " + missing.join(", "));
-      const firstInvalidRef = detailsInvalid ? detailsSectionRef : loaInvalid ? loaSectionRef : signSectionRef;
+      const firstInvalidRef = detailsInvalid
+        ? detailsSectionRef
+        : loaInvalid
+          ? loaSectionRef
+          : signSectionRef;
       firstInvalidRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
@@ -187,10 +209,16 @@ function LoaRpaPage() {
     if (!canSubmit) return;
     setSubmitting(true);
     try {
-      const dateStr = new Date().toLocaleDateString("en-ZA", { day: "2-digit", month: "long", year: "numeric" });
+      const dateStr = new Date().toLocaleDateString("en-ZA", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
       const loaFull: LoaData = { ...loa, telephone: phone };
       const rpaFull: RpaData = { ...rpa, cellPhone: phone, email };
-      const docHash = await sha256(JSON.stringify({ fullName, loa: loaFull, rpa: rpaFull, DOC_VERSION }));
+      const docHash = await sha256(
+        JSON.stringify({ fullName, loa: loaFull, rpa: rpaFull, DOC_VERSION }),
+      );
 
       const pdfInput = {
         fullName: fullName.trim(),
@@ -206,7 +234,10 @@ function LoaRpaPage() {
       // for ThuthukaSA's internal file, and a standalone LOA-only PDF — the
       // one that gets emailed on its own to outside institutions and must
       // not carry the applicant's RPA financial/risk answers with it.
-      const [pdfBlob, loaOnlyBlob] = await Promise.all([buildLoaRpaPdf(pdfInput), buildLoaPdf(pdfInput)]);
+      const [pdfBlob, loaOnlyBlob] = await Promise.all([
+        buildLoaRpaPdf(pdfInput),
+        buildLoaPdf(pdfInput),
+      ]);
 
       // 2. Upload both to the private loa-rpa-documents bucket.
       const idStub = loa.idNumber.replace(/\s+/g, "") || "submission";
@@ -247,7 +278,9 @@ function LoaRpaPage() {
       // by that navigation, silently dropping the admin notification even
       // though the submission itself had already saved.
       try {
-        await sendReceivedEmail({ data: { email: email.trim(), fullName: fullName.trim(), source, loaOnly: false } });
+        await sendReceivedEmail({
+          data: { email: email.trim(), fullName: fullName.trim(), source, loaOnly: false },
+        });
       } catch {
         // best-effort — the submission itself already succeeded
       }
@@ -271,8 +304,8 @@ function LoaRpaPage() {
           </div>
           <h1 className="mt-6 font-serif text-3xl text-foreground">All done</h1>
           <p className="mt-3 text-muted-foreground">
-            Your signed Letter of Authority and Risk Profile Analysis have been submitted to ThuthukaSA. We've
-            emailed you a confirmation. No further action is needed right now.
+            Your signed Letter of Authority and Risk Profile Analysis have been submitted to
+            ThuthukaSA. We've emailed you a confirmation. No further action is needed right now.
           </p>
           <Button asChild className="mt-6">
             <a href="https://thuthuka-sa.co.za">Visit ThuthukaSA</a>
@@ -286,7 +319,10 @@ function LoaRpaPage() {
     <>
       <section className="page-header px-4 py-16 md:py-20">
         <div className="relative mx-auto max-w-3xl">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
+          >
             <span>ThuthukaSA</span>
             <ChevronRight className="h-3 w-3" />
             <span className="text-accent">LOA &amp; Risk Profile</span>
@@ -298,21 +334,27 @@ function LoaRpaPage() {
               className="h-14 w-auto shrink-0 rounded-md bg-white p-1.5 shadow-sm"
             />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-accent">ThuthukaSA (FSP No. 47992)</p>
-              <p className="text-sm text-foreground/70">Your appointed Financial Services Provider</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-accent">
+                ThuthukaSA (FSP No. 47992)
+              </p>
+              <p className="text-sm text-foreground/70">
+                Your appointed Financial Services Provider
+              </p>
             </div>
           </div>
-          <h1 className="mt-4 font-serif text-foreground">Letter of Authority &amp; Risk Profile</h1>
+          <h1 className="mt-4 font-serif text-foreground">
+            Letter of Authority &amp; Risk Profile
+          </h1>
           <p className="mt-3 max-w-xl text-foreground/80 md:text-lg">
-            Two short forms required by ThuthukaSA so we can guide your investment appropriately. Takes about 5
-            minutes on your phone.
+            Two short forms required by ThuthukaSA so we can guide your investment appropriately.
+            Takes about 5 minutes on your phone.
           </p>
           <p className="mt-4 flex items-start gap-2 rounded-lg border border-accent/30 bg-accent/10 p-3 text-sm text-foreground/85">
             <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
             <span>
-              The information you provide on this form is submitted directly to ThuthukaSA, your appointed
-              Financial Services Provider, and is treated as confidential as required by the Financial Advisory
-              and Intermediary Services Act (FAIS) and POPIA.
+              The information you provide on this form is submitted directly to ThuthukaSA, your
+              appointed Financial Services Provider, and is treated as confidential as required by
+              the Financial Advisory and Intermediary Services Act (FAIS) and POPIA.
             </span>
           </p>
           <button
@@ -330,54 +372,84 @@ function LoaRpaPage() {
           {/* Section overview — this is a long single-scroll form, so set
               expectations up front rather than leaving length a surprise. */}
           <ol className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground">
-            {["Your details", "Letter of Authority", "Risk Profile", "Sign & submit"].map((label, i, arr) => (
-              <li key={label} className="flex items-center gap-2">
-                <span className="flex items-center gap-1.5">
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary text-[10px] font-semibold text-foreground">
-                    {i + 1}
+            {["Your details", "Letter of Authority", "Risk Profile", "Sign & submit"].map(
+              (label, i, arr) => (
+                <li key={label} className="flex items-center gap-2">
+                  <span className="flex items-center gap-1.5">
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary text-[10px] font-semibold text-foreground">
+                      {i + 1}
+                    </span>
+                    {label}
                   </span>
-                  {label}
-                </span>
-                {i < arr.length - 1 && <ChevronRight className="size-3 text-muted-foreground/50" />}
-              </li>
-            ))}
+                  {i < arr.length - 1 && (
+                    <ChevronRight className="size-3 text-muted-foreground/50" />
+                  )}
+                </li>
+              ),
+            )}
           </ol>
 
           {/* Your details */}
           <Card
             ref={detailsSectionRef}
-            className={cn("border-border/60", submitAttempted && detailsInvalid && "border-destructive ring-2 ring-destructive/50")}
+            className={cn(
+              "border-border/60",
+              submitAttempted && detailsInvalid && "border-destructive ring-2 ring-destructive/50",
+            )}
           >
             <CardContent className="space-y-4 p-6">
               <h2 className="font-serif text-xl text-foreground">Your details</h2>
               <div className="grid gap-4">
                 <div>
                   <Label>Full name (per ID book) *</Label>
-                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Jane Nokuthula Dlamini" />
-                  {(submitAttempted || fullName) && !nameValid && <p className="mt-1 text-xs text-destructive">Enter your full name.</p>}
+                  <Input
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Jane Nokuthula Dlamini"
+                  />
+                  {(submitAttempted || fullName) && !nameValid && (
+                    <p className="mt-1 text-xs text-destructive">Enter your full name.</p>
+                  )}
                 </div>
                 <div>
                   <Label>ID number *</Label>
-                  <Input value={loa.idNumber} onChange={(e) => setLoa({ ...loa, idNumber: e.target.value })} placeholder="13 digits" maxLength={13} />
-                  {(submitAttempted || loa.idNumber) && !idValid && <p className="mt-1 text-xs text-destructive">SA ID must be 13 digits.</p>}
+                  <Input
+                    value={loa.idNumber}
+                    onChange={(e) => setLoa({ ...loa, idNumber: e.target.value })}
+                    placeholder="13 digits"
+                    maxLength={13}
+                  />
+                  {(submitAttempted || loa.idNumber) && !idValid && (
+                    <p className="mt-1 text-xs text-destructive">SA ID must be 13 digits.</p>
+                  )}
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <Label>Cell phone number *</Label>
-                    <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 82 123 4567" />
-                    {(submitAttempted || phone) && !phoneValid && <p className="mt-1 text-xs text-destructive">Enter a valid phone number.</p>}
+                    <Input
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+27 82 123 4567"
+                    />
+                    {(submitAttempted || phone) && !phoneValid && (
+                      <p className="mt-1 text-xs text-destructive">Enter a valid phone number.</p>
+                    )}
                   </div>
                   <div>
                     <Label>Email address *</Label>
                     <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    {(submitAttempted || email) && !emailValid && <p className="mt-1 text-xs text-destructive">Enter a valid email.</p>}
+                    {(submitAttempted || email) && !emailValid && (
+                      <p className="mt-1 text-xs text-destructive">Enter a valid email.</p>
+                    )}
                   </div>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <Label>Gender</Label>
                     <Select value={rpa.gender} onValueChange={setRpaField("gender")}>
-                      <SelectTrigger><SelectValue placeholder="Choose one" /></SelectTrigger>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose one" />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Female">Female</SelectItem>
                         <SelectItem value="Male">Male</SelectItem>
@@ -388,20 +460,31 @@ function LoaRpaPage() {
                   </div>
                   <div>
                     <Label>Work number</Label>
-                    <Input value={rpa.workNumber} onChange={(e) => setRpaField("workNumber")(e.target.value)} />
+                    <Input
+                      value={rpa.workNumber}
+                      onChange={(e) => setRpaField("workNumber")(e.target.value)}
+                    />
                   </div>
                   <div>
                     <Label>Qualification</Label>
-                    <Input value={rpa.qualification} onChange={(e) => setRpaField("qualification")(e.target.value)} />
+                    <Input
+                      value={rpa.qualification}
+                      onChange={(e) => setRpaField("qualification")(e.target.value)}
+                    />
                   </div>
                   <div>
                     <Label>Occupation</Label>
-                    <Input value={rpa.occupation} onChange={(e) => setRpaField("occupation")(e.target.value)} />
+                    <Input
+                      value={rpa.occupation}
+                      onChange={(e) => setRpaField("occupation")(e.target.value)}
+                    />
                   </div>
                   <div className="sm:col-span-2">
                     <div className="flex items-baseline justify-between">
                       <Label>Gross monthly income</Label>
-                      <span className="text-sm font-semibold text-primary">{formatIncome(incomeValue)}</span>
+                      <span className="text-sm font-semibold text-primary">
+                        {formatIncome(incomeValue)}
+                      </span>
                     </div>
                     <Slider
                       className="mt-2"
@@ -414,12 +497,16 @@ function LoaRpaPage() {
                         setRpaField("grossMonthlyIncome")(formatIncome(v));
                       }}
                     />
-                    <p className="mt-1 text-xs text-muted-foreground">Before deductions, per month</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Before deductions, per month
+                    </p>
                   </div>
                   <div>
                     <Label>Marital status</Label>
                     <Select value={rpa.maritalStatus} onValueChange={setRpaField("maritalStatus")}>
-                      <SelectTrigger><SelectValue placeholder="Choose one" /></SelectTrigger>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose one" />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Single">Single</SelectItem>
                         <SelectItem value="Married">Married</SelectItem>
@@ -431,7 +518,10 @@ function LoaRpaPage() {
                   </div>
                   <div className="sm:col-span-2">
                     <Label>Stokvel name</Label>
-                    <Input value={rpa.stokvelName} onChange={(e) => setRpaField("stokvelName")(e.target.value)} />
+                    <Input
+                      value={rpa.stokvelName}
+                      onChange={(e) => setRpaField("stokvelName")(e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -441,31 +531,37 @@ function LoaRpaPage() {
           {/* LOA */}
           <Card
             ref={loaSectionRef}
-            className={cn("border-border/60", submitAttempted && loaInvalid && "border-destructive ring-2 ring-destructive/50")}
+            className={cn(
+              "border-border/60",
+              submitAttempted && loaInvalid && "border-destructive ring-2 ring-destructive/50",
+            )}
           >
             <CardContent className="space-y-4 p-6">
               <h2 className="font-serif text-xl text-foreground">Letter of Authority</h2>
               <div className="max-h-56 overflow-y-auto rounded-lg border border-border bg-secondary/20 p-4 text-sm leading-relaxed text-foreground/90">
                 <p>
-                  I, the undersigned, hereby authorise <strong>Phumelele Ndumo</strong> to obtain any information on
-                  my behalf regarding my assurance and/or investment portfolio, and any of my employee benefits, from
-                  any life office, retirement fund or other financial institution directly, or by using the
-                  services of The Financial Services Exchange (Pty.) Ltd., trading as Astute.
+                  I, the undersigned, hereby authorise <strong>Phumelele Ndumo</strong> to obtain
+                  any information on my behalf regarding my assurance and/or investment portfolio,
+                  and any of my employee benefits, from any life office, retirement fund or other
+                  financial institution directly, or by using the services of The Financial Services
+                  Exchange (Pty.) Ltd., trading as Astute.
                 </p>
                 <p className="mt-3">
-                  I hereby give consent to any financial institution or employer in possession of information
-                  regarding my insurance, investment and employee benefits portfolio to release that information
-                  upon request directly to the person who is in terms of this document authorised to request it, or
-                  to the authorised person via Astute. For this purpose I confirm that the authorised person is
-                  acting on my behalf and/or in my interest. It was explained to me, and I understand, that this
-                  consent may possibly have a restricting influence on my constitutional right to privacy. This
-                  authorisation shall remain valid for 6 months (180 days) from date of my signature.
+                  I hereby give consent to any financial institution or employer in possession of
+                  information regarding my insurance, investment and employee benefits portfolio to
+                  release that information upon request directly to the person who is in terms of
+                  this document authorised to request it, or to the authorised person via Astute.
+                  For this purpose I confirm that the authorised person is acting on my behalf
+                  and/or in my interest. It was explained to me, and I understand, that this consent
+                  may possibly have a restricting influence on my constitutional right to privacy.
+                  This authorisation shall remain valid for 6 months (180 days) from date of my
+                  signature.
                 </p>
                 <p className="mt-3">
-                  I further request the financial institutions with whom Phumelele Ndumo has a sales agreement to
-                  indicate him/her on their records as my official care intermediary. I have been properly
-                  counselled on the consequences of this letter of appointment. This appointment may be revoked by
-                  me in writing at any time.
+                  I further request the financial institutions with whom Phumelele Ndumo has a sales
+                  agreement to indicate him/her on their records as my official care intermediary. I
+                  have been properly counselled on the consequences of this letter of appointment.
+                  This appointment may be revoked by me in writing at any time.
                 </p>
               </div>
               <div>
@@ -477,11 +573,19 @@ function LoaRpaPage() {
                 />
               </div>
               <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
-                <Checkbox checked={loaAgree} onCheckedChange={(v) => setLoaAgree(!!v)} className="mt-0.5" />
-                <span className="text-sm">I have read the authorisation above and I agree to be bound by its terms.</span>
+                <Checkbox
+                  checked={loaAgree}
+                  onCheckedChange={(v) => setLoaAgree(!!v)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm">
+                  I have read the authorisation above and I agree to be bound by its terms.
+                </span>
               </label>
               {submitAttempted && !loaAgree && (
-                <p className="text-xs text-destructive">Please read and agree to the Letter of Authority to continue.</p>
+                <p className="text-xs text-destructive">
+                  Please read and agree to the Letter of Authority to continue.
+                </p>
               )}
             </CardContent>
           </Card>
@@ -490,16 +594,29 @@ function LoaRpaPage() {
           <Card className="border-border/60">
             <CardContent className="space-y-5 p-6">
               <h2 className="font-serif text-xl text-foreground">Risk Profile Analysis</h2>
-              <p className="text-sm text-muted-foreground">Please answer as accurately as possible — this guides which investments suit you.</p>
+              <p className="text-sm text-muted-foreground">
+                Please answer as accurately as possible — this guides which investments suit you.
+              </p>
 
               <div>
-                <Label>1. What is the objective for the investment? <span className="font-normal text-muted-foreground">e.g. saving for school/varsity fees</span></Label>
-                <Textarea rows={2} value={rpa.objective} onChange={(e) => setRpaField("objective")(e.target.value)} />
+                <Label>
+                  1. What is the objective for the investment?{" "}
+                  <span className="font-normal text-muted-foreground">
+                    e.g. saving for school/varsity fees
+                  </span>
+                </Label>
+                <Textarea
+                  rows={2}
+                  value={rpa.objective}
+                  onChange={(e) => setRpaField("objective")(e.target.value)}
+                />
               </div>
               <div>
                 <Label>2. What is the term of your investment?</Label>
                 <Select value={rpa.term} onValueChange={setRpaField("term")}>
-                  <SelectTrigger><SelectValue placeholder="Choose one" /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose one" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Less than 1 year">Less than 1 year</SelectItem>
                     <SelectItem value="1 - 3 years">1 - 3 years</SelectItem>
@@ -511,8 +628,13 @@ function LoaRpaPage() {
               </div>
               <div>
                 <div className="flex items-baseline justify-between">
-                  <Label>3. How much would you like to invest per month? <span className="font-normal text-muted-foreground">Minimum R500</span></Label>
-                  <span className="shrink-0 pl-3 text-sm font-semibold text-primary">{formatInvestAmount(investValue)}</span>
+                  <Label>
+                    3. How much would you like to invest per month?{" "}
+                    <span className="font-normal text-muted-foreground">Minimum R500</span>
+                  </Label>
+                  <span className="shrink-0 pl-3 text-sm font-semibold text-primary">
+                    {formatInvestAmount(investValue)}
+                  </span>
                 </div>
                 <Slider
                   className="mt-2"
@@ -554,9 +676,13 @@ function LoaRpaPage() {
               <div>
                 <Label>5. Are you scared of losing money?</Label>
                 <p className="mb-1.5 text-xs text-muted-foreground">
-                  With equities, you can lose money in the short term but you are likely to have good capital growth in the long term (5 years+).
+                  With equities, you can lose money in the short term but you are likely to have
+                  good capital growth in the long term (5 years+).
                 </p>
-                <YesNo value={rpa.scaredOfLosingMoney} onChange={setRpaField("scaredOfLosingMoney")} />
+                <YesNo
+                  value={rpa.scaredOfLosingMoney}
+                  onChange={setRpaField("scaredOfLosingMoney")}
+                />
               </div>
               <div>
                 <Label>6. Are you likely to withdraw your money in the next 12 or 24 months?</Label>
@@ -564,11 +690,19 @@ function LoaRpaPage() {
               </div>
               <div>
                 <Label>7. Do you have investments? If yes, where and how much?</Label>
-                <Textarea rows={2} value={rpa.existingInvestments} onChange={(e) => setRpaField("existingInvestments")(e.target.value)} />
+                <Textarea
+                  rows={2}
+                  value={rpa.existingInvestments}
+                  onChange={(e) => setRpaField("existingInvestments")(e.target.value)}
+                />
               </div>
               <div>
                 <Label>8. How much do you know about investing?</Label>
-                <Textarea rows={2} value={rpa.investingKnowledge} onChange={(e) => setRpaField("investingKnowledge")(e.target.value)} />
+                <Textarea
+                  rows={2}
+                  value={rpa.investingKnowledge}
+                  onChange={(e) => setRpaField("investingKnowledge")(e.target.value)}
+                />
               </div>
               <div>
                 <Label>9. Do you have an emergency fund?</Label>
@@ -586,7 +720,9 @@ function LoaRpaPage() {
                 {hasChildren === "Yes" && (
                   <div className="mt-3 space-y-3 rounded-lg border border-border p-3">
                     <div className="flex items-center gap-2">
-                      <Label className="text-xs font-normal text-muted-foreground">Number of children</Label>
+                      <Label className="text-xs font-normal text-muted-foreground">
+                        Number of children
+                      </Label>
                       <Input
                         type="number"
                         min={1}
@@ -605,14 +741,18 @@ function LoaRpaPage() {
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                       {Array.from({ length: childCount }, (_, i) => (
                         <div key={i}>
-                          <Label className="text-xs font-normal text-muted-foreground">{ordinal(i + 1)} child's age</Label>
+                          <Label className="text-xs font-normal text-muted-foreground">
+                            {ordinal(i + 1)} child's age
+                          </Label>
                           <Input
                             value={childAges[i] ?? ""}
                             onChange={(e) => {
                               const nextAges = [...childAges];
                               nextAges[i] = e.target.value;
                               setChildAges(nextAges);
-                              setRpaField("children")(composeChildrenAnswer(hasChildren, childCount, nextAges));
+                              setRpaField("children")(
+                                composeChildrenAnswer(hasChildren, childCount, nextAges),
+                              );
                             }}
                             placeholder="Age"
                           />
@@ -624,15 +764,27 @@ function LoaRpaPage() {
               </div>
               <div>
                 <Label>11. Have you saved for their university education?</Label>
-                <Input value={rpa.savedForEducation} onChange={(e) => setRpaField("savedForEducation")(e.target.value)} />
+                <Input
+                  value={rpa.savedForEducation}
+                  onChange={(e) => setRpaField("savedForEducation")(e.target.value)}
+                />
               </div>
               <div>
                 <Label>12. Have you saved for your own retirement?</Label>
-                <Input value={rpa.savedForRetirement} onChange={(e) => setRpaField("savedForRetirement")(e.target.value)} />
+                <Input
+                  value={rpa.savedForRetirement}
+                  onChange={(e) => setRpaField("savedForRetirement")(e.target.value)}
+                />
               </div>
               <div>
-                <Label>Would you like to subscribe to our newsletter? <span className="font-normal text-muted-foreground">It's free</span></Label>
-                <YesNo value={rpa.newsletterSubscribe} onChange={setRpaField("newsletterSubscribe")} />
+                <Label>
+                  Would you like to subscribe to our newsletter?{" "}
+                  <span className="font-normal text-muted-foreground">It's free</span>
+                </Label>
+                <YesNo
+                  value={rpa.newsletterSubscribe}
+                  onChange={setRpaField("newsletterSubscribe")}
+                />
               </div>
             </CardContent>
           </Card>
@@ -640,7 +792,10 @@ function LoaRpaPage() {
           {/* Privacy + signature */}
           <Card
             ref={signSectionRef}
-            className={cn("border-border/60", submitAttempted && signInvalid && "border-destructive ring-2 ring-destructive/50")}
+            className={cn(
+              "border-border/60",
+              submitAttempted && signInvalid && "border-destructive ring-2 ring-destructive/50",
+            )}
           >
             <CardContent className="space-y-5 p-6">
               <h2 className="font-serif text-xl text-foreground">Sign &amp; submit</h2>
@@ -649,27 +804,38 @@ function LoaRpaPage() {
                 <p className="flex items-start gap-2">
                   <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
                   <span>
-                    <strong>ThuthukaSA (FSP No. 47992)</strong> is the appointed financial advisor to A-Win. This
-                    form, and the Letter of Authority and Risk Profile it produces, are submitted directly to
-                    ThuthukaSA as the licensed Financial Services Provider — not to A-Win.
+                    <strong>ThuthukaSA (FSP No. 47992)</strong> is the appointed financial advisor
+                    to A-Win. This form, and the Letter of Authority and Risk Profile it produces,
+                    are submitted directly to ThuthukaSA as the licensed Financial Services Provider
+                    — not to A-Win.
                   </span>
                 </p>
                 <p className="mt-2 flex items-start gap-2">
                   <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
                   <span>
-                    <strong>Confidentiality clause:</strong> the personal and financial information you provide here
-                    is treated as confidential in terms of the Financial Advisory and Intermediary Services Act
-                    (FAIS) and POPIA. It is used solely by ThuthukaSA to prepare your Letter of Authority and Risk
-                    Profile, and is not shared with A-Win or any other party without your consent.
+                    <strong>Confidentiality clause:</strong> the personal and financial information
+                    you provide here is treated as confidential in terms of the Financial Advisory
+                    and Intermediary Services Act (FAIS) and POPIA. It is used solely by ThuthukaSA
+                    to prepare your Letter of Authority and Risk Profile, and is not shared with
+                    A-Win or any other party without your consent.
                   </span>
                 </p>
               </div>
               <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
-                <Checkbox checked={privacyConsent} onCheckedChange={(v) => setPrivacyConsent(!!v)} className="mt-0.5" />
-                <span className="text-sm">I consent to ThuthukaSA, as the Financial Services Provider, processing my personal information as described above.</span>
+                <Checkbox
+                  checked={privacyConsent}
+                  onCheckedChange={(v) => setPrivacyConsent(!!v)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm">
+                  I consent to ThuthukaSA, as the Financial Services Provider, processing my
+                  personal information as described above.
+                </span>
               </label>
               {submitAttempted && !privacyConsent && (
-                <p className="text-xs text-destructive">Please consent to the processing of your personal information to continue.</p>
+                <p className="text-xs text-destructive">
+                  Please consent to the processing of your personal information to continue.
+                </p>
               )}
 
               <div className="flex gap-2 rounded-lg border border-border p-1">
@@ -698,23 +864,36 @@ function LoaRpaPage() {
                     placeholder={fullName || "Type your full name"}
                     className="font-serif text-lg italic"
                   />
-                  {submitAttempted && !signatureValid && <p className="mt-1 text-xs text-destructive">Type your signature to sign.</p>}
+                  {submitAttempted && !signatureValid && (
+                    <p className="mt-1 text-xs text-destructive">Type your signature to sign.</p>
+                  )}
                 </div>
               ) : (
                 <div>
                   <Label>Draw your signature *</Label>
                   <SignaturePad value={drawnSignature} onChange={setDrawnSignature} />
-                  {submitAttempted && !signatureValid && <p className="mt-1 text-xs text-destructive">Draw your signature to sign.</p>}
+                  {submitAttempted && !signatureValid && (
+                    <p className="mt-1 text-xs text-destructive">Draw your signature to sign.</p>
+                  )}
                 </div>
               )}
 
               <Button
                 onClick={handleSubmitClick}
                 disabled={submitting}
-                className={cn("w-full bg-accent text-accent-foreground hover:bg-accent/90", !canSubmit && !submitting && "opacity-60")}
+                className={cn(
+                  "w-full bg-accent text-accent-foreground hover:bg-accent/90",
+                  !canSubmit && !submitting && "opacity-60",
+                )}
                 size="lg"
               >
-                {submitting ? <><Loader2 className="mr-2 size-4 animate-spin" /> Submitting…</> : <>Submit LOA &amp; Risk Profile</>}
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" /> Submitting…
+                  </>
+                ) : (
+                  <>Submit LOA &amp; Risk Profile</>
+                )}
               </Button>
             </CardContent>
           </Card>

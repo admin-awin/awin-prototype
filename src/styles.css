@@ -74,21 +74,21 @@
   --radius: 0.75rem;
 
   /* Surfaces — airy, light neutrals (lightened site-wide palette) */
-  --background: #FFFFFF;
-  --foreground: #24261F;
-  --card: #FFFFFF;
-  --card-foreground: #24261F;
-  --popover: #FFFFFF;
-  --popover-foreground: #24261F;
+  --background: #ffffff;
+  --foreground: #24261f;
+  --card: #ffffff;
+  --card-foreground: #24261f;
+  --popover: #ffffff;
+  --popover-foreground: #24261f;
 
   /* Brand — warm olive green (A symbol). Lightened a touch site-wide
      2026-08-06 (client request) — NOT --gradient-hero, which stays as-is:
      it's calibrated to clear WCAG AA for white hero text (see below), and
      a lighter hero previously drew a "not visible enough" complaint. */
-  --primary: #66BF3F;
-  --primary-foreground: #FFFFFF;
+  --primary: #66bf3f;
+  --primary-foreground: #ffffff;
   --primary-deep: #479938;
-  --primary-light: #EEF9E6;
+  --primary-light: #eef9e6;
 
   /* ThuthukaSA's own brand (dashboard at /tksa, PDF letterhead) — a second,
      fixed-dark brand living alongside A-Win's, not tied to the light/dark
@@ -96,47 +96,47 @@
      this — one definition, referenced via bg-tksa-dark etc. or var(). */
   --tksa-orange: #e8960a;
   --tksa-dark: #1a1815;
-  --hero-foreground: #FFFFFF;
+  --hero-foreground: #ffffff;
   --hero-muted: rgba(255, 255, 255, 0.97);
   --hero-surface: rgba(255, 255, 255, 0.16);
   --hero-border: rgba(255, 255, 255, 0.42);
 
   /* Accent — bright warm orange (WIN) */
-  --accent: #F5A623;
-  --accent-foreground: #24261F;
-  --accent-soft: #FFF6E1;
-  --accent-deep: #D98910;
-  --accent-bright: #FFA500;
+  --accent: #f5a623;
+  --accent-foreground: #24261f;
+  --accent-soft: #fff6e1;
+  --accent-deep: #d98910;
+  --accent-bright: #ffa500;
 
-  --secondary: #F4FAF0;
+  --secondary: #f4faf0;
   --secondary-foreground: #479938;
 
-  --muted: #F7F7F5;
-  --muted-foreground: #6E7268;
+  --muted: #f7f7f5;
+  --muted-foreground: #6e7268;
 
-  --destructive: #C0392B;
-  --destructive-foreground: #FFFFFF;
-  --success: #66BF3F;
-  --success-foreground: #FFFFFF;
+  --destructive: #c0392b;
+  --destructive-foreground: #ffffff;
+  --success: #66bf3f;
+  --success-foreground: #ffffff;
 
-  --border: #E6E6E1;
-  --input: #E6E6E1;
-  --ring: #66BF3F;
+  --border: #e6e6e1;
+  --input: #e6e6e1;
+  --ring: #66bf3f;
 
-  --chart-1: #66BF3F;
-  --chart-2: #E8960A;
-  --chart-3: #4F7FB7;
+  --chart-1: #66bf3f;
+  --chart-2: #e8960a;
+  --chart-3: #4f7fb7;
   --chart-4: #479938;
-  --chart-5: #C0392B;
+  --chart-5: #c0392b;
 
   --sidebar: #479938;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #E8960A;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #66BF3F;
-  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #e8960a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #66bf3f;
+  --sidebar-accent-foreground: #ffffff;
   --sidebar-border: rgba(255, 255, 255, 0.12);
-  --sidebar-ring: #E8960A;
+  --sidebar-ring: #e8960a;
 
   /* Gradients & shadows */
   /* Lightened 2026-08-06 (explicit client request) to match the rest of
@@ -146,11 +146,12 @@
      instead now leans on the existing h1/p text-shadow rule further down
      this file (search "gradient-hero" h1). Don't lighten further without
      either re-checking contrast or strengthening that shadow first. */
-  --gradient-hero: linear-gradient(135deg, #66BF3F 0%, #479938 100%);
-  --gradient-placeholder: linear-gradient(135deg, #F2FCEA 0%, #D3EFBA 100%);
-  --gradient-gold: linear-gradient(135deg, #F5A623 0%, #D98910 100%);
+  --gradient-hero: linear-gradient(135deg, #66bf3f 0%, #479938 100%);
+  --gradient-placeholder: linear-gradient(135deg, #f2fcea 0%, #d3efba 100%);
+  --gradient-gold: linear-gradient(135deg, #f5a623 0%, #d98910 100%);
   --shadow-elegant: 0 10px 30px -10px rgba(71, 153, 56, 0.28);
-  --shadow-gold-glow: 0 0 0 1px rgba(232, 150, 10, 0.42), 0 10px 30px -10px rgba(232, 150, 10, 0.48);
+  --shadow-gold-glow:
+    0 0 0 1px rgba(232, 150, 10, 0.42), 0 10px 30px -10px rgba(232, 150, 10, 0.48);
   --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   /* .page-header background — matches --primary-deep, the same green used
      on the site header/footer bars and the admin sidebar (explicit client
@@ -159,10 +160,8 @@
      site-wide green, not the deep/sidebar variant) so dark text clears
      6.6:1 — comfortably past the 4.5:1 AA floor, unlike the sidebar-green
      version's marginal ~4.3:1. */
-  --page-header-bg: #66BF3F;
+  --page-header-bg: #66bf3f;
 }
-
-
 
 .dark {
   --background: #181c2a;
@@ -208,11 +207,11 @@
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #d4a64a;
 
-  --gradient-hero: linear-gradient(135deg, #6A6E7A 0%, #3B3E48 100%);
+  --gradient-hero: linear-gradient(135deg, #6a6e7a 0%, #3b3e48 100%);
   --gradient-gold: linear-gradient(135deg, #d9b45b 0%, #a5792e 100%);
   --shadow-elegant: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
   --shadow-gold-glow: 0 0 0 1px rgba(212, 166, 74, 0.5), 0 10px 30px -10px rgba(212, 166, 74, 0.45);
-  --page-header-bg: #5A4C35;
+  --page-header-bg: #5a4c35;
 }
 
 @layer base {
@@ -232,15 +231,28 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4, h5 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
     font-family: var(--font-serif);
     letter-spacing: -0.01em;
     font-weight: 600;
   }
 
-  h1 { font-size: clamp(2.25rem, 4vw + 1rem, 3.5rem); line-height: 1.1; }
-  h2 { font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem); line-height: 1.2; }
-  h3 { font-size: clamp(1.375rem, 1.5vw + 0.5rem, 1.75rem); line-height: 1.3; }
+  h1 {
+    font-size: clamp(2.25rem, 4vw + 1rem, 3.5rem);
+    line-height: 1.1;
+  }
+  h2 {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    line-height: 1.2;
+  }
+  h3 {
+    font-size: clamp(1.375rem, 1.5vw + 0.5rem, 1.75rem);
+    line-height: 1.3;
+  }
 
   :focus-visible {
     outline: 2px solid var(--ring);
@@ -254,7 +266,12 @@
   }
 
   * {
-    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+    transition:
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      color 0.3s ease,
+      fill 0.3s ease,
+      stroke 0.3s ease;
   }
 }
 
@@ -280,11 +297,11 @@
   --sidebar-primary: #d99a38;
   --chart-1: #d87432;
   --chart-2: #c85b27;
-  --gradient-hero: linear-gradient(135deg, #A94E1F 0%, #7A3410 100%);
+  --gradient-hero: linear-gradient(135deg, #a94e1f 0%, #7a3410 100%);
   --gradient-gold: linear-gradient(135deg, #e7b34b 0%, #b75a25 100%);
   --shadow-elegant: 0 10px 30px -10px rgba(169, 78, 31, 0.3);
   --shadow-gold-glow: 0 0 0 1px rgba(200, 91, 39, 0.4), 0 10px 30px -10px rgba(200, 91, 39, 0.45);
-  --page-header-bg: #F1CEB7;
+  --page-header-bg: #f1ceb7;
 }
 
 :root[data-theme="black"] {
@@ -304,11 +321,11 @@
   --sidebar-primary-foreground: #1b1d26;
   --chart-1: #444750;
   --chart-2: #777b86;
-  --gradient-hero: linear-gradient(135deg, #6A6E7A 0%, #3B3E48 100%);
+  --gradient-hero: linear-gradient(135deg, #6a6e7a 0%, #3b3e48 100%);
   --gradient-gold: linear-gradient(135deg, #666a73 0%, #2f323a 100%);
   --shadow-elegant: 0 10px 30px -10px rgba(0, 0, 0, 0.45);
   --shadow-gold-glow: 0 0 0 1px rgba(83, 87, 97, 0.5), 0 10px 30px -10px rgba(0, 0, 0, 0.4);
-  --page-header-bg: #B3B4B8;
+  --page-header-bg: #b3b4b8;
 }
 
 :root[data-theme="white"] {
@@ -347,19 +364,25 @@
   --gradient-hero: linear-gradient(135deg, #202228 0%, #0d0e12 100%);
   --gradient-gold: linear-gradient(135deg, #eee9dc 0%, #bcb6a9 100%);
   --shadow-elegant: 0 10px 30px -10px rgba(0, 0, 0, 0.55);
-  --shadow-gold-glow: 0 0 0 1px rgba(248, 245, 236, 0.35), 0 10px 30px -10px rgba(248, 245, 236, 0.25);
+  --shadow-gold-glow:
+    0 0 0 1px rgba(248, 245, 236, 0.35), 0 10px 30px -10px rgba(248, 245, 236, 0.25);
 }
 
 /* A-WIN green accordion chevron */
 .awin-accordion [data-slot="accordion-trigger"] svg {
-  color: #4CAF25;
+  color: #4caf25;
 }
 
 /* Hero typography legibility — applied across hero gradients */
 section [style*="gradient-hero"] h1,
-section[style*="gradient-hero"] h1 { text-shadow: 0 2px 18px rgba(0,0,0,0.35); }
+section[style*="gradient-hero"] h1 {
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
 section [style*="gradient-hero"] p,
-section[style*="gradient-hero"] p { text-shadow: 0 1px 10px rgba(0,0,0,0.45); font-weight: 500; }
+section[style*="gradient-hero"] p {
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  font-weight: 500;
+}
 
 /* Interior page headers (About, Contact, Membership, etc.) — replaced the
    colored --gradient-hero band 2026-08-06 (explicit client request: "swap
@@ -387,11 +410,15 @@ section[style*="gradient-hero"] p { text-shadow: 0 1px 10px rgba(0,0,0,0.45); fo
 
 /* Skeleton shimmer */
 @keyframes awin-shimmer {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
 }
 .awin-skeleton {
-  background: linear-gradient(90deg, #E8E8E8 0%, #F5F5F5 50%, #E8E8E8 100%);
+  background: linear-gradient(90deg, #e8e8e8 0%, #f5f5f5 50%, #e8e8e8 100%);
   background-size: 800px 100%;
   animation: awin-shimmer 1.5s linear infinite;
   border-radius: 8px;
@@ -408,12 +435,20 @@ section[style*="gradient-hero"] p { text-shadow: 0 1px 10px rgba(0,0,0,0.45); fo
 
 /* Placeholder contrast — ensure visible on all themes. */
 /* opacity instead of a mixed color — html2canvas/PDF export can't parse modern color functions */
-::placeholder { color: var(--muted-foreground); opacity: 0.85; }
+::placeholder {
+  color: var(--muted-foreground);
+  opacity: 0.85;
+}
 
 /* Hide native scrollbar on horizontal pill rails */
-.no-scrollbar { scrollbar-width: none; }
-.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 
 /* Global button safety: any white-on-white from defaulted text */
-button:disabled { opacity: 0.5; }
-
+button:disabled {
+  opacity: 0.5;
+}

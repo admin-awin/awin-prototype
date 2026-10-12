@@ -5,7 +5,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getMyPayments, createPayfastCheckout, cancelPayfastSubscription } from "@/lib/payfast.functions";
+import {
+  getMyPayments,
+  createPayfastCheckout,
+  cancelPayfastSubscription,
+} from "@/lib/payfast.functions";
 import { buildEftReference, useBankDetails } from "@/components/site/EftPanel";
 import { useAuth } from "@/lib/use-auth";
 
@@ -65,7 +69,12 @@ export function BillingTab({ preferredTier }: { preferredTier?: string | null })
   }, [fnGet]);
 
   const cancelSubscription = async () => {
-    if (!confirm("Cancel your recurring monthly card payment? You can still pay by EFT or restart card billing later.")) return;
+    if (
+      !confirm(
+        "Cancel your recurring monthly card payment? You can still pay by EFT or restart card billing later.",
+      )
+    )
+      return;
     setCancelling(true);
     try {
       await fnCancel();
@@ -141,14 +150,18 @@ export function BillingTab({ preferredTier }: { preferredTier?: string | null })
             </div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">Last payment</div>
+            <div className="text-xs text-muted-foreground uppercase tracking-wide">
+              Last payment
+            </div>
             <div className="mt-1 font-semibold">{fmtDate(lastPayment)}</div>
           </div>
           <div>
             <div className="text-xs text-muted-foreground uppercase tracking-wide">Renews</div>
             <div className="mt-1 font-semibold flex items-center gap-1.5">
               <Calendar className="size-4 text-muted-foreground" />
-              {expiresAt ? `${fmtDate(expiresAt)}${daysLeft !== null ? ` (${daysLeft}d)` : ""}` : "—"}
+              {expiresAt
+                ? `${fmtDate(expiresAt)}${daysLeft !== null ? ` (${daysLeft}d)` : ""}`
+                : "—"}
             </div>
           </div>
         </div>
@@ -184,18 +197,21 @@ export function BillingTab({ preferredTier }: { preferredTier?: string | null })
               ))}
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              Email your proof of payment to <a className="underline" href="mailto:treasurer@awin.co.za">treasurer@awin.co.za</a>.
-              The committee confirms EFTs from the admin EFT queue.
+              Email your proof of payment to{" "}
+              <a className="underline" href="mailto:treasurer@awin.co.za">
+                treasurer@awin.co.za
+              </a>
+              . The committee confirms EFTs from the admin EFT queue.
             </p>
             <details>
               <summary className="text-xs text-muted-foreground cursor-pointer">
                 Prefer to pay by card instead? (PayFast)
               </summary>
               <div className="mt-2 flex flex-wrap gap-2">
-                {([
+                {[
                   { t: "general" as const, label: "Joining fee (once-off)", cents: 20000 },
                   { t: "active" as const, label: "Monthly contribution (recurring)", cents: 50000 },
-                ]).map(({ t, label, cents }) => (
+                ].map(({ t, label, cents }) => (
                   <Button
                     key={t}
                     variant={t === tierForPay ? "default" : "outline"}
@@ -203,13 +219,16 @@ export function BillingTab({ preferredTier }: { preferredTier?: string | null })
                     disabled={paying}
                     onClick={() => pay(t)}
                   >
-                    {paying && t === tierForPay && <Loader2 className="size-3.5 animate-spin mr-1.5" />}
+                    {paying && t === tierForPay && (
+                      <Loader2 className="size-3.5 animate-spin mr-1.5" />
+                    )}
                     {label}: {fmtZar(cents)}
                   </Button>
                 ))}
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                Monthly contribution card payments repeat automatically every month — cancel anytime below.
+                Monthly contribution card payments repeat automatically every month — cancel anytime
+                below.
               </p>
             </details>
           </div>
@@ -217,7 +236,9 @@ export function BillingTab({ preferredTier }: { preferredTier?: string | null })
 
         {data.profile?.payfast_subscription_token && (
           <div className="flex items-center justify-between gap-3 rounded-lg border p-3 text-sm">
-            <span className="text-muted-foreground">A recurring card payment is active for your monthly contribution.</span>
+            <span className="text-muted-foreground">
+              A recurring card payment is active for your monthly contribution.
+            </span>
             <Button size="sm" variant="outline" disabled={cancelling} onClick={cancelSubscription}>
               {cancelling && <Loader2 className="size-3.5 animate-spin mr-1.5" />}
               Cancel
@@ -233,9 +254,14 @@ export function BillingTab({ preferredTier }: { preferredTier?: string | null })
           ) : (
             <div className="space-y-2">
               {data.payments.map((p) => (
-                <div key={p.id} className="flex items-center justify-between border rounded-md p-3 text-sm">
+                <div
+                  key={p.id}
+                  className="flex items-center justify-between border rounded-md p-3 text-sm"
+                >
                   <div>
-                    <div className="font-medium capitalize">{p.tier}: {fmtZar(p.amount_cents)}</div>
+                    <div className="font-medium capitalize">
+                      {p.tier}: {fmtZar(p.amount_cents)}
+                    </div>
                     <div className="text-xs text-muted-foreground">
                       {fmtDate(p.paid_at ?? p.created_at)}
                       {p.pf_payment_id ? ` · ref ${p.pf_payment_id}` : ""}

@@ -17,7 +17,9 @@ export async function executeSiteSettingsUpdate(
   data: z.infer<typeof siteSettingsSchema>,
   actor: { userId: string; email: string | null },
 ) {
-  const { error } = await supabaseAdmin.from("site_settings").upsert({ key: data.key, value: data.value });
+  const { error } = await supabaseAdmin
+    .from("site_settings")
+    .upsert({ key: data.key, value: data.value });
   if (error) throw new Error(error.message);
 
   await supabaseAdmin.from("audit_logs").insert({
@@ -71,7 +73,11 @@ export async function executeTeamMemberDelete(
   data: z.infer<typeof teamMemberDeleteSchema>,
   actor: { userId: string; email: string | null },
 ) {
-  const { data: existing } = await supabaseAdmin.from("team_members").select("*").eq("id", data.id).maybeSingle();
+  const { data: existing } = await supabaseAdmin
+    .from("team_members")
+    .select("*")
+    .eq("id", data.id)
+    .maybeSingle();
   const { error } = await supabaseAdmin.from("team_members").delete().eq("id", data.id);
   if (error) throw new Error(error.message);
 
@@ -98,7 +104,10 @@ export async function executeSettingsDangerAction(
   actor: { userId: string; email: string | null },
 ) {
   if (data.op === "clear_messages") {
-    const { error } = await supabaseAdmin.from("contact_messages").delete().gte("created_at", "1970-01-01");
+    const { error } = await supabaseAdmin
+      .from("contact_messages")
+      .delete()
+      .gte("created_at", "1970-01-01");
     if (error) throw new Error(error.message);
   } else if (data.op === "reset_settings") {
     const { error } = await supabaseAdmin.from("site_settings").delete().gte("key", "");
@@ -191,7 +200,11 @@ export const requestTeamMemberDelete = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    await notifyNewApprovalRequest("Delete team profile", `Delete team profile: ${data.name}`, context.claims?.email ?? "an admin");
+    await notifyNewApprovalRequest(
+      "Delete team profile",
+      `Delete team profile: ${data.name}`,
+      context.claims?.email ?? "an admin",
+    );
     return { ok: true, approval_id: row.id };
   });
 
@@ -212,6 +225,10 @@ export const requestSettingsDangerAction = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    await notifyNewApprovalRequest("Danger zone action", `Danger zone: ${data.op}`, context.claims?.email ?? "an admin");
+    await notifyNewApprovalRequest(
+      "Danger zone action",
+      `Danger zone: ${data.op}`,
+      context.claims?.email ?? "an admin",
+    );
     return { ok: true, approval_id: row.id };
   });

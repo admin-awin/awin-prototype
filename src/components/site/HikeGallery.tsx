@@ -24,7 +24,6 @@ const photos = [
   { src: h9, caption: "Quiet waters" },
 ];
 
-
 export function HikeGallery() {
   const [open, setOpen] = useState<{ src: string; caption: string } | null>(null);
   return (

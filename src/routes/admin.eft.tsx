@@ -49,17 +49,24 @@ function EftQueuePage() {
   const load = useCallback(async () => {
     const { data, error } = await supabase
       .from("applications")
-      .select("id, full_name, email, payment_reference, proof_of_payment_path, proof_of_payment_uploaded_at, pop_status, pop_reviewed_at, pop_review_notes, signature_typed_name, stamped_document_path, created_at")
+      .select(
+        "id, full_name, email, payment_reference, proof_of_payment_path, proof_of_payment_uploaded_at, pop_status, pop_reviewed_at, pop_review_notes, signature_typed_name, stamped_document_path, created_at",
+      )
       .not("proof_of_payment_path", "is", null)
       .order("proof_of_payment_uploaded_at", { ascending: false });
     if (error) toast.error(error.message);
     setRows((data as Row[]) ?? []);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   useEffect(() => {
-    if (!viewing?.proof_of_payment_path) { setSignedUrl(null); return; }
+    if (!viewing?.proof_of_payment_path) {
+      setSignedUrl(null);
+      return;
+    }
     let cancelled = false;
     supabase.storage
       .from("onboarding-uploads")
@@ -70,7 +77,9 @@ function EftQueuePage() {
         else setSignedUrl(data?.signedUrl ?? null);
       });
     setNotes(viewing.pop_review_notes ?? "");
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [viewing]);
 
   const filtered = (rows ?? []).filter((r) => tab === "all" || r.pop_status === tab);
@@ -105,7 +114,9 @@ function EftQueuePage() {
 
   const downloadStamp = async (r: Row) => {
     if (!r.stamped_document_path) return;
-    const { data, error } = await supabase.storage.from("onboarding-uploads").createSignedUrl(r.stamped_document_path, 300);
+    const { data, error } = await supabase.storage
+      .from("onboarding-uploads")
+      .createSignedUrl(r.stamped_document_path, 300);
     if (error || !data) return toast.error(error?.message ?? "Could not sign PDF URL");
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   };
@@ -132,7 +143,9 @@ function EftQueuePage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">EFT payment queue</h1>
-        <p className="text-sm text-muted-foreground">Review proof-of-payment uploads and verify or reject each submission.</p>
+        <p className="text-sm text-muted-foreground">
+          Review proof-of-payment uploads and verify or reject each submission.
+        </p>
       </div>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
@@ -147,9 +160,13 @@ function EftQueuePage() {
       <Card>
         <CardContent className="pt-6">
           {rows === null ? (
-            <div className="flex justify-center py-8"><Loader2 className="size-5 animate-spin" /></div>
+            <div className="flex justify-center py-8">
+              <Loader2 className="size-5 animate-spin" />
+            </div>
           ) : filtered.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No proofs in this bucket.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              No proofs in this bucket.
+            </p>
           ) : (
             <div className="-mx-6 overflow-x-auto px-6">
               <table className="w-full text-sm">
@@ -171,9 +188,13 @@ function EftQueuePage() {
                       </td>
                       <td className="py-3 pr-3 font-mono text-xs">{r.payment_reference ?? "—"}</td>
                       <td className="py-3 pr-3 text-muted-foreground">
-                        {r.proof_of_payment_uploaded_at ? new Date(r.proof_of_payment_uploaded_at).toLocaleDateString() : "—"}
+                        {r.proof_of_payment_uploaded_at
+                          ? new Date(r.proof_of_payment_uploaded_at).toLocaleDateString()
+                          : "—"}
                       </td>
-                      <td className="py-3 pr-3"><StatusPill status={r.pop_status} /></td>
+                      <td className="py-3 pr-3">
+                        <StatusPill status={r.pop_status} />
+                      </td>
                       <td className="py-3">
                         <Button size="sm" variant="ghost" onClick={() => setViewing(r)}>
                           <Eye className="mr-1 size-3.5" /> Review POP
@@ -200,18 +221,27 @@ function EftQueuePage() {
             <div className="space-y-4 text-sm">
               <div className="grid grid-cols-2 gap-2 rounded-lg border bg-muted/30 p-3">
                 <div>
-                  <div className="text-xs uppercase tracking-widest text-muted-foreground">Reference</div>
+                  <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Reference
+                  </div>
                   <div className="flex items-center gap-2 font-mono">
                     {viewing.payment_reference ?? "—"}
                     {viewing.payment_reference && (
-                      <button onClick={() => { navigator.clipboard.writeText(viewing.payment_reference!); toast.success("Copied"); }}>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(viewing.payment_reference!);
+                          toast.success("Copied");
+                        }}
+                      >
                         <Copy className="size-3.5 text-muted-foreground" />
                       </button>
                     )}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs uppercase tracking-widest text-muted-foreground">Email</div>
+                  <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Email
+                  </div>
                   <div>{viewing.email}</div>
                 </div>
               </div>
@@ -224,29 +254,53 @@ function EftQueuePage() {
                 ) : /\.pdf(\?|$)/i.test(viewing.proof_of_payment_path ?? "") ? (
                   <div className="flex flex-col items-center gap-2 p-6">
                     <FileText className="size-8 text-muted-foreground" />
-                    <a href={signedUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary underline">
+                    <a
+                      href={signedUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-primary underline"
+                    >
                       Open PDF <ExternalLink className="size-3.5" />
                     </a>
                   </div>
                 ) : (
-                  <img src={signedUrl} alt="Proof of payment" className="mx-auto max-h-[60vh] rounded" />
+                  <img
+                    src={signedUrl}
+                    alt="Proof of payment"
+                    className="mx-auto max-h-[60vh] rounded"
+                  />
                 )}
               </div>
 
               <div>
-                <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">Review notes</div>
-                <Textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Add a note visible to the applicant…" />
+                <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
+                  Review notes
+                </div>
+                <Textarea
+                  rows={3}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Add a note visible to the applicant…"
+                />
               </div>
 
               <div className="flex flex-wrap gap-2 border-t pt-3">
                 <Button disabled={!!busy} onClick={() => setStatus(viewing, "verified")}>
                   <Check className="mr-1 size-4" /> Verify payment
                 </Button>
-                <Button variant="outline" disabled={!!busy} onClick={() => setStatus(viewing, "rejected")}>
+                <Button
+                  variant="outline"
+                  disabled={!!busy}
+                  onClick={() => setStatus(viewing, "rejected")}
+                >
                   <X className="mr-1 size-4" /> Reject
                 </Button>
                 {viewing.pop_status !== "pending_review" && (
-                  <Button variant="ghost" disabled={!!busy} onClick={() => setStatus(viewing, "pending_review")}>
+                  <Button
+                    variant="ghost"
+                    disabled={!!busy}
+                    onClick={() => setStatus(viewing, "pending_review")}
+                  >
                     Reset to pending
                   </Button>
                 )}
@@ -257,14 +311,25 @@ function EftQueuePage() {
                   <Stamp className="size-3.5" /> Stamped certificate
                 </div>
                 {!viewing.signature_typed_name ? (
-                  <p className="text-xs text-muted-foreground">This applicant hasn't signed the membership agreement yet — nothing to stamp.</p>
+                  <p className="text-xs text-muted-foreground">
+                    This applicant hasn't signed the membership agreement yet — nothing to stamp.
+                  </p>
                 ) : viewing.stamped_document_path ? (
                   <Button size="sm" variant="outline" onClick={() => downloadStamp(viewing)}>
                     <FileText className="mr-1 size-4" /> Download stamped document
                   </Button>
                 ) : (
-                  <Button size="sm" variant="outline" disabled={stamping} onClick={() => generateStamp(viewing)}>
-                    {stamping ? <Loader2 className="mr-1 size-4 animate-spin" /> : <Stamp className="mr-1 size-4" />}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={stamping}
+                    onClick={() => generateStamp(viewing)}
+                  >
+                    {stamping ? (
+                      <Loader2 className="mr-1 size-4 animate-spin" />
+                    ) : (
+                      <Stamp className="mr-1 size-4" />
+                    )}
                     Generate stamped document
                   </Button>
                 )}
@@ -284,6 +349,13 @@ function StatusPill({ status }: { status: PopStatus }) {
     verified: "bg-green-500/15 text-green-700 dark:text-green-400",
     rejected: "bg-destructive/15 text-destructive",
   };
-  const label = status === "pending_review" ? "Pending review" : status.charAt(0).toUpperCase() + status.slice(1);
-  return <Badge variant="outline" className={map[status]}>{label}</Badge>;
+  const label =
+    status === "pending_review"
+      ? "Pending review"
+      : status.charAt(0).toUpperCase() + status.slice(1);
+  return (
+    <Badge variant="outline" className={map[status]}>
+      {label}
+    </Badge>
+  );
 }

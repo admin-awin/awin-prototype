@@ -21,9 +21,13 @@ vi.mock("@tanstack/react-router", async () => {
   return {
     ...actual,
     createFileRoute: () => (config: unknown) => ({ options: config }),
-    Link: ({ children, to, ...rest }: { children: React.ReactNode; to: string } & Record<string, unknown>) =>
+    Link: ({
+      children,
+      to,
+      ...rest
+    }: { children: React.ReactNode; to: string } & Record<string, unknown>) =>
       // eslint-disable-next-line jsx-a11y/anchor-is-valid
-      ({ type: "a", props: { href: to, ...rest, children } } as unknown as React.ReactElement),
+      ({ type: "a", props: { href: to, ...rest, children } }) as unknown as React.ReactElement,
     Outlet: () => null,
     useNavigate: () => () => {},
     useRouterState: () => ({ location: { pathname: "/" } }),
@@ -38,7 +42,10 @@ vi.mock("@/integrations/supabase/client", async () => {
 const routesDir = path.resolve(__dirname, "../src/routes");
 const allRouteFiles = fs
   .readdirSync(routesDir)
-  .filter((f) => f.endsWith(".tsx") && !f.startsWith("__") && !f.startsWith("_") && f !== "routeTree.gen.ts");
+  .filter(
+    (f) =>
+      f.endsWith(".tsx") && !f.startsWith("__") && !f.startsWith("_") && f !== "routeTree.gen.ts",
+  );
 
 describe("Smoke: every route module loads and exports `Route`", () => {
   for (const file of allRouteFiles) {
@@ -52,7 +59,17 @@ describe("Smoke: every route module loads and exports `Route`", () => {
 
 describe("Smoke: agreed public navigation surface", () => {
   it("exposes the nine agreed public pages", () => {
-    const publicPages = ["index", "about", "membership", "events", "portfolio", "news", "team", "info", "contact"];
+    const publicPages = [
+      "index",
+      "about",
+      "membership",
+      "events",
+      "portfolio",
+      "news",
+      "team",
+      "info",
+      "contact",
+    ];
     for (const page of publicPages) {
       const target = page === "index" ? "index.tsx" : `${page}.tsx`;
       expect(allRouteFiles.includes(target), `missing public route ${target}`).toBe(true);

@@ -58,7 +58,8 @@ function useContactInfo() {
       .eq("key", "contact_info")
       .maybeSingle()
       .then(({ data }) => {
-        if (data?.value) setInfo({ ...INFO_DEFAULTS, ...(data.value as Partial<typeof INFO_DEFAULTS>) });
+        if (data?.value)
+          setInfo({ ...INFO_DEFAULTS, ...(data.value as Partial<typeof INFO_DEFAULTS>) });
       });
   }, []);
   return [
@@ -72,7 +73,9 @@ function useContactInfo() {
 
 function ContactPage() {
   const INFO = useContactInfo();
-  const [subject, setSubject] = useState<"general" | "membership" | "events" | "partnership" | "media">("general");
+  const [subject, setSubject] = useState<
+    "general" | "membership" | "events" | "partnership" | "media"
+  >("general");
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -114,14 +117,18 @@ function ContactPage() {
     (e.target as HTMLFormElement).reset();
   };
 
-
   return (
     <div className="flex flex-col">
       {/* Hero */}
       <section className="page-header px-4 py-24">
         <div className="relative mx-auto max-w-5xl animate-fade-in">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
-            <Link to="/" className="hover:text-accent transition-colors">Home</Link>
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
+          >
+            <Link to="/" className="hover:text-accent transition-colors">
+              Home
+            </Link>
             <ChevronRight className="h-3 w-3" />
             <span className="font-medium text-accent">Contact</span>
           </nav>
