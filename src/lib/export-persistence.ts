@@ -72,7 +72,10 @@ export function loadExportJob(): ExportJobState | null {
 export function saveExportJob(job: ExportJobState) {
   if (!isBrowser()) return;
   try {
-    window.localStorage.setItem(JOB_KEY, JSON.stringify({ ...job, updatedAt: new Date().toISOString() }));
+    window.localStorage.setItem(
+      JOB_KEY,
+      JSON.stringify({ ...job, updatedAt: new Date().toISOString() }),
+    );
   } catch {
     /* metadata persistence is best-effort */
   }
@@ -106,7 +109,10 @@ function openDb(): Promise<IDBDatabase> {
   });
 }
 
-async function withStore<T>(mode: IDBTransactionMode, task: (store: IDBObjectStore) => IDBRequest<T>) {
+async function withStore<T>(
+  mode: IDBTransactionMode,
+  task: (store: IDBObjectStore) => IDBRequest<T>,
+) {
   const db = await openDb();
   try {
     return await new Promise<T>((resolve, reject) => {

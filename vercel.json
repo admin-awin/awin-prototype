@@ -4,7 +4,9 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "awinwebsite-african-women-investment-network.vercel.app" }],
+      "has": [
+        { "type": "host", "value": "awinwebsite-african-women-investment-network.vercel.app" }
+      ],
       "destination": "https://awin.co.za/:path*",
       "permanent": false
     }
@@ -14,7 +16,10 @@
       "source": "/(.*)",
       "headers": [
         { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" }
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
       ]
     }
   ]

@@ -34,10 +34,7 @@ function pfEncode(value: string): string {
  *   For outbound checkout, use the field order as defined in PayFast docs.
  *   For inbound ITN, use the order fields arrived in the request body.
  */
-export function pfSignature(
-  orderedFields: Array<[string, string]>,
-  passphrase?: string,
-): string {
+export function pfSignature(orderedFields: Array<[string, string]>, passphrase?: string): string {
   const parts: string[] = [];
   for (const [k, v] of orderedFields) {
     if (k === "signature") continue;
@@ -62,7 +59,10 @@ export function parseOrderedForm(body: string): Array<[string, string]> {
     const idx = pair.indexOf("=");
     const k = idx >= 0 ? pair.slice(0, idx) : pair;
     const v = idx >= 0 ? pair.slice(idx + 1) : "";
-    out.push([decodeURIComponent(k.replace(/\+/g, " ")), decodeURIComponent(v.replace(/\+/g, " "))]);
+    out.push([
+      decodeURIComponent(k.replace(/\+/g, " ")),
+      decodeURIComponent(v.replace(/\+/g, " ")),
+    ]);
   }
   return out;
 }

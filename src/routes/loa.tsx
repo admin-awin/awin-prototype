@@ -26,7 +26,8 @@ import { cn } from "@/lib/utils";
 // See loa-rpa.tsx for why every social/title tag is overridden here, not
 // just <title> — this link is shared directly with ThuthukaSA clients too.
 const LOA_TITLE = "Letter of Authority | ThuthukaSA";
-const LOA_DESCRIPTION = "Complete your Letter of Authority with ThuthukaSA (FSP No. 47992), your appointed Financial Services Provider.";
+const LOA_DESCRIPTION =
+  "Complete your Letter of Authority with ThuthukaSA (FSP No. 47992), your appointed Financial Services Provider.";
 const LOA_IMAGE = "https://awin.co.za/email-assets/thuthuka-logo.png";
 
 export const Route = createFileRoute("/loa")({
@@ -50,7 +51,9 @@ export const Route = createFileRoute("/loa")({
 async function sha256(text: string) {
   const buf = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest("SHA-256", buf);
-  return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 const DOC_VERSION = "loa-only-v1.0-2026";
@@ -61,7 +64,11 @@ function LoaOnlyPage() {
   const [done, setDone] = useState(false);
 
   const source = useMemo<"whatsapp" | "website">(
-    () => (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("src") === "whatsapp" ? "whatsapp" : "website"),
+    () =>
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("src") === "whatsapp"
+        ? "whatsapp"
+        : "website",
     [],
   );
 
@@ -84,7 +91,8 @@ function LoaOnlyPage() {
   const idValid = /^\d{13}$/.test(loa.idNumber.replace(/\s+/g, ""));
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const phoneValid = /^[+\d\s()-]{8,}$/.test(phone);
-  const signatureValid = signatureType === "typed" ? typedSignature.trim().length > 2 : drawnSignature.length > 0;
+  const signatureValid =
+    signatureType === "typed" ? typedSignature.trim().length > 2 : drawnSignature.length > 0;
 
   const detailsInvalid = !nameValid || !idValid || !phoneValid || !emailValid;
   const loaInvalid = !loaAgree;
@@ -105,7 +113,11 @@ function LoaOnlyPage() {
       if (!privacyConsent) missing.push("Privacy consent");
       if (!signatureValid) missing.push("Signature");
       toast.error("Please complete: " + missing.join(", "));
-      const firstInvalidRef = detailsInvalid ? detailsSectionRef : loaInvalid ? loaSectionRef : signSectionRef;
+      const firstInvalidRef = detailsInvalid
+        ? detailsSectionRef
+        : loaInvalid
+          ? loaSectionRef
+          : signSectionRef;
       firstInvalidRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
@@ -116,7 +128,11 @@ function LoaOnlyPage() {
     if (!canSubmit) return;
     setSubmitting(true);
     try {
-      const dateStr = new Date().toLocaleDateString("en-ZA", { day: "2-digit", month: "long", year: "numeric" });
+      const dateStr = new Date().toLocaleDateString("en-ZA", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
       const loaFull: LoaData = { ...loa, telephone: phone };
       const docHash = await sha256(JSON.stringify({ fullName, loa: loaFull, DOC_VERSION }));
 
@@ -163,7 +179,9 @@ function LoaOnlyPage() {
       // by that navigation, silently dropping the admin notification even
       // though the submission itself had already saved.
       try {
-        await sendReceivedEmail({ data: { email: email.trim(), fullName: fullName.trim(), source, loaOnly: true } });
+        await sendReceivedEmail({
+          data: { email: email.trim(), fullName: fullName.trim(), source, loaOnly: true },
+        });
       } catch {
         // best-effort — the submission itself already succeeded
       }
@@ -187,8 +205,8 @@ function LoaOnlyPage() {
           </div>
           <h1 className="mt-6 font-serif text-3xl text-foreground">All done</h1>
           <p className="mt-3 text-muted-foreground">
-            Your signed Letter of Authority has been submitted to ThuthukaSA. We've emailed you a confirmation. No
-            further action is needed right now.
+            Your signed Letter of Authority has been submitted to ThuthukaSA. We've emailed you a
+            confirmation. No further action is needed right now.
           </p>
           <Button asChild className="mt-6">
             <a href="https://thuthuka-sa.co.za">Visit ThuthukaSA</a>
@@ -202,7 +220,10 @@ function LoaOnlyPage() {
     <>
       <section className="page-header px-4 py-16 md:py-20">
         <div className="relative mx-auto max-w-2xl">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
+          >
             <span>ThuthukaSA</span>
             <ChevronRight className="h-3 w-3" />
             <span className="text-accent">Letter of Authority</span>
@@ -214,8 +235,12 @@ function LoaOnlyPage() {
               className="h-14 w-auto shrink-0 rounded-md bg-white p-1.5 shadow-sm"
             />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-accent">ThuthukaSA (FSP No. 47992)</p>
-              <p className="text-sm text-foreground/70">Your appointed Financial Services Provider</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-accent">
+                ThuthukaSA (FSP No. 47992)
+              </p>
+              <p className="text-sm text-foreground/70">
+                Your appointed Financial Services Provider
+              </p>
             </div>
           </div>
           <h1 className="mt-4 font-serif text-foreground">Letter of Authority</h1>
@@ -225,9 +250,9 @@ function LoaOnlyPage() {
           <p className="mt-4 flex items-start gap-2 rounded-lg border border-accent/30 bg-accent/10 p-3 text-sm text-foreground/85">
             <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
             <span>
-              The information you provide on this form is submitted directly to ThuthukaSA, your appointed
-              Financial Services Provider, and is treated as confidential as required by the Financial Advisory
-              and Intermediary Services Act (FAIS) and POPIA.
+              The information you provide on this form is submitted directly to ThuthukaSA, your
+              appointed Financial Services Provider, and is treated as confidential as required by
+              the Financial Advisory and Intermediary Services Act (FAIS) and POPIA.
             </span>
           </p>
           <button
@@ -244,31 +269,55 @@ function LoaOnlyPage() {
         <div className="mx-auto max-w-2xl space-y-8 px-4">
           <Card
             ref={detailsSectionRef}
-            className={cn("border-border/60", submitAttempted && detailsInvalid && "border-destructive ring-2 ring-destructive/50")}
+            className={cn(
+              "border-border/60",
+              submitAttempted && detailsInvalid && "border-destructive ring-2 ring-destructive/50",
+            )}
           >
             <CardContent className="space-y-4 p-6">
               <h2 className="font-serif text-xl text-foreground">Your details</h2>
               <div className="grid gap-4">
                 <div>
                   <Label>Full name (per ID book) *</Label>
-                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Jane Nokuthula Dlamini" />
-                  {(submitAttempted || fullName) && !nameValid && <p className="mt-1 text-xs text-destructive">Enter your full name.</p>}
+                  <Input
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Jane Nokuthula Dlamini"
+                  />
+                  {(submitAttempted || fullName) && !nameValid && (
+                    <p className="mt-1 text-xs text-destructive">Enter your full name.</p>
+                  )}
                 </div>
                 <div>
                   <Label>ID number *</Label>
-                  <Input value={loa.idNumber} onChange={(e) => setLoa({ ...loa, idNumber: e.target.value })} placeholder="13 digits" maxLength={13} />
-                  {(submitAttempted || loa.idNumber) && !idValid && <p className="mt-1 text-xs text-destructive">SA ID must be 13 digits.</p>}
+                  <Input
+                    value={loa.idNumber}
+                    onChange={(e) => setLoa({ ...loa, idNumber: e.target.value })}
+                    placeholder="13 digits"
+                    maxLength={13}
+                  />
+                  {(submitAttempted || loa.idNumber) && !idValid && (
+                    <p className="mt-1 text-xs text-destructive">SA ID must be 13 digits.</p>
+                  )}
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <Label>Cell phone number *</Label>
-                    <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 82 123 4567" />
-                    {(submitAttempted || phone) && !phoneValid && <p className="mt-1 text-xs text-destructive">Enter a valid phone number.</p>}
+                    <Input
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+27 82 123 4567"
+                    />
+                    {(submitAttempted || phone) && !phoneValid && (
+                      <p className="mt-1 text-xs text-destructive">Enter a valid phone number.</p>
+                    )}
                   </div>
                   <div>
                     <Label>Email address *</Label>
                     <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    {(submitAttempted || email) && !emailValid && <p className="mt-1 text-xs text-destructive">Enter a valid email.</p>}
+                    {(submitAttempted || email) && !emailValid && (
+                      <p className="mt-1 text-xs text-destructive">Enter a valid email.</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -277,31 +326,37 @@ function LoaOnlyPage() {
 
           <Card
             ref={loaSectionRef}
-            className={cn("border-border/60", submitAttempted && loaInvalid && "border-destructive ring-2 ring-destructive/50")}
+            className={cn(
+              "border-border/60",
+              submitAttempted && loaInvalid && "border-destructive ring-2 ring-destructive/50",
+            )}
           >
             <CardContent className="space-y-4 p-6">
               <h2 className="font-serif text-xl text-foreground">Letter of Authority</h2>
               <div className="max-h-56 overflow-y-auto rounded-lg border border-border bg-secondary/20 p-4 text-sm leading-relaxed text-foreground/90">
                 <p>
-                  I, the undersigned, hereby authorise <strong>Phumelele Ndumo</strong> to obtain any information on
-                  my behalf regarding my assurance and/or investment portfolio, and any of my employee benefits, from
-                  any life office, retirement fund or other financial institution directly, or by using the
-                  services of The Financial Services Exchange (Pty.) Ltd., trading as Astute.
+                  I, the undersigned, hereby authorise <strong>Phumelele Ndumo</strong> to obtain
+                  any information on my behalf regarding my assurance and/or investment portfolio,
+                  and any of my employee benefits, from any life office, retirement fund or other
+                  financial institution directly, or by using the services of The Financial Services
+                  Exchange (Pty.) Ltd., trading as Astute.
                 </p>
                 <p className="mt-3">
-                  I hereby give consent to any financial institution or employer in possession of information
-                  regarding my insurance, investment and employee benefits portfolio to release that information
-                  upon request directly to the person who is in terms of this document authorised to request it, or
-                  to the authorised person via Astute. For this purpose I confirm that the authorised person is
-                  acting on my behalf and/or in my interest. It was explained to me, and I understand, that this
-                  consent may possibly have a restricting influence on my constitutional right to privacy. This
-                  authorisation shall remain valid for 6 months (180 days) from date of my signature.
+                  I hereby give consent to any financial institution or employer in possession of
+                  information regarding my insurance, investment and employee benefits portfolio to
+                  release that information upon request directly to the person who is in terms of
+                  this document authorised to request it, or to the authorised person via Astute.
+                  For this purpose I confirm that the authorised person is acting on my behalf
+                  and/or in my interest. It was explained to me, and I understand, that this consent
+                  may possibly have a restricting influence on my constitutional right to privacy.
+                  This authorisation shall remain valid for 6 months (180 days) from date of my
+                  signature.
                 </p>
                 <p className="mt-3">
-                  I further request the financial institutions with whom Phumelele Ndumo has a sales agreement to
-                  indicate him/her on their records as my official care intermediary. I have been properly
-                  counselled on the consequences of this letter of appointment. This appointment may be revoked by
-                  me in writing at any time.
+                  I further request the financial institutions with whom Phumelele Ndumo has a sales
+                  agreement to indicate him/her on their records as my official care intermediary. I
+                  have been properly counselled on the consequences of this letter of appointment.
+                  This appointment may be revoked by me in writing at any time.
                 </p>
               </div>
               <div>
@@ -313,18 +368,29 @@ function LoaOnlyPage() {
                 />
               </div>
               <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
-                <Checkbox checked={loaAgree} onCheckedChange={(v) => setLoaAgree(!!v)} className="mt-0.5" />
-                <span className="text-sm">I have read the authorisation above and I agree to be bound by its terms.</span>
+                <Checkbox
+                  checked={loaAgree}
+                  onCheckedChange={(v) => setLoaAgree(!!v)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm">
+                  I have read the authorisation above and I agree to be bound by its terms.
+                </span>
               </label>
               {submitAttempted && !loaAgree && (
-                <p className="text-xs text-destructive">Please read and agree to the Letter of Authority to continue.</p>
+                <p className="text-xs text-destructive">
+                  Please read and agree to the Letter of Authority to continue.
+                </p>
               )}
             </CardContent>
           </Card>
 
           <Card
             ref={signSectionRef}
-            className={cn("border-border/60", submitAttempted && signInvalid && "border-destructive ring-2 ring-destructive/50")}
+            className={cn(
+              "border-border/60",
+              submitAttempted && signInvalid && "border-destructive ring-2 ring-destructive/50",
+            )}
           >
             <CardContent className="space-y-5 p-6">
               <h2 className="font-serif text-xl text-foreground">Sign &amp; submit</h2>
@@ -333,27 +399,36 @@ function LoaOnlyPage() {
                 <p className="flex items-start gap-2">
                   <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
                   <span>
-                    <strong>ThuthukaSA (FSP No. 47992)</strong> is the appointed financial advisor to A-Win. This
-                    form is submitted directly to ThuthukaSA as the licensed Financial Services Provider — not to
-                    A-Win.
+                    <strong>ThuthukaSA (FSP No. 47992)</strong> is the appointed financial advisor
+                    to A-Win. This form is submitted directly to ThuthukaSA as the licensed
+                    Financial Services Provider — not to A-Win.
                   </span>
                 </p>
                 <p className="mt-2 flex items-start gap-2">
                   <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
                   <span>
-                    <strong>Confidentiality clause:</strong> the personal information you provide here is treated
-                    as confidential in terms of the Financial Advisory and Intermediary Services Act (FAIS) and
-                    POPIA. It is used solely by ThuthukaSA and is not shared with A-Win or any other party without
-                    your consent.
+                    <strong>Confidentiality clause:</strong> the personal information you provide
+                    here is treated as confidential in terms of the Financial Advisory and
+                    Intermediary Services Act (FAIS) and POPIA. It is used solely by ThuthukaSA and
+                    is not shared with A-Win or any other party without your consent.
                   </span>
                 </p>
               </div>
               <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
-                <Checkbox checked={privacyConsent} onCheckedChange={(v) => setPrivacyConsent(!!v)} className="mt-0.5" />
-                <span className="text-sm">I consent to ThuthukaSA, as the Financial Services Provider, processing my personal information as described above.</span>
+                <Checkbox
+                  checked={privacyConsent}
+                  onCheckedChange={(v) => setPrivacyConsent(!!v)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm">
+                  I consent to ThuthukaSA, as the Financial Services Provider, processing my
+                  personal information as described above.
+                </span>
               </label>
               {submitAttempted && !privacyConsent && (
-                <p className="text-xs text-destructive">Please consent to the processing of your personal information to continue.</p>
+                <p className="text-xs text-destructive">
+                  Please consent to the processing of your personal information to continue.
+                </p>
               )}
 
               <div className="flex gap-2 rounded-lg border border-border p-1">
@@ -382,23 +457,36 @@ function LoaOnlyPage() {
                     placeholder={fullName || "Type your full name"}
                     className="font-serif text-lg italic"
                   />
-                  {submitAttempted && !signatureValid && <p className="mt-1 text-xs text-destructive">Type your signature to sign.</p>}
+                  {submitAttempted && !signatureValid && (
+                    <p className="mt-1 text-xs text-destructive">Type your signature to sign.</p>
+                  )}
                 </div>
               ) : (
                 <div>
                   <Label>Draw your signature *</Label>
                   <SignaturePad value={drawnSignature} onChange={setDrawnSignature} />
-                  {submitAttempted && !signatureValid && <p className="mt-1 text-xs text-destructive">Draw your signature to sign.</p>}
+                  {submitAttempted && !signatureValid && (
+                    <p className="mt-1 text-xs text-destructive">Draw your signature to sign.</p>
+                  )}
                 </div>
               )}
 
               <Button
                 onClick={handleSubmitClick}
                 disabled={submitting}
-                className={cn("w-full bg-accent text-accent-foreground hover:bg-accent/90", !canSubmit && !submitting && "opacity-60")}
+                className={cn(
+                  "w-full bg-accent text-accent-foreground hover:bg-accent/90",
+                  !canSubmit && !submitting && "opacity-60",
+                )}
                 size="lg"
               >
-                {submitting ? <><Loader2 className="mr-2 size-4 animate-spin" /> Submitting…</> : <>Submit Letter of Authority</>}
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" /> Submitting…
+                  </>
+                ) : (
+                  <>Submit Letter of Authority</>
+                )}
               </Button>
             </CardContent>
           </Card>

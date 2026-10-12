@@ -7,7 +7,13 @@ import { useAuth } from "@/lib/use-auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/admin/documents")({
@@ -37,10 +43,15 @@ function DocumentsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
-    const { data } = await supabase.from("documents").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase
+      .from("documents")
+      .select("*")
+      .order("created_at", { ascending: false });
     setDocs((data as Doc[]) ?? []);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const onUpload = async (file: File) => {
     if (!user) return;
@@ -68,7 +79,9 @@ function DocumentsPage() {
   };
 
   const download = async (d: Doc) => {
-    const { data, error } = await supabase.storage.from("documents").createSignedUrl(d.file_path, 60);
+    const { data, error } = await supabase.storage
+      .from("documents")
+      .createSignedUrl(d.file_path, 60);
     if (error) return toast.error(error.message);
     window.open(data.signedUrl, "_blank");
   };
@@ -97,16 +110,24 @@ function DocumentsPage() {
             <div className="grid gap-1">
               <label className="text-xs font-medium">Folder</label>
               <Select value={uploadFolder} onValueChange={setUploadFolder}>
-                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {FOLDERS.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                  {FOLDERS.map((f) => (
+                    <SelectItem key={f} value={f}>
+                      {f}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1">
               <label className="text-xs font-medium">Visibility</label>
               <Select value={uploadVisibility} onValueChange={setUploadVisibility}>
-                <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="members">Members only</SelectItem>
                   <SelectItem value="public">Public</SelectItem>
@@ -120,7 +141,11 @@ function DocumentsPage() {
               onChange={(e) => e.target.files?.[0] && onUpload(e.target.files[0])}
             />
             <Button disabled={uploading} onClick={() => fileRef.current?.click()}>
-              {uploading ? <Loader2 className="size-4 mr-2 animate-spin" /> : <Upload className="size-4 mr-2" />}
+              {uploading ? (
+                <Loader2 className="size-4 mr-2 animate-spin" />
+              ) : (
+                <Upload className="size-4 mr-2" />
+              )}
               Upload File
             </Button>
           </div>
@@ -129,12 +154,18 @@ function DocumentsPage() {
 
       <Tabs value={folder} onValueChange={setFolder}>
         <TabsList>
-          {FOLDERS.map((f) => <TabsTrigger key={f} value={f}>{f}</TabsTrigger>)}
+          {FOLDERS.map((f) => (
+            <TabsTrigger key={f} value={f}>
+              {f}
+            </TabsTrigger>
+          ))}
         </TabsList>
       </Tabs>
 
       {docs === null ? (
-        <div className="py-8 flex justify-center"><Loader2 className="size-5 animate-spin" /></div>
+        <div className="py-8 flex justify-center">
+          <Loader2 className="size-5 animate-spin" />
+        </div>
       ) : filtered.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
@@ -151,7 +182,15 @@ function DocumentsPage() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium truncate">{d.name}</span>
                     <Badge variant="outline" className="text-xs">
-                      {d.visibility === "public" ? <><Globe className="size-3 mr-1" /> Public</> : <><Lock className="size-3 mr-1" /> Members</>}
+                      {d.visibility === "public" ? (
+                        <>
+                          <Globe className="size-3 mr-1" /> Public
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="size-3 mr-1" /> Members
+                        </>
+                      )}
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground">

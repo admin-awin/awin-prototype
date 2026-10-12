@@ -87,7 +87,10 @@ Deno.serve(async (req) => {
 
     const allowed = ALLOWED_MIME[bucket];
     if (allowed && !allowed.includes(file.type)) {
-      return new Response(`Mime type ${file.type} not allowed for ${bucket}`, { status: 415, headers: cors });
+      return new Response(`Mime type ${file.type} not allowed for ${bucket}`, {
+        status: 415,
+        headers: cors,
+      });
     }
 
     const admin = createClient(supabaseUrl, serviceKey, {

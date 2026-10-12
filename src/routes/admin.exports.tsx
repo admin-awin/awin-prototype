@@ -156,7 +156,9 @@ async function waitForContentReady(doc: Document, isAdminRoute: boolean) {
     const spinners = Array.from(doc.querySelectorAll<HTMLElement>(".animate-spin")).filter(
       (el) => el.offsetParent !== null,
     );
-    const skeletons = doc.querySelectorAll<HTMLElement>('[data-loading="true"], .animate-pulse').length;
+    const skeletons = doc.querySelectorAll<HTMLElement>(
+      '[data-loading="true"], .animate-pulse',
+    ).length;
     const bodyText = (doc.body.innerText || "").trim().length;
     if (spinners.length === 0 && skeletons < 4 && bodyText > 120) return;
     await wait(220);
@@ -202,7 +204,10 @@ async function captureRoute(
 
   const target = doc.body;
   const width = 1280;
-  const height = Math.min(Math.max(target.scrollHeight, doc.documentElement.scrollHeight, 900), 2600);
+  const height = Math.min(
+    Math.max(target.scrollHeight, doc.documentElement.scrollHeight, 900),
+    2600,
+  );
   const { toJpeg } = await import("html-to-image");
 
   try {
@@ -212,7 +217,8 @@ async function captureRoute(
       cacheBust: true,
       pixelRatio: 0.86,
       quality: 0.78,
-      backgroundColor: getComputedStyle(doc.documentElement).getPropertyValue("--background").trim() || "#ffffff",
+      backgroundColor:
+        getComputedStyle(doc.documentElement).getPropertyValue("--background").trim() || "#ffffff",
       style: {
         width: `${width}px`,
         minHeight: `${height}px`,
@@ -269,7 +275,11 @@ async function downloadScreenshots(captures: CapturedExport[]) {
     const filename = `${sanitizeExportFilename(item.pageLabel)}-${sanitizeExportFilename(item.themeLabel)}.jpg`;
     folder?.file(filename, bytesFromDataUrl(item.dataUrl));
   }
-  const blob = await zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 4 } });
+  const blob = await zip.generateAsync({
+    type: "blob",
+    compression: "DEFLATE",
+    compressionOptions: { level: 4 },
+  });
   downloadBlob(blob, `awin-runbook-screenshots-${new Date().toISOString().slice(0, 10)}.zip`);
 }
 
@@ -282,7 +292,13 @@ function downloadBlob(blob: Blob, filename: string) {
   window.setTimeout(() => URL.revokeObjectURL(href), 3_000);
 }
 
-function addCoverPage(pdf: import("jspdf").jsPDF, title: string, subtitle: string, lines: string[], addNewPage: boolean) {
+function addCoverPage(
+  pdf: import("jspdf").jsPDF,
+  title: string,
+  subtitle: string,
+  lines: string[],
+  addNewPage: boolean,
+) {
   if (addNewPage) pdf.addPage();
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
@@ -395,15 +411,15 @@ function ExportsPage() {
     const saved = loadExportJob();
     if (!saved) return;
     const shouldAutoResume = saved.status === "running" || saved.status === "assembling";
-    const restored: ExportJobState =
-      shouldAutoResume
-        ? {
-            ...saved,
-            status: "paused",
-            statusText: "Export was interrupted by refresh. Saved captures are loading and the run will resume automatically…",
-            updatedAt: new Date().toISOString(),
-          }
-        : saved;
+    const restored: ExportJobState = shouldAutoResume
+      ? {
+          ...saved,
+          status: "paused",
+          statusText:
+            "Export was interrupted by refresh. Saved captures are loading and the run will resume automatically…",
+          updatedAt: new Date().toISOString(),
+        }
+      : saved;
     if (restored !== saved) saveExportJob(restored);
     setJob(restored);
     setSelectedPages(restored.selectedPages);
@@ -445,7 +461,9 @@ function ExportsPage() {
   );
 
   const togglePage = (path: string) =>
-    setSelectedPages((current) => (current.includes(path) ? current.filter((item) => item !== path) : [...current, path]));
+    setSelectedPages((current) =>
+      current.includes(path) ? current.filter((item) => item !== path) : [...current, path],
+    );
   const toggleTheme = (theme: string) =>
     setSelectedThemes((current) =>
       current.includes(theme) ? current.filter((item) => item !== theme) : [...current, theme],
@@ -455,14 +473,22 @@ function ExportsPage() {
     setJob((current) => {
       const base = current ?? loadExportJob();
       if (typeof next === "function" && !base) return current;
-      const resolved = typeof next === "function" ? (next as (value: ExportJobState) => ExportJobState)(base!) : next;
+      const resolved =
+        typeof next === "function"
+          ? (next as (value: ExportJobState) => ExportJobState)(base!)
+          : next;
       saveExportJob(resolved);
       return resolved;
     });
   };
 
   async function finishPdfDownload(currentJob: ExportJobState) {
-    updateJob({ ...currentJob, status: "assembling", statusText: "Assembling runbook PDF…", progress: 98 });
+    updateJob({
+      ...currentJob,
+      status: "assembling",
+      statusText: "Assembling runbook PDF…",
+      progress: 98,
+    });
     const captures = await getJobCaptures(currentJob.id);
     if (captures.length === 0) throw new Error("No screenshots were captured for the PDF");
     const blob = await buildRunbookPdf(captures);
@@ -472,7 +498,12 @@ function ExportsPage() {
   }
 
   async function finishScreenshotDownload(currentJob: ExportJobState) {
-    updateJob({ ...currentJob, status: "assembling", statusText: "Preparing screenshot ZIP…", progress: 98 });
+    updateJob({
+      ...currentJob,
+      status: "assembling",
+      statusText: "Preparing screenshot ZIP…",
+      progress: 98,
+    });
     const captures = await getJobCaptures(currentJob.id);
     if (captures.length === 0) throw new Error("No screenshots were captured for download");
     await downloadScreenshots(captures);
@@ -533,7 +564,12 @@ function ExportsPage() {
           statusText: "Resuming export…",
           updatedAt: new Date().toISOString(),
         }
-      : createExportJob({ mode, selectedPages: activePages, selectedThemes: activeThemes, total: activeTotal });
+      : createExportJob({
+          mode,
+          selectedPages: activePages,
+          selectedThemes: activeThemes,
+          total: activeTotal,
+        });
     runLock.current = true;
     setJob(newJob);
     saveExportJob(newJob);
@@ -542,8 +578,12 @@ function ExportsPage() {
 
     try {
       if (!resumeJob) await clearJobCaptures(newJob.id).catch(() => undefined);
-      const existingCaptures = resumeJob ? await getJobCaptures(newJob.id).catch(() => [] as CapturedExport[]) : [];
-      const capturedKeys = new Set(existingCaptures.map((capture) => `${capture.page}::${capture.theme}`));
+      const existingCaptures = resumeJob
+        ? await getJobCaptures(newJob.id).catch(() => [] as CapturedExport[])
+        : [];
+      const capturedKeys = new Set(
+        existingCaptures.map((capture) => `${capture.page}::${capture.theme}`),
+      );
       const errors: string[] = resumeJob?.errors ?? [];
       let done = Math.min(existingCaptures.length, activeTotal);
 
@@ -563,7 +603,10 @@ function ExportsPage() {
             setPreviews((current) =>
               current.length >= SCREENSHOT_PREVIEW_LIMIT
                 ? current
-                : [...current, { label: buildScreenshotCaption(capture, done + 1), url: capture.dataUrl }],
+                : [
+                    ...current,
+                    { label: buildScreenshotCaption(capture, done + 1), url: capture.dataUrl },
+                  ],
             );
           } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
@@ -604,7 +647,8 @@ function ExportsPage() {
         return;
       }
 
-      if (errors.length > 0) toast.warning(`${errors.length} capture(s) had issues; exporting the successful captures.`);
+      if (errors.length > 0)
+        toast.warning(`${errors.length} capture(s) had issues; exporting the successful captures.`);
       if (mode === "pdf") await finishPdfDownload(readyJob);
       else await finishScreenshotDownload(readyJob);
     } catch (error) {
@@ -647,10 +691,12 @@ function ExportsPage() {
       <div>
         <h1 className="text-3xl font-serif">Runbook Export</h1>
         <p className="text-muted-foreground mt-2">
-          Generate one presentation PDF with admin and member-portal cover pages, labeled captions, and grouped screenshots.
+          Generate one presentation PDF with admin and member-portal cover pages, labeled captions,
+          and grouped screenshots.
         </p>
         <p className="text-xs text-muted-foreground mt-1">
-          Captures persist locally during and after refreshes. Sign in as an admin before exporting protected pages.
+          Captures persist locally during and after refreshes. Sign in as an admin before exporting
+          protected pages.
         </p>
       </div>
 
@@ -667,22 +713,27 @@ function ExportsPage() {
                   ) : (
                     <CheckCircle2 className="size-4 text-accent" />
                   )}
-                  Export status: {job.status} · {job.done - job.errors.length}/{job.total} captured · {Math.max(job.total - job.done, 0)} remaining · {job.errors.length} failed
+                  Export status: {job.status} · {job.done - job.errors.length}/{job.total} captured
+                  · {Math.max(job.total - job.done, 0)} remaining · {job.errors.length} failed
                 </div>
-                <p className="text-xs text-muted-foreground mt-1 break-words">
-                  {job.statusText}
-                </p>
+                <p className="text-xs text-muted-foreground mt-1 break-words">{job.statusText}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">
-                  Last updated {new Date(job.updatedAt).toLocaleString()} · Auto-resumes after refresh
+                  Last updated {new Date(job.updatedAt).toLocaleString()} · Auto-resumes after
+                  refresh
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                {!running && (job.done - job.errors.length) > 0 && (
+                {!running && job.done - job.errors.length > 0 && (
                   <>
                     <Button size="sm" onClick={() => downloadExisting("pdf")}>
-                      <Download className="size-4 mr-2" /> Download PDF ({job.done - job.errors.length})
+                      <Download className="size-4 mr-2" /> Download PDF (
+                      {job.done - job.errors.length})
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => downloadExisting("screenshots")}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => downloadExisting("screenshots")}
+                    >
                       <ImageDown className="size-4 mr-2" /> Download ZIP
                     </Button>
                   </>
@@ -694,11 +745,13 @@ function ExportsPage() {
             </div>
             <Progress value={job.status === "complete" ? 100 : job.progress} />
             {(running || job.status === "assembling") && (
-              <p className="text-xs text-muted-foreground">Keep this tab open for the active capture. If refreshed, completed captures stay saved and the run will continue automatically.</p>
+              <p className="text-xs text-muted-foreground">
+                Keep this tab open for the active capture. If refreshed, completed captures stay
+                saved and the run will continue automatically.
+              </p>
             )}
           </CardContent>
         </Card>
-
       )}
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -707,10 +760,20 @@ function ExportsPage() {
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-medium">Pages</h2>
               <div className="flex gap-2">
-                <Button size="sm" variant="ghost" onClick={() => setSelectedPages(PAGES.map((page) => page.path))} disabled={running}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSelectedPages(PAGES.map((page) => page.path))}
+                  disabled={running}
+                >
                   All
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setSelectedPages([])} disabled={running}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSelectedPages([])}
+                  disabled={running}
+                >
                   None
                 </Button>
               </div>
@@ -729,7 +792,9 @@ function ExportsPage() {
                       onClick={() => {
                         const paths = groupPages.map((page) => page.path);
                         setSelectedPages((current) =>
-                          allSelected ? current.filter((item) => !paths.includes(item)) : Array.from(new Set([...current, ...paths])),
+                          allSelected
+                            ? current.filter((item) => !paths.includes(item))
+                            : Array.from(new Set([...current, ...paths])),
                         );
                       }}
                     >
@@ -738,8 +803,15 @@ function ExportsPage() {
                   </div>
                   <div className="space-y-1.5">
                     {groupPages.map((page) => (
-                      <label key={page.path} className="flex items-center gap-2 text-sm cursor-pointer">
-                        <Checkbox checked={selectedPages.includes(page.path)} onCheckedChange={() => togglePage(page.path)} disabled={running} />
+                      <label
+                        key={page.path}
+                        className="flex items-center gap-2 text-sm cursor-pointer"
+                      >
+                        <Checkbox
+                          checked={selectedPages.includes(page.path)}
+                          onCheckedChange={() => togglePage(page.path)}
+                          disabled={running}
+                        />
                         <span className="flex-1">{page.label}</span>
                         <code className="text-xs text-muted-foreground">{page.path}</code>
                       </label>
@@ -756,13 +828,28 @@ function ExportsPage() {
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-medium">Themes</h2>
               <div className="flex gap-2">
-                <Button size="sm" variant="ghost" onClick={() => setSelectedThemes(THEMES.map((theme) => theme.id))} disabled={running}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSelectedThemes(THEMES.map((theme) => theme.id))}
+                  disabled={running}
+                >
                   All
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setSelectedThemes(["color"])} disabled={running}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSelectedThemes(["color"])}
+                  disabled={running}
+                >
                   Fast
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setSelectedThemes([])} disabled={running}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSelectedThemes([])}
+                  disabled={running}
+                >
                   None
                 </Button>
               </div>
@@ -770,8 +857,16 @@ function ExportsPage() {
             <div className="space-y-2">
               {THEMES.map((theme) => (
                 <label key={theme.id} className="flex items-center gap-3 text-sm cursor-pointer">
-                  <Checkbox checked={selectedThemes.includes(theme.id)} onCheckedChange={() => toggleTheme(theme.id)} disabled={running} />
-                  <span className="h-5 w-5 rounded border" style={{ background: theme.swatch }} aria-hidden="true" />
+                  <Checkbox
+                    checked={selectedThemes.includes(theme.id)}
+                    onCheckedChange={() => toggleTheme(theme.id)}
+                    disabled={running}
+                  />
+                  <span
+                    className="h-5 w-5 rounded border"
+                    style={{ background: theme.swatch }}
+                    aria-hidden="true"
+                  />
                   <span>{theme.label}</span>
                 </label>
               ))}
@@ -781,7 +876,8 @@ function ExportsPage() {
               <Badge variant="secondary">{totalJobs}</Badge>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              Fast mode captures the default theme only; choose All for the full theme audit across every page.
+              Fast mode captures the default theme only; choose All for the full theme audit across
+              every page.
             </p>
           </CardContent>
         </Card>
@@ -791,20 +887,36 @@ function ExportsPage() {
         <CardContent className="p-5 space-y-4">
           <div className="flex flex-wrap gap-3">
             <Button onClick={() => runCapture("pdf")} disabled={running || totalJobs === 0}>
-              {running ? <Loader2 className="size-4 mr-2 animate-spin" /> : <FileDown className="size-4 mr-2" />}
+              {running ? (
+                <Loader2 className="size-4 mr-2 animate-spin" />
+              ) : (
+                <FileDown className="size-4 mr-2" />
+              )}
               Generate Runbook PDF
             </Button>
-            <Button variant="outline" onClick={() => runCapture("screenshots")} disabled={running || totalJobs === 0}>
+            <Button
+              variant="outline"
+              onClick={() => runCapture("screenshots")}
+              disabled={running || totalJobs === 0}
+            >
               <ImageDown className="size-4 mr-2" />
               Capture Screenshots ZIP
             </Button>
             {job?.status === "failed" && (
-              <Button variant="secondary" onClick={() => runCapture(job.mode)} disabled={running || totalJobs === 0}>
+              <Button
+                variant="secondary"
+                onClick={() => runCapture(job.mode)}
+                disabled={running || totalJobs === 0}
+              >
                 <RotateCcw className="size-4 mr-2" /> Retry
               </Button>
             )}
             {job?.status === "paused" && (
-              <Button variant="secondary" onClick={() => runCapture(job.mode, job)} disabled={running || job.total === 0}>
+              <Button
+                variant="secondary"
+                onClick={() => runCapture(job.mode, job)}
+                disabled={running || job.total === 0}
+              >
                 <RotateCcw className="size-4 mr-2" /> Resume Export
               </Button>
             )}
@@ -826,12 +938,17 @@ function ExportsPage() {
           {previews.length > 0 && (
             <div>
               <div className="flex items-center gap-2 text-sm text-foreground mb-3">
-                <CheckCircle2 className="size-4 text-accent" /> Preview (first {previews.length} captures)
+                <CheckCircle2 className="size-4 text-accent" /> Preview (first {previews.length}{" "}
+                captures)
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {previews.map((preview, index) => (
                   <div key={`${preview.label}-${index}`} className="border rounded overflow-hidden">
-                    <img src={preview.url} alt={preview.label} className="w-full h-32 object-cover object-top" />
+                    <img
+                      src={preview.url}
+                      alt={preview.label}
+                      className="w-full h-32 object-cover object-top"
+                    />
                     <div className="px-2 py-1 text-[10px] truncate">{preview.label}</div>
                   </div>
                 ))}
@@ -843,13 +960,27 @@ function ExportsPage() {
 
       <div
         aria-hidden="true"
-        style={{ position: "fixed", left: "-10000px", top: 0, width: "1280px", height: "2600px", pointerEvents: "none", opacity: 0 }}
+        style={{
+          position: "fixed",
+          left: "-10000px",
+          top: 0,
+          width: "1280px",
+          height: "2600px",
+          pointerEvents: "none",
+          opacity: 0,
+        }}
       >
-        <iframe ref={iframeRef} title="Capture frame" src="about:blank" style={{ width: "1280px", height: "2600px", border: 0 }} />
+        <iframe
+          ref={iframeRef}
+          title="Capture frame"
+          src="about:blank"
+          style={{ width: "1280px", height: "2600px", border: 0 }}
+        />
       </div>
 
       <p className="text-xs text-muted-foreground">
-        The exporter now captures compressed images into local browser storage first, then builds the PDF/ZIP from saved captures for quicker repeat downloads.
+        The exporter now captures compressed images into local browser storage first, then builds
+        the PDF/ZIP from saved captures for quicker repeat downloads.
       </p>
     </div>
   );

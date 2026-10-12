@@ -57,17 +57,53 @@ export const MEMBERSHIP_MODEL = {
 // Grounded in Phumelele's "Why I started A-Win" — real focus areas the
 // community has named, not invented numbers.
 const INVESTMENT_FOCUS = [
-  { icon: Globe2, title: "Offshore Tax-Free Investing", body: "Access to offshore tax free investment vehicles, curated with a qualified financial advisor." },
-  { icon: Home, title: "Property & Airbnb", body: "Our first collective investment: an Airbnb in Cape Town, guided by members who already run profitable Airbnbs." },
-  { icon: HandCoins, title: "Business Crowdfunding", body: "Members crowdfund each other's businesses and open access to markets for one another." },
-  { icon: BookOpen, title: "Financial Literacy", body: "Workshops and mentorship to grow financial knowledge, so every member invests with confidence." },
+  {
+    icon: Globe2,
+    title: "Offshore Tax-Free Investing",
+    body: "Access to offshore tax free investment vehicles, curated with a qualified financial advisor.",
+  },
+  {
+    icon: Home,
+    title: "Property & Airbnb",
+    body: "Our first collective investment: an Airbnb in Cape Town, guided by members who already run profitable Airbnbs.",
+  },
+  {
+    icon: HandCoins,
+    title: "Business Crowdfunding",
+    body: "Members crowdfund each other's businesses and open access to markets for one another.",
+  },
+  {
+    icon: BookOpen,
+    title: "Financial Literacy",
+    body: "Workshops and mentorship to grow financial knowledge, so every member invests with confidence.",
+  },
 ];
 
 const STEPS = [
-  { n: 1, title: "Submit Application", icon: PenLine, desc: "Fill out the form below with your details." },
-  { n: 2, title: "Committee Review", icon: UserRoundSearch, desc: "Our team reviews within 5 business days." },
-  { n: 3, title: "Payment Details", icon: MailCheck, desc: "Receive payment details securely after approval." },
-  { n: 4, title: "Welcome to A-Win", icon: PartyPopper, desc: "Access your member benefits and community." },
+  {
+    n: 1,
+    title: "Submit Application",
+    icon: PenLine,
+    desc: "Fill out the form below with your details.",
+  },
+  {
+    n: 2,
+    title: "Committee Review",
+    icon: UserRoundSearch,
+    desc: "Our team reviews within 5 business days.",
+  },
+  {
+    n: 3,
+    title: "Payment Details",
+    icon: MailCheck,
+    desc: "Receive payment details securely after approval.",
+  },
+  {
+    n: 4,
+    title: "Welcome to A-Win",
+    icon: PartyPopper,
+    desc: "Access your member benefits and community.",
+  },
 ];
 
 const applicationSchema = z.object({
@@ -128,7 +164,10 @@ function MembershipPage() {
 
   // Resume an in-progress application for a returning, logged-in applicant.
   useEffect(() => {
-    if (!user) { setResuming(false); return; }
+    if (!user) {
+      setResuming(false);
+      return;
+    }
     let cancelled = false;
     supabase
       .from("applications")
@@ -154,7 +193,9 @@ function MembershipPage() {
     // `cancelled` guard stops a stale run (e.g. React StrictMode's double
     // effect invocation in dev) from resolving after this one and clobbering
     // state a later effect (like EftPanel's) already corrected.
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
@@ -175,13 +216,18 @@ function MembershipPage() {
           patch.proof_of_payment_path = path;
           patch.proof_of_payment_uploaded_at = new Date().toISOString();
         }
-        const { error } = await supabase.from("applications").update(patch as never).eq("id", applicationId);
+        const { error } = await supabase
+          .from("applications")
+          .update(patch as never)
+          .eq("id", applicationId);
         if (error) throw error;
         if (advance && patch.proof_of_payment_path) {
           setStep(2);
           toast.success("Proof of payment received!");
         } else {
-          toast.success("Progress saved — come back anytime to finish uploading your proof of payment.");
+          toast.success(
+            "Progress saved — come back anytime to finish uploading your proof of payment.",
+          );
         }
       } catch (err: any) {
         toast.error(err.message ?? "Could not save. Please try again.");
@@ -196,14 +242,22 @@ function MembershipPage() {
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (!user) {
-        toast.error("Please create an account or sign in first — it's how we confirm your email and keep your application connected to you.");
+        toast.error(
+          "Please create an account or sign in first — it's how we confirm your email and keep your application connected to you.",
+        );
         navigate({ to: "/auth" });
         return;
       }
       setDuplicateWarning(null);
       const fd = new FormData(e.currentTarget);
-      const { sanitizeText, sanitizeOptionalText, sanitizeEmail, sanitizeIdNumber, sanitizePhone, isDuplicateError } =
-        await import("@/lib/sanitize");
+      const {
+        sanitizeText,
+        sanitizeOptionalText,
+        sanitizeEmail,
+        sanitizeIdNumber,
+        sanitizePhone,
+        isDuplicateError,
+      } = await import("@/lib/sanitize");
 
       let cleanEmail = "";
       try {
@@ -313,12 +367,13 @@ function MembershipPage() {
       }
       // Confirmation email — fire and forget, submission already succeeded.
       void import("@/lib/email.functions").then(({ sendApplicationReceivedEmail }) =>
-        sendApplicationReceivedEmail({ data: { email: cleanEmail, fullName: parsed.data.full_name } }).catch(() => {}),
+        sendApplicationReceivedEmail({
+          data: { email: cleanEmail, fullName: parsed.data.full_name },
+        }).catch(() => {}),
       );
     },
     [user, popiaConsent, navigate],
   );
-
 
   const scrollToForm = () => {
     document.getElementById("application")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -329,16 +384,21 @@ function MembershipPage() {
       {/* Hero */}
       <section className="page-header px-4 py-24">
         <div className="relative mx-auto max-w-5xl animate-fade-in">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
-            <Link to="/" className="hover:text-accent transition-colors">Home</Link>
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
+          >
+            <Link to="/" className="hover:text-accent transition-colors">
+              Home
+            </Link>
             <ChevronRight className="h-3 w-3" />
             <span className="font-medium text-accent">Membership</span>
           </nav>
           <h1 className="mt-5 font-serif text-foreground">Become a Member</h1>
           <p className="mt-5 max-w-2xl text-foreground/80 md:text-lg">
-            You do not need a degree or a professional title to join A-Win. You
-            need a commitment to saving, investing, and growing with a community
-            of women who have your back. If that sounds like you, you belong here.
+            You do not need a degree or a professional title to join A-Win. You need a commitment to
+            saving, investing, and growing with a community of women who have your back. If that
+            sounds like you, you belong here.
           </p>
         </div>
       </section>
@@ -347,10 +407,13 @@ function MembershipPage() {
       <section id="fees" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-center mb-10">
-            <span className="text-xs font-semibold uppercase tracking-widest text-accent">Fees &amp; Commitment</span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+              Fees &amp; Commitment
+            </span>
             <h2 className="font-bold mt-2">One Membership · Built for Long Term Wealth</h2>
             <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-              A-Win follows a single, transparent membership model. Reviewed annually by the community.
+              A-Win follows a single, transparent membership model. Reviewed annually by the
+              community.
             </p>
           </div>
 
@@ -362,7 +425,9 @@ function MembershipPage() {
                 </div>
                 <div className="mt-3 flex items-baseline gap-1">
                   <span className="font-serif text-4xl text-primary">{MEMBERSHIP_MODEL.fee}</span>
-                  <span className="text-sm text-muted-foreground">{MEMBERSHIP_MODEL.feeCadence}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {MEMBERSHIP_MODEL.feeCadence}
+                  </span>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
                   Covers administration, member services and access to the A-Win community.
@@ -379,8 +444,12 @@ function MembershipPage() {
                   Monthly Contribution
                 </div>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-serif text-4xl text-primary">{MEMBERSHIP_MODEL.contribution}</span>
-                  <span className="text-sm text-muted-foreground">{MEMBERSHIP_MODEL.contributionCadence} minimum</span>
+                  <span className="font-serif text-4xl text-primary">
+                    {MEMBERSHIP_MODEL.contribution}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {MEMBERSHIP_MODEL.contributionCadence} minimum
+                  </span>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
                   Directed into collective investment opportunities curated for women investors.
@@ -401,7 +470,10 @@ function MembershipPage() {
                 ))}
               </ul>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button onClick={scrollToForm} className="bg-accent text-accent-foreground hover:bg-accent/90">
+                <Button
+                  onClick={scrollToForm}
+                  className="bg-accent text-accent-foreground hover:bg-accent/90"
+                >
                   Apply Now
                 </Button>
                 <Button asChild variant="outline">
@@ -422,11 +494,13 @@ function MembershipPage() {
       <section className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-center mb-10">
-            <span className="text-xs font-semibold uppercase tracking-widest text-accent">Where Your Money Goes</span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+              Where Your Money Goes
+            </span>
             <h2 className="font-bold mt-2">How We Invest Together</h2>
             <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-              Every member's monthly contribution is pooled into collective investment opportunities,
-              chosen and reviewed by the community.
+              Every member's monthly contribution is pooled into collective investment
+              opportunities, chosen and reviewed by the community.
             </p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -472,9 +546,12 @@ function MembershipPage() {
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-accent">
                 <ShieldCheck className="size-4" /> Onboarding requirements
               </div>
-              <h3 className="font-serif text-foreground mt-2">What you'll need to complete onboarding</h3>
+              <h3 className="font-serif text-foreground mt-2">
+                What you'll need to complete onboarding
+              </h3>
               <p className="text-sm text-muted-foreground mt-2">
-                Once your application is approved, you'll be guided through these steps to activate your A-Win membership.
+                Once your application is approved, you'll be guided through these steps to activate
+                your A-Win membership.
               </p>
               <ol className="mt-5 space-y-3">
                 {ONBOARDING.map((item, i) => (
@@ -513,7 +590,9 @@ function MembershipPage() {
                 <p className="text-muted-foreground">
                   Head over to onboarding to sign your membership agreement and finish setting up.
                 </p>
-                <Button asChild><Link to="/onboarding">Continue to Onboarding</Link></Button>
+                <Button asChild>
+                  <Link to="/onboarding">Continue to Onboarding</Link>
+                </Button>
               </CardContent>
             </Card>
           ) : appStatus === "rejected" ? (
@@ -521,8 +600,12 @@ function MembershipPage() {
               <CardContent className="pt-6 text-center space-y-4">
                 <h3 className="text-2xl font-semibold">Application not approved</h3>
                 <p className="text-muted-foreground">
-                  Your previous application wasn't approved. If you believe this is a mistake, please
-                  contact <a className="underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+                  Your previous application wasn't approved. If you believe this is a mistake,
+                  please contact{" "}
+                  <a className="underline" href={`mailto:${SUPPORT_EMAIL}`}>
+                    {SUPPORT_EMAIL}
+                  </a>
+                  .
                 </p>
               </CardContent>
             </Card>
@@ -544,10 +627,17 @@ function MembershipPage() {
                     >
                       {step > s.n ? <Check className="size-4" /> : <s.icon className="size-4" />}
                     </div>
-                    <span className={cn("hidden text-xs font-medium sm:inline", step === s.n ? "text-accent-deep" : "text-muted-foreground")}>
+                    <span
+                      className={cn(
+                        "hidden text-xs font-medium sm:inline",
+                        step === s.n ? "text-accent-deep" : "text-muted-foreground",
+                      )}
+                    >
                       {s.title}
                     </span>
-                    {i < APPLY_STEPS.length - 1 && <ChevronRight className="size-4 text-muted-foreground" />}
+                    {i < APPLY_STEPS.length - 1 && (
+                      <ChevronRight className="size-4 text-muted-foreground" />
+                    )}
                   </li>
                 ))}
               </ol>
@@ -555,9 +645,11 @@ function MembershipPage() {
               {!user && (
                 <div className="mb-5 rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm">
                   You'll need to{" "}
-                  <Link to="/auth" className="font-semibold underline">sign in or create an account</Link>{" "}
-                  before submitting — this confirms your email and keeps your application, and later your
-                  onboarding, linked to you. You can fill in the form first.
+                  <Link to="/auth" className="font-semibold underline">
+                    sign in or create an account
+                  </Link>{" "}
+                  before submitting — this confirms your email and keeps your application, and later
+                  your onboarding, linked to you. You can fill in the form first.
                 </div>
               )}
 
@@ -617,10 +709,18 @@ function MembershipPage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Social media">Social media</SelectItem>
-                          <SelectItem value="Friend or member referral">Friend or member referral</SelectItem>
-                          <SelectItem value="A-Win event or workshop">A-Win event or workshop</SelectItem>
-                          <SelectItem value="Phumelele Ndumo (Founder)">Phumelele Ndumo (Founder)</SelectItem>
-                          <SelectItem value="News / podcast / article">News / podcast / article</SelectItem>
+                          <SelectItem value="Friend or member referral">
+                            Friend or member referral
+                          </SelectItem>
+                          <SelectItem value="A-Win event or workshop">
+                            A-Win event or workshop
+                          </SelectItem>
+                          <SelectItem value="Phumelele Ndumo (Founder)">
+                            Phumelele Ndumo (Founder)
+                          </SelectItem>
+                          <SelectItem value="News / podcast / article">
+                            News / podcast / article
+                          </SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
@@ -628,7 +728,12 @@ function MembershipPage() {
 
                     <div>
                       <Label htmlFor="referral">Who referred you? (optional)</Label>
-                      <Input id="referral" name="referral" maxLength={120} placeholder="Name of the person who told you" />
+                      <Input
+                        id="referral"
+                        name="referral"
+                        maxLength={120}
+                        placeholder="Name of the person who told you"
+                      />
                     </div>
 
                     {duplicateWarning && (
@@ -647,13 +752,18 @@ function MembershipPage() {
                         className="mt-0.5"
                       />
                       <span className="text-sm text-muted-foreground">
-                        I consent to A-Win processing my personal information (name, ID number, contact
-                        details) for the purpose of reviewing this application, in terms of the Protection
-                        of Personal Information Act (POPIA).
+                        I consent to A-Win processing my personal information (name, ID number,
+                        contact details) for the purpose of reviewing this application, in terms of
+                        the Protection of Personal Information Act (POPIA).
                       </span>
                     </label>
 
-                    <Button type="submit" size="lg" className="w-full" disabled={submitting || !popiaConsent || !user}>
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full"
+                      disabled={submitting || !popiaConsent || !user}
+                    >
                       {submitting && <Loader2 className="size-4 animate-spin mr-2" />}
                       Continue <ChevronRight className="ml-1 size-4" />
                     </Button>
@@ -666,9 +776,9 @@ function MembershipPage() {
                   <div className="flex items-start gap-2 rounded-lg border border-accent/30 bg-accent/5 p-3 text-xs text-foreground/80">
                     <Lightbulb className="mt-0.5 size-4 shrink-0 text-accent-deep" />
                     <p>
-                      Tip: pay by EFT using the reference below, then upload your proof here. Not ready to
-                      pay right now? Use <strong>Save &amp; Continue Later</strong> below — we'll pick up right
-                      where you left off next time you visit this page.
+                      Tip: pay by EFT using the reference below, then upload your proof here. Not
+                      ready to pay right now? Use <strong>Save &amp; Continue Later</strong> below —
+                      we'll pick up right where you left off next time you visit this page.
                     </p>
                   </div>
                   <EftPanel
@@ -711,11 +821,13 @@ function MembershipPage() {
                     <div className="size-16 rounded-full bg-accent/20 text-accent flex items-center justify-center mx-auto">
                       <Check className="size-8" />
                     </div>
-                    <h3 className="text-2xl font-semibold">You're all set{applicantName ? `, ${applicantName.split(" ")[0]}` : ""}!</h3>
+                    <h3 className="text-2xl font-semibold">
+                      You're all set{applicantName ? `, ${applicantName.split(" ")[0]}` : ""}!
+                    </h3>
                     <p className="text-muted-foreground max-w-md mx-auto">
-                      Your application and proof of payment are in. The committee reviews within 5 business
-                      days — once approved, you'll complete your Letter of Authority, Risk Profile and FICA
-                      documents to finish onboarding.
+                      Your application and proof of payment are in. The committee reviews within 5
+                      business days — once approved, you'll complete your Letter of Authority, Risk
+                      Profile and FICA documents to finish onboarding.
                     </p>
                     <Button asChild variant="outline">
                       <Link to="/">Back to Home</Link>
@@ -728,7 +840,8 @@ function MembershipPage() {
                 <div className="mt-6 flex items-start gap-3 rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
                   <ShieldCheck className="size-5 text-accent shrink-0 mt-0.5" />
                   <p>
-                    Your details and proof of payment are shared securely and reviewed by the committee only.
+                    Your details and proof of payment are shared securely and reviewed by the
+                    committee only.
                   </p>
                 </div>
               )}

@@ -16,7 +16,8 @@ export const sendApplicationReceivedEmail = createServerFn({ method: "POST" })
     if (!(await rateLimitOk(`app:${data.email.toLowerCase()}`, 3, 3600))) {
       return { ok: false as const, error: "rate limited" };
     }
-    const { applicationReceivedEmail, adminNewApplicationEmail } = await import("./email-templates.server");
+    const { applicationReceivedEmail, adminNewApplicationEmail } =
+      await import("./email-templates.server");
     const mail = applicationReceivedEmail(data.fullName);
     // Committee alert — gated by the "new application" notification toggle.
     // The applicant confirmation (below) always sends; it's a transactional reply.
@@ -117,7 +118,8 @@ export const sendPasswordChangedEmail = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { sendEmail } = await import("./email.server");
-    const { passwordChangedEmail, adminPasswordChangedEmail } = await import("./email-templates.server");
+    const { passwordChangedEmail, adminPasswordChangedEmail } =
+      await import("./email-templates.server");
     const mail = passwordChangedEmail(data.fullName);
     const adminMail = adminPasswordChangedEmail(data.fullName, data.email);
     await sendEmail({ to: "admin@awin.co.za", toName: "A-Win Admin", ...adminMail });

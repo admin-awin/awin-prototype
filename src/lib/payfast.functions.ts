@@ -29,22 +29,18 @@ export const createPayfastCheckout = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => checkoutSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const {
-      PAYFAST_PROCESS_URL,
-      PAYFAST_FIELD_ORDER,
-      pfSignature,
-    } = await import("./payfast.server");
+    const { PAYFAST_PROCESS_URL, PAYFAST_FIELD_ORDER, pfSignature } =
+      await import("./payfast.server");
 
     const merchantId = process.env.PAYFAST_MERCHANT_ID;
     const merchantKey = process.env.PAYFAST_MERCHANT_KEY;
     const passphrase = process.env.PAYFAST_PASSPHRASE ?? "";
-    const siteUrl =
-      process.env.SITE_URL ??
-      process.env.VITE_SITE_URL ??
-      "https://awin.co.za";
+    const siteUrl = process.env.SITE_URL ?? process.env.VITE_SITE_URL ?? "https://awin.co.za";
 
     if (!merchantId || !merchantKey) {
-      throw new Error("PayFast is not configured. Add PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY.");
+      throw new Error(
+        "PayFast is not configured. Add PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY.",
+      );
     }
 
     const amountZar = TIER_PRICES_ZAR[data.tier];
@@ -191,7 +187,9 @@ export const getMyPayments = createServerFn({ method: "GET" })
         .limit(20),
       context.supabase
         .from("profiles")
-        .select("membership_status, membership_tier, membership_expires_at, last_payment_at, payfast_subscription_token")
+        .select(
+          "membership_status, membership_tier, membership_expires_at, last_payment_at, payfast_subscription_token",
+        )
         .eq("id", context.userId)
         .maybeSingle(),
     ]);

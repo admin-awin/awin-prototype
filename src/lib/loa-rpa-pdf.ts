@@ -17,7 +17,8 @@ import { THUTHUKA_LOGO_PNG_BASE64 } from "./thuthuka-logo-base64";
 const THUTHUKA_HEADER = {
   phone: "+27 11 568 2635 / +27 69 245 0228",
   email: "info@thuthuka-sa.co.za",
-  address: "Office 62, Block 2, Ext 15, 8 Incubation Dr, Riversands Office Park, Riverside View, Fourways, Midrand, 2021",
+  address:
+    "Office 62, Block 2, Ext 15, 8 Incubation Dr, Riversands Office Park, Riverside View, Fourways, Midrand, 2021",
 };
 
 // Full logo (icon + "ThuthukaSA" wordmark + "Financial Services Provider" +
@@ -142,7 +143,14 @@ function drawLoaPage(
   y = field(pdf, "Telephone number", input.loa.telephone, margin, y, colW);
   y = field(pdf, "Hereby authorise", "Phumelele Ndumo", margin, y, colW);
   if (input.loa.staffMember.trim()) {
-    y = field(pdf, "Or any/the following member of his/her staff", input.loa.staffMember, margin, y, colW);
+    y = field(
+      pdf,
+      "Or any/the following member of his/her staff",
+      input.loa.staffMember,
+      margin,
+      y,
+      colW,
+    );
   }
   y += 4;
 
@@ -157,7 +165,15 @@ function drawLoaPage(
   y += loaConsent.length * 13 + 16;
 
   // Signature block #1 — closes out §1, exactly as the paper form does.
-  addSignatureBlock(pdf, margin, y, input.signatureType, input.signatureTypedName, input.signatureDrawnData, input.dateStr);
+  addSignatureBlock(
+    pdf,
+    margin,
+    y,
+    input.signatureType,
+    input.signatureTypedName,
+    input.signatureDrawnData,
+    input.dateStr,
+  );
   y += 100;
 
   if (y > 620) {
@@ -186,7 +202,15 @@ function drawLoaPage(
   }
   // Signature block #2 — closes out §2, the second signature spot the
   // paper form has and the earlier digital version was missing.
-  addSignatureBlock(pdf, margin, y, input.signatureType, input.signatureTypedName, input.signatureDrawnData, input.dateStr);
+  addSignatureBlock(
+    pdf,
+    margin,
+    y,
+    input.signatureType,
+    input.signatureTypedName,
+    input.signatureDrawnData,
+    input.dateStr,
+  );
   y += 100;
 
   if (y > 680) {
@@ -201,7 +225,12 @@ function drawLoaPage(
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(9.5);
   pdf.setTextColor(90, 90, 90);
-  pdf.text("Name: Phumelele Ndumo   ·   Code: 627 518   ·   Telephone: 011 568 2635   ·   e-mail: phumelele@thuthuka-sa.co.za", margin, y, { maxWidth: colW });
+  pdf.text(
+    "Name: Phumelele Ndumo   ·   Code: 627 518   ·   Telephone: 011 568 2635   ·   e-mail: phumelele@thuthuka-sa.co.za",
+    margin,
+    y,
+    { maxWidth: colW },
+  );
   y += 20;
   pdf.setFont("helvetica", "italic");
   pdf.setFontSize(8.5);
@@ -231,10 +260,24 @@ function drawRpaPage(
   y = field(pdf, "Email address", input.rpa.email, margin + colHalf + 20, rowStartY2, colHalf);
   const rowStartY3 = y;
   field(pdf, "Work number", input.rpa.workNumber, margin, rowStartY3, colHalf);
-  y = field(pdf, "Qualification", input.rpa.qualification, margin + colHalf + 20, rowStartY3, colHalf);
+  y = field(
+    pdf,
+    "Qualification",
+    input.rpa.qualification,
+    margin + colHalf + 20,
+    rowStartY3,
+    colHalf,
+  );
   const rowStartY4 = y;
   field(pdf, "Occupation", input.rpa.occupation, margin, rowStartY4, colHalf);
-  y = field(pdf, "Gross monthly income (before deductions)", input.rpa.grossMonthlyIncome, margin + colHalf + 20, rowStartY4, colHalf);
+  y = field(
+    pdf,
+    "Gross monthly income (before deductions)",
+    input.rpa.grossMonthlyIncome,
+    margin + colHalf + 20,
+    rowStartY4,
+    colHalf,
+  );
   const rowStartY5 = y;
   field(pdf, "Marital status", input.rpa.maritalStatus, margin, rowStartY5, colHalf);
   y = field(pdf, "Stokvel name", input.rpa.stokvelName, margin + colHalf + 20, rowStartY5, colHalf);
@@ -255,20 +298,35 @@ function drawRpaPage(
   // Numbered and worded to match the paper form exactly, including its
   // jump from 9 straight to 11 (no question 10 on the original either).
   const QUESTIONS: [string, string, string?][] = [
-    ["1. What is the objective for the investment? e.g: saving for school/varsity fees", input.rpa.objective],
+    [
+      "1. What is the objective for the investment? e.g: saving for school/varsity fees",
+      input.rpa.objective,
+    ],
     ["2. What is the term of your investment?", input.rpa.term],
     ["3. How much would you like to invest per month? Minimum is R500", input.rpa.monthlyAmount],
-    ["4. What is your risk appetite? (Aggressive, moderate or conservative)", input.rpa.riskAppetite],
-    ["5. Are you scared of losing money? Yes/No", input.rpa.scaredOfLosingMoney,
-      "Note: With equities, you can lose money in the short term but you are likely to have good capital growth in the long term i.e. 5 years +"],
-    ["6. Are you likely to withdraw your money in the next 12 months or 24 months? Yes/No", input.rpa.withdrawSoon],
+    [
+      "4. What is your risk appetite? (Aggressive, moderate or conservative)",
+      input.rpa.riskAppetite,
+    ],
+    [
+      "5. Are you scared of losing money? Yes/No",
+      input.rpa.scaredOfLosingMoney,
+      "Note: With equities, you can lose money in the short term but you are likely to have good capital growth in the long term i.e. 5 years +",
+    ],
+    [
+      "6. Are you likely to withdraw your money in the next 12 months or 24 months? Yes/No",
+      input.rpa.withdrawSoon,
+    ],
     ["7. Do you have investments? If yes, where and how much?", input.rpa.existingInvestments],
     ["8. How much do you know about investing?", input.rpa.investingKnowledge],
     ["9. Do you have an emergency fund? Yes/No", input.rpa.emergencyFund],
     ["11. Do you have children, if yes how many? Please include their ages", input.rpa.children],
     ["12. Have you saved for their university education?", input.rpa.savedForEducation],
     ["13. Have you saved for your own retirement?", input.rpa.savedForRetirement],
-    ["Would you like to subscribe to our newsletter? It's a free subscription", input.rpa.newsletterSubscribe],
+    [
+      "Would you like to subscribe to our newsletter? It's a free subscription",
+      input.rpa.newsletterSubscribe,
+    ],
   ];
 
   for (const [q, a, note] of QUESTIONS) {
@@ -296,7 +354,15 @@ function drawRpaPage(
     y = 60;
   }
   y += 10;
-  addSignatureBlock(pdf, margin, y, input.signatureType, input.signatureTypedName, input.signatureDrawnData, input.dateStr);
+  addSignatureBlock(
+    pdf,
+    margin,
+    y,
+    input.signatureType,
+    input.signatureTypedName,
+    input.signatureDrawnData,
+    input.dateStr,
+  );
   drawFooter(pdf);
 }
 
@@ -340,11 +406,28 @@ const BLANK_INPUT: BuildInput = {
   fullName: "",
   loa: { idNumber: "", telephone: "", staffMember: "" },
   rpa: {
-    gender: "", cellPhone: "", email: "", workNumber: "", qualification: "", occupation: "",
-    grossMonthlyIncome: "", maritalStatus: "", stokvelName: "", objective: "", term: "",
-    monthlyAmount: "", riskAppetite: "", scaredOfLosingMoney: "", withdrawSoon: "",
-    existingInvestments: "", investingKnowledge: "", emergencyFund: "", children: "",
-    savedForEducation: "", savedForRetirement: "", newsletterSubscribe: "",
+    gender: "",
+    cellPhone: "",
+    email: "",
+    workNumber: "",
+    qualification: "",
+    occupation: "",
+    grossMonthlyIncome: "",
+    maritalStatus: "",
+    stokvelName: "",
+    objective: "",
+    term: "",
+    monthlyAmount: "",
+    riskAppetite: "",
+    scaredOfLosingMoney: "",
+    withdrawSoon: "",
+    existingInvestments: "",
+    investingKnowledge: "",
+    emergencyFund: "",
+    children: "",
+    savedForEducation: "",
+    savedForRetirement: "",
+    newsletterSubscribe: "",
   },
   signatureType: "typed",
   signatureTypedName: "",
@@ -363,10 +446,16 @@ function triggerDownload(blob: Blob, filename: string) {
 
 /** Blank, unsigned LOA — the original document as-is, for anyone who wants the template itself. */
 export async function downloadBlankLoaTemplate() {
-  triggerDownload(await buildLoaPdf(BLANK_INPUT), "ThuthukaSA-Letter-of-Authority-blank-template.pdf");
+  triggerDownload(
+    await buildLoaPdf(BLANK_INPUT),
+    "ThuthukaSA-Letter-of-Authority-blank-template.pdf",
+  );
 }
 
 /** Blank, unsigned combined LOA + RPA — the original document as-is. */
 export async function downloadBlankLoaRpaTemplate() {
-  triggerDownload(await buildLoaRpaPdf(BLANK_INPUT), "ThuthukaSA-LOA-and-Risk-Profile-blank-template.pdf");
+  triggerDownload(
+    await buildLoaRpaPdf(BLANK_INPUT),
+    "ThuthukaSA-LOA-and-Risk-Profile-blank-template.pdf",
+  );
 }

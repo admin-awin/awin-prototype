@@ -29,7 +29,10 @@ export async function sendWhatsAppMessage(to: string, text: string): Promise<Sen
   const token = process.env.WHATSAPP_ACCESS_TOKEN;
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
   if (!token || !phoneNumberId) {
-    console.warn("[whatsapp] WHATSAPP_ACCESS_TOKEN / WHATSAPP_PHONE_NUMBER_ID not set — skipping send to", to);
+    console.warn(
+      "[whatsapp] WHATSAPP_ACCESS_TOKEN / WHATSAPP_PHONE_NUMBER_ID not set — skipping send to",
+      to,
+    );
     return { ok: false, error: "whatsapp not configured" };
   }
 

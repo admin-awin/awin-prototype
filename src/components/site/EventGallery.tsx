@@ -6,7 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Photo = { id: string; src: string; caption: string; event: string; category: string; mediaType: string };
+type Photo = {
+  id: string;
+  src: string;
+  caption: string;
+  event: string;
+  category: string;
+  mediaType: string;
+};
 
 // Seed labels for the categories admin.gallery.tsx ships with — any further
 // category an admin types in there just shows up automatically, titled from
@@ -21,7 +28,11 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const labelize = (id: string) =>
   CATEGORY_LABELS[id] ??
-  id.split(/[-_\s]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
+  id
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((w) => w[0].toUpperCase() + w.slice(1))
+    .join(" ");
 
 export function EventGallery({ heading = true }: { heading?: boolean }) {
   const [photos, setPhotos] = useState<Photo[] | null>(null);
@@ -37,7 +48,14 @@ export function EventGallery({ heading = true }: { heading?: boolean }) {
         .eq("is_visible", true)
         .order("sort_order", { ascending: true });
       if (cancelled) return;
-      const rows = (data ?? []) as { id: string; category: string; storage_path: string; caption: string | null; event_label: string | null; media_type: string }[];
+      const rows = (data ?? []) as {
+        id: string;
+        category: string;
+        storage_path: string;
+        caption: string | null;
+        event_label: string | null;
+        media_type: string;
+      }[];
       setPhotos(
         rows.map((r) => ({
           id: r.id,
@@ -49,20 +67,27 @@ export function EventGallery({ heading = true }: { heading?: boolean }) {
         })),
       );
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (photos === null) {
     return (
       <section className="bg-secondary/30 py-16">
-        <div className="flex justify-center"><Loader2 className="size-6 animate-spin text-muted-foreground" /></div>
+        <div className="flex justify-center">
+          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        </div>
       </section>
     );
   }
   if (photos.length === 0) return null;
 
   const categories = Array.from(new Set(photos.map((p) => p.category)));
-  const tabs = [{ id: "all", label: "All" }, ...categories.map((id) => ({ id, label: labelize(id) }))];
+  const tabs = [
+    { id: "all", label: "All" },
+    ...categories.map((id) => ({ id, label: labelize(id) })),
+  ];
   const items = cat === "all" ? photos : photos.filter((p) => p.category === cat);
 
   return (
@@ -73,7 +98,8 @@ export function EventGallery({ heading = true }: { heading?: boolean }) {
             <Badge className="bg-accent text-accent-foreground">Event gallery</Badge>
             <h2 className="mt-3 font-serif text-foreground">Moments from our community</h2>
             <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-              Hikes, coaching circles, panels and Woman Crush Wednesdays: the sisterhood in real life.
+              Hikes, coaching circles, panels and Woman Crush Wednesdays: the sisterhood in real
+              life.
             </p>
           </div>
         )}
@@ -142,16 +168,17 @@ export function EventGallery({ heading = true }: { heading?: boolean }) {
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
         <DialogContent className="max-w-4xl border-0 bg-background p-0">
           <DialogTitle className="sr-only">{open?.caption ?? "Event photo"}</DialogTitle>
-          {open && (
-            open.mediaType === "video" ? (
+          {open &&
+            (open.mediaType === "video" ? (
               <video src={open.src} controls autoPlay className="h-auto w-full rounded-lg" />
             ) : (
               <img src={open.src} alt={open.caption} className="h-auto w-full rounded-lg" />
-            )
-          )}
+            ))}
           {open && (
             <div className="px-4 pb-4 pt-2">
-              <div className="text-xs uppercase tracking-widest text-muted-foreground">{open.event}</div>
+              <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                {open.event}
+              </div>
               <p className="text-sm text-foreground">{open.caption}</p>
             </div>
           )}

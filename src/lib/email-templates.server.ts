@@ -86,9 +86,15 @@ function thuthukaLayout(
 // Escape user-supplied leaf values before they hit the HTML email body.
 // Prevents HTML/link injection from public endpoints (contact form, applications).
 const esc = (s: string) =>
-  String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
-const p = (t: string) => `<p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#44403c;">${t}</p>`;
+const p = (t: string) =>
+  `<p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#44403c;">${t}</p>`;
 // strong() only ever wraps leaf user values (names, tiers, amounts) — escape here.
 const strong = (t: string) => `<strong style="color:#1c1917;">${esc(t)}</strong>`;
 const btn = (href: string, label: string) =>
@@ -110,7 +116,11 @@ export function applicationReceivedEmail(fullName: string) {
 
 export function membershipActivatedEmail(fullName: string, tier: string, expiresAt: string | null) {
   const expires = expiresAt
-    ? new Date(expiresAt).toLocaleDateString("en-ZA", { year: "numeric", month: "long", day: "numeric" })
+    ? new Date(expiresAt).toLocaleDateString("en-ZA", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
     : "12 months from today";
   return {
     subject: "Welcome to A-Win: your membership is active",
@@ -178,13 +188,22 @@ export function loaRpaReceivedEmail(fullName: string, loaOnly: boolean) {
         p(
           "Thank you for completing your Letter of Authority and Risk Profile Analysis. A signed copy of both has been generated and is on file with ThuthukaSA (FSP No. 47992).",
         ) +
-        p("No further action is needed from you right now. The A-Win committee will be in touch if anything further is required."),
+        p(
+          "No further action is needed from you right now. The A-Win committee will be in touch if anything further is required.",
+        ),
     ),
   };
 }
 
-export function adminNewLoaRpaEmail(fullName: string, email: string, source: string, loaOnly: boolean) {
-  const what = loaOnly ? "a signed Letter of Authority" : "a signed LOA &amp; Risk Profile Analysis";
+export function adminNewLoaRpaEmail(
+  fullName: string,
+  email: string,
+  source: string,
+  loaOnly: boolean,
+) {
+  const what = loaOnly
+    ? "a signed Letter of Authority"
+    : "a signed LOA &amp; Risk Profile Analysis";
   return {
     subject: `New ${loaOnly ? "LOA" : "LOA & RPA"} submission: ${fullName}`,
     html: thuthukaLayout(
@@ -218,12 +237,18 @@ export function contactMessageEmail(name: string, email: string, subject: string
   };
 }
 
-export function adminNewApprovalRequestEmail(actionLabel: string, reason: string, requestedByName: string) {
+export function adminNewApprovalRequestEmail(
+  actionLabel: string,
+  reason: string,
+  requestedByName: string,
+) {
   return {
     subject: `Approval needed: ${actionLabel}`,
     html: layout(
       "A request is waiting for a second admin",
-      p(`${strong(requestedByName)} filed a request that needs approval from a ${strong("different")} admin before it takes effect.`) +
+      p(
+        `${strong(requestedByName)} filed a request that needs approval from a ${strong("different")} admin before it takes effect.`,
+      ) +
         p(`${strong("Action:")} ${esc(actionLabel)}`) +
         p(`${strong("Reason given:")} ${esc(reason)}`) +
         btn(`${BRAND.site}/admin/approvals`, "Review in Admin → Approvals"),
@@ -238,7 +263,9 @@ export function passwordChangedEmail(fullName: string) {
       "Password changed",
       p(`Hi ${strong(fullName)},`) +
         p("This confirms your A-Win account password was just changed.") +
-        p("If you made this change, no action is needed. If you did NOT make this change, please contact the committee immediately by replying to this email."),
+        p(
+          "If you made this change, no action is needed. If you did NOT make this change, please contact the committee immediately by replying to this email.",
+        ),
     ),
   };
 }
@@ -261,7 +288,10 @@ export function paymentReceiptEmail(
   paidAtIso: string,
 ) {
   const amount = `R ${(amountCents / 100).toFixed(2)}`;
-  const paidAt = new Date(paidAtIso).toLocaleString("en-ZA", { dateStyle: "long", timeStyle: "short" });
+  const paidAt = new Date(paidAtIso).toLocaleString("en-ZA", {
+    dateStyle: "long",
+    timeStyle: "short",
+  });
   return {
     subject: `Payment received: ${amount} (A-Win membership)`,
     html: layout(
@@ -296,21 +326,38 @@ export type SetPasswordKind = "reset" | "advisor_welcome" | "advisor_access";
  * on an existing account. Carries both a one-click link and the one-time code
  * (for anyone whose mail scanner pre-clicks links and burns them).
  */
-export function setPasswordEmail(kind: SetPasswordKind, fullName: string | null, email: string, link: string, code: string) {
+export function setPasswordEmail(
+  kind: SetPasswordKind,
+  fullName: string | null,
+  email: string,
+  link: string,
+  code: string,
+) {
   const hi = p(`Hi ${strong(fullName || email)},`);
   const how =
     btn(link, "Set my password") +
-    p(`Or go to ${strong(`${BRAND.site.replace(/^https?:\/\//, "")}/auth`)}, choose ${strong("Forgot password?")}, type your email, click ${strong("I already have a code")}, and enter this code:`) +
+    p(
+      `Or go to ${strong(`${BRAND.site.replace(/^https?:\/\//, "")}/auth`)}, choose ${strong("Forgot password?")}, type your email, click ${strong("I already have a code")}, and enter this code:`,
+    ) +
     codeBlock(code) +
-    p(`The link and code expire in 1 hour and work once. If they expire, use ${strong("Forgot password?")} on the sign-in page to get a new one — no need to contact anyone.`);
-  const signIn = p(`From then on, sign in at ${strong(`${BRAND.site.replace(/^https?:\/\//, "")}/auth`)} with ${strong(email)} and the password you chose.`);
+    p(
+      `The link and code expire in 1 hour and work once. If they expire, use ${strong("Forgot password?")} on the sign-in page to get a new one — no need to contact anyone.`,
+    );
+  const signIn = p(
+    `From then on, sign in at ${strong(`${BRAND.site.replace(/^https?:\/\//, "")}/auth`)} with ${strong(email)} and the password you chose.`,
+  );
   if (kind === "advisor_welcome") {
     return {
       subject: "Your ThuthukaSA dashboard account is ready",
       html: thuthukaLayout(
         "Welcome to the ThuthukaSA dashboard",
-        hi + p("An account has been created for you on the ThuthukaSA dashboard, where you can view and download signed Letters of Authority and Risk Profiles.") +
-          p("First, choose your own password:") + how + signIn,
+        hi +
+          p(
+            "An account has been created for you on the ThuthukaSA dashboard, where you can view and download signed Letters of Authority and Risk Profiles.",
+          ) +
+          p("First, choose your own password:") +
+          how +
+          signIn,
         "This is a message about your ThuthukaSA dashboard access.",
       ),
     };
@@ -320,8 +367,12 @@ export function setPasswordEmail(kind: SetPasswordKind, fullName: string | null,
       subject: "You now have ThuthukaSA dashboard access",
       html: thuthukaLayout(
         "ThuthukaSA dashboard access granted",
-        hi + p(`Your account (${strong(email)}) now has access to the ThuthukaSA dashboard. If you already know your password, just sign in. If not, set one now:`) +
-          how + signIn,
+        hi +
+          p(
+            `Your account (${strong(email)}) now has access to the ThuthukaSA dashboard. If you already know your password, just sign in. If not, set one now:`,
+          ) +
+          how +
+          signIn,
         "This is a message about your ThuthukaSA dashboard access.",
       ),
     };
@@ -330,7 +381,9 @@ export function setPasswordEmail(kind: SetPasswordKind, fullName: string | null,
     subject: "Reset your A-Win password",
     html: layout(
       "Reset your password",
-      hi + p("We received a request to reset the password for your account.") + how +
+      hi +
+        p("We received a request to reset the password for your account.") +
+        how +
         p("If you didn't ask for this, you can ignore this email — your password won't change."),
     ),
   };
@@ -342,9 +395,13 @@ export function confirmSignupEmail(fullName: string, link: string) {
     html: layout(
       "Confirm your email",
       p(`Hi ${strong(fullName)},`) +
-        p("Thanks for creating an A-Win account. Please confirm your email address to finish setting it up:") +
+        p(
+          "Thanks for creating an A-Win account. Please confirm your email address to finish setting it up:",
+        ) +
         btn(link, "Confirm my email") +
-        p("The link expires in 1 hour. If it expires, just sign up again with the same email and we'll send a fresh one."),
+        p(
+          "The link expires in 1 hour. If it expires, just sign up again with the same email and we'll send a fresh one.",
+        ),
     ),
   };
 }
@@ -355,7 +412,8 @@ export function tksaTeamNoticeEmail(title: string, lines: string[]) {
     subject: `ThuthukaSA team: ${title}`,
     html: thuthukaLayout(
       title,
-      lines.map((l) => p(esc(l))).join("") + btn(`${BRAND.site}/tksa`, "Open the ThuthukaSA dashboard"),
+      lines.map((l) => p(esc(l))).join("") +
+        btn(`${BRAND.site}/tksa`, "Open the ThuthukaSA dashboard"),
       "This is a message about your ThuthukaSA dashboard access.",
     ),
   };

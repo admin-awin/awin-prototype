@@ -18,23 +18,23 @@ Go to [awin.co.za/auth](https://awin.co.za/auth) and sign in. New accounts creat
 
 All under `/admin`:
 
-| Section | URL | What it's for |
-|---|---|---|
-| Dashboard | `/admin` | At-a-glance stats (members, pending applications, upcoming events, unread messages, documents) and quick actions. |
-| Members | `/admin/members` | View/edit member profiles, membership status and tier, role badges (Admin / ThuthukaSA Advisor), revoke advisor access. |
-| Applications | `/admin/applications` | Review and action new membership applications. |
-| Events | `/admin/events` | Create/edit events, manage registrations. |
-| Gallery | `/admin/gallery` | Upload and manage event photos shown on the public Events & Gallery page. |
-| News | `/admin/news` | Publish news/announcement posts. |
-| Committees | `/admin/committees` | Manage committee member profiles and positions shown on the public Team page. |
-| Documents | `/admin/documents` | Upload/manage documents available to members via the portal. |
-| Messages | `/admin/messages` | Contact-form submissions from the public site. |
-| EFT | `/admin/eft` | EFT/banking details shown to members for manual payments. |
-| Billing | `/admin/billing` | Membership billing/subscription status (PayFast). |
-| LOA & Risk Profile | `/admin/loa-rpa` | Share links for the LOA/RPA forms, ThuthukaSA advisor access management, and all submitted LOA/RPA records. Same submissions view as `/tksa`. |
-| Approvals | `/admin/approvals` | Two-person approval queue — see below. |
-| Exports | `/admin/exports` | Export data (e.g. members, applications) to CSV. |
-| Settings | `/admin/settings` | Site content, team, notification toggles, and danger-zone actions. |
+| Section            | URL                   | What it's for                                                                                                                                 |
+| ------------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dashboard          | `/admin`              | At-a-glance stats (members, pending applications, upcoming events, unread messages, documents) and quick actions.                             |
+| Members            | `/admin/members`      | View/edit member profiles, membership status and tier, role badges (Admin / ThuthukaSA Advisor), revoke advisor access.                       |
+| Applications       | `/admin/applications` | Review and action new membership applications.                                                                                                |
+| Events             | `/admin/events`       | Create/edit events, manage registrations.                                                                                                     |
+| Gallery            | `/admin/gallery`      | Upload and manage event photos shown on the public Events & Gallery page.                                                                     |
+| News               | `/admin/news`         | Publish news/announcement posts.                                                                                                              |
+| Committees         | `/admin/committees`   | Manage committee member profiles and positions shown on the public Team page.                                                                 |
+| Documents          | `/admin/documents`    | Upload/manage documents available to members via the portal.                                                                                  |
+| Messages           | `/admin/messages`     | Contact-form submissions from the public site.                                                                                                |
+| EFT                | `/admin/eft`          | EFT/banking details shown to members for manual payments.                                                                                     |
+| Billing            | `/admin/billing`      | Membership billing/subscription status (PayFast).                                                                                             |
+| LOA & Risk Profile | `/admin/loa-rpa`      | Share links for the LOA/RPA forms, ThuthukaSA advisor access management, and all submitted LOA/RPA records. Same submissions view as `/tksa`. |
+| Approvals          | `/admin/approvals`    | Two-person approval queue — see below.                                                                                                        |
+| Exports            | `/admin/exports`      | Export data (e.g. members, applications) to CSV.                                                                                              |
+| Settings           | `/admin/settings`     | Site content, team, notification toggles, and danger-zone actions.                                                                            |
 
 ## Two-person approval (maker-checker)
 
@@ -82,7 +82,7 @@ This is the exact kind of prompt to type into an AI coding assistant open in thi
 
 > Add a new page at `/market` called "A-Win Market". Use `/why-a-win` as the style reference — same header, breadcrumb, and section layout as the rest of the site. For now it should list one listing: "Family Law Mediation Services" — a short description, the flyer image, and contact details (phone/email). Show it as a card, similar to how team member profiles are shown on the `/team` page. Add a link to the new page in the main navigation menu and the footer, labeled "A-Win Market". Then test it locally and show me it works before pushing anything live.
 
-Notice what that prompt does: names the URL and title, points at an existing page to copy the *look* from, describes the *content* plainly (what a listing needs — name, description, image, contact), and says where it should be linked from. It never mentions React, routing, or any code — that's the assistant's job to figure out.
+Notice what that prompt does: names the URL and title, points at an existing page to copy the _look_ from, describes the _content_ plainly (what a listing needs — name, description, image, contact), and says where it should be linked from. It never mentions React, routing, or any code — that's the assistant's job to figure out.
 
 ### How to write a good prompt
 
@@ -91,15 +91,15 @@ Notice what that prompt does: names the URL and title, points at an existing pag
 3. **Be concrete about content.** List the actual fields/sections you want (name, description, image, price, contact) rather than "make it nice."
 4. **One step at a time, then iterate.** Get the basic page working first, then ask for the next thing — "now add a second listing," "now make the card bigger on mobile."
 5. **Describe what's wrong, not the fix.** "The image looks stretched on my phone" is a better bug report than a guess at the CSS fix — let the assistant diagnose it.
-6. **Always ask for it to be tested before it goes live.** A well-behaved assistant will build it, check it in a browser, and only then push the change — but it's fine to say so explicitly: *"test this and show me it works before pushing live."*
+6. **Always ask for it to be tested before it goes live.** A well-behaved assistant will build it, check it in a browser, and only then push the change — but it's fine to say so explicitly: _"test this and show me it works before pushing live."_
 7. **Say how far it's allowed to go.** If you're fine with it touching the navigation menu and footer too (not just the one new page), say so up front.
 
 ### Prompt templates to copy
 
-- *"Add a new page at `/[url]` called '[title]'. Use `/[existing-page]` as the style reference. It should [describe the sections/content]. Add it to the main navigation menu."*
-- *"On the [page name] page, add a new section that [describe what it should show]."*
-- *"The [page] page looks wrong on my phone — [describe what you see]. Please fix it and confirm it works before pushing."*
-- *"I want a form that collects [fields] and emails me when someone submits it, similar to the Contact page."*
+- _"Add a new page at `/[url]` called '[title]'. Use `/[existing-page]` as the style reference. It should [describe the sections/content]. Add it to the main navigation menu."_
+- _"On the [page name] page, add a new section that [describe what it should show]."_
+- _"The [page] page looks wrong on my phone — [describe what you see]. Please fix it and confirm it works before pushing."_
+- _"I want a form that collects [fields] and emails me when someone submits it, similar to the Contact page."_
 
 ### Building the A-Win Market incrementally
 

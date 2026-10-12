@@ -24,9 +24,7 @@ describe("perf regression: portal document download", () => {
   const src = read("src/components/pages/portal-page.tsx");
 
   it("requests a 60-second signed URL (short-lived, fast to mint)", () => {
-    expect(src).toMatch(
-      /storage\.from\(["']documents["']\)\.createSignedUrl\([^,]+,\s*60\)/,
-    );
+    expect(src).toMatch(/storage\.from\(["']documents["']\)\.createSignedUrl\([^,]+,\s*60\)/);
   });
 
   it("makes exactly one createSignedUrl call per download (no listing pre-fetch)", () => {

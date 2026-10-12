@@ -9,7 +9,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { EventGallery } from "@/components/site/EventGallery";
@@ -29,9 +36,16 @@ export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
       { title: "Events & Gallery | A-Win" },
-      { name: "description", content: "Browse upcoming and past A-Win events, photography and member stories." },
+      {
+        name: "description",
+        content: "Browse upcoming and past A-Win events, photography and member stories.",
+      },
       { property: "og:title", content: "A-Win Events & Gallery" },
-      { property: "og:description", content: "Masterclasses, summits, meetups and event photography for women investors across Africa." },
+      {
+        property: "og:description",
+        content:
+          "Masterclasses, summits, meetups and event photography for women investors across Africa.",
+      },
     ],
   }),
   component: EventsPage,
@@ -61,7 +75,11 @@ const FILTERS: { id: Filter; label: string }[] = [
 ];
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-ZA", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 function dateBadge(iso: string) {
   const d = new Date(iso);
@@ -86,7 +104,9 @@ function EventsPage() {
   useEffect(() => {
     supabase
       .from("events")
-      .select("id, title, description, event_date, event_time, location, image_url, event_type, max_attendees, registration_deadline, is_awin_hosted, live_link, host_website")
+      .select(
+        "id, title, description, event_date, event_time, location, image_url, event_type, max_attendees, registration_deadline, is_awin_hosted, live_link, host_website",
+      )
       .eq("published", true)
       .order("event_date", { ascending: true })
       .then(({ data }) => setEvents((data as EventRow[]) ?? []));
@@ -108,7 +128,9 @@ function EventsPage() {
     setMyRsvps(map);
   }, [user?.id]);
 
-  useEffect(() => { loadMyRsvps(); }, [loadMyRsvps]);
+  useEffect(() => {
+    loadMyRsvps();
+  }, [loadMyRsvps]);
 
   useEffect(() => {
     if (registering && user) {
@@ -137,7 +159,8 @@ function EventsPage() {
 
   const submitRegistration = async () => {
     if (!registering) return;
-    const { sanitizeText, sanitizeEmail, sanitizePhone, isDuplicateError } = await import("@/lib/sanitize");
+    const { sanitizeText, sanitizeEmail, sanitizePhone, isDuplicateError } =
+      await import("@/lib/sanitize");
     const cleanName = sanitizeText(reg.full_name);
     let cleanEmail = "";
     try {
@@ -201,13 +224,17 @@ function EventsPage() {
     await loadMyRsvps();
   };
 
-
   return (
     <>
       <section className="page-header px-4 py-24">
         <div className="relative mx-auto max-w-5xl animate-fade-in">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
-            <Link to="/" className="hover:text-accent transition-colors">Home</Link>
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
+          >
+            <Link to="/" className="hover:text-accent transition-colors">
+              Home
+            </Link>
             <ChevronRight className="h-3 w-3" />
             <span className="font-medium text-accent">Events &amp; Gallery</span>
           </nav>
@@ -228,7 +255,9 @@ function EventsPage() {
                 onClick={() => setFilter(f.id)}
                 className={cn(
                   "rounded-full px-5 py-2 text-sm font-medium transition-colors",
-                  filter === f.id ? "bg-primary text-primary-foreground shadow-[var(--shadow-elegant)]" : "text-muted-foreground hover:bg-secondary",
+                  filter === f.id
+                    ? "bg-primary text-primary-foreground shadow-[var(--shadow-elegant)]"
+                    : "text-muted-foreground hover:bg-secondary",
                 )}
               >
                 {f.label}
@@ -239,12 +268,17 @@ function EventsPage() {
           <h2 className="mt-10 font-serif text-2xl text-foreground">Upcoming Events</h2>
 
           {events === null ? (
-            <div className="mt-10 flex justify-center"><Loader2 className="size-6 animate-spin text-muted-foreground" /></div>
+            <div className="mt-10 flex justify-center">
+              <Loader2 className="size-6 animate-spin text-muted-foreground" />
+            </div>
           ) : filtered.length === 0 ? (
             <>
               <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {[0, 1, 2].map((i) => (
-                  <Card key={i} className="overflow-hidden border-border/60 shadow-[var(--shadow-elegant)]">
+                  <Card
+                    key={i}
+                    className="overflow-hidden border-border/60 shadow-[var(--shadow-elegant)]"
+                  >
                     <div className="relative h-44 w-full bg-muted">
                       <div className="absolute left-4 top-4 rounded-lg bg-accent/90 px-3 py-1.5 text-center text-accent-foreground shadow-md">
                         <div className="font-serif text-xl leading-none">TBC</div>
@@ -252,15 +286,24 @@ function EventsPage() {
                       </div>
                     </div>
                     <CardContent className="p-6">
-                      <h3 className="font-serif text-lg text-foreground">Event details coming soon</h3>
+                      <h3 className="font-serif text-lg text-foreground">
+                        Event details coming soon
+                      </h3>
                       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                        <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> [Date TBC]</span>
-                        <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> [Location TBC]</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5" /> [Date TBC]
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="h-3.5 w-3.5" /> [Location TBC]
+                        </span>
                       </div>
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                         Full event details will be announced soon.
                       </p>
-                      <Button asChild className="mt-5 w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                      <Button
+                        asChild
+                        className="mt-5 w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                      >
                         <Link to="/contact">Register Interest</Link>
                       </Button>
                     </CardContent>
@@ -268,9 +311,8 @@ function EventsPage() {
                 ))}
               </div>
               <p className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
-                A-Win hosts regular investment workshops, networking events, and
-                annual summits. Events are announced to members first. Join us
-                to be the first to know.
+                A-Win hosts regular investment workshops, networking events, and annual summits.
+                Events are announced to members first. Join us to be the first to know.
               </p>
             </>
           ) : (
@@ -278,9 +320,13 @@ function EventsPage() {
               {filtered.map((e, i) => {
                 const db = dateBadge(e.event_date);
                 const isPast = new Date(e.event_date).getTime() < now;
-                const cover = e.image_url || EVENT_FALLBACK_IMAGES[i % EVENT_FALLBACK_IMAGES.length];
+                const cover =
+                  e.image_url || EVENT_FALLBACK_IMAGES[i % EVENT_FALLBACK_IMAGES.length];
                 return (
-                  <Card key={e.id} className="flex h-full flex-col overflow-hidden border-border/60 shadow-[var(--shadow-elegant)] hover-scale">
+                  <Card
+                    key={e.id}
+                    className="flex h-full flex-col overflow-hidden border-border/60 shadow-[var(--shadow-elegant)] hover-scale"
+                  >
                     <button
                       type="button"
                       onClick={() => setViewingImage(e)}
@@ -294,12 +340,19 @@ function EventsPage() {
                         decoding="async"
                         className="absolute inset-0 h-full w-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent transition-opacity group-hover:from-black/60" aria-hidden="true" />
+                      <div
+                        className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent transition-opacity group-hover:from-black/60"
+                        aria-hidden="true"
+                      />
                       <div className="absolute left-4 top-4 rounded-lg bg-accent px-3 py-1.5 text-center text-accent-foreground shadow-md">
                         <div className="font-serif text-xl leading-none">{db.d}</div>
                         <div className="text-[10px] font-semibold tracking-widest">{db.m}</div>
                       </div>
-                      {isPast && <Badge className="absolute right-4 top-4 bg-background/80 text-foreground">Past</Badge>}
+                      {isPast && (
+                        <Badge className="absolute right-4 top-4 bg-background/80 text-foreground">
+                          Past
+                        </Badge>
+                      )}
                       {!e.is_awin_hosted && !isPast && (
                         <Badge className="absolute bottom-3 right-4 bg-background/90 text-foreground shadow">
                           Meet A-Win here
@@ -309,12 +362,19 @@ function EventsPage() {
                     <CardContent className="flex flex-1 flex-col p-6">
                       <h3 className="font-serif text-lg text-foreground">{e.title}</h3>
                       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                        <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {formatDate(e.event_date)}{e.event_time && ` · ${e.event_time}`}</span>
-                        <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {e.location}</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5" /> {formatDate(e.event_date)}
+                          {e.event_time && ` · ${e.event_time}`}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="h-3.5 w-3.5" /> {e.location}
+                        </span>
                       </div>
                       {!e.is_awin_hosted && (
                         <p className="mt-2 text-xs font-medium text-accent-deep">
-                          Not an A-Win event. A community event where A-Win members will be present. Tickets, stall bookings and enquiries go directly to the host (see poster).
+                          Not an A-Win event. A community event where A-Win members will be present.
+                          Tickets, stall bookings and enquiries go directly to the host (see
+                          poster).
                           {e.host_website && (
                             <>
                               {" "}
@@ -342,56 +402,64 @@ function EventsPage() {
                           Join online →
                         </a>
                       )}
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-3">{e.description}</p>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-3">
+                        {e.description}
+                      </p>
                       {/* mt-auto pins the button area to the bottom of the card regardless of how
                           much text sits above it, so buttons line up across a row. min-height keeps
                           the taller confirmed-state (badge+button) from shifting the row when it
                           appears/disappears. */}
                       <div className="mt-auto flex min-h-[88px] flex-col justify-end pt-5">
                         {(() => {
-                        const my = myRsvps[e.id];
-                        const isConfirmed = my?.status === "confirmed";
-                        if (!e.is_awin_hosted) {
-                          return (
-                            <Button className="w-full" variant="outline" onClick={() => setViewingImage(e)}>
-                              View poster &amp; details
-                            </Button>
-                          );
-                        }
-                        if (isPast) {
-                          return (
-                            <Button className="w-full" variant="outline" disabled>
-                              Event Ended
-                            </Button>
-                          );
-                        }
-                        if (isConfirmed) {
-                          return (
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-center gap-2 rounded-md bg-green-100 px-3 py-2 text-sm font-medium text-green-800 dark:bg-green-900/30 dark:text-green-200">
-                                <CheckCircle2 className="size-4" />
-                                You are registered
-                              </div>
+                          const my = myRsvps[e.id];
+                          const isConfirmed = my?.status === "confirmed";
+                          if (!e.is_awin_hosted) {
+                            return (
                               <Button
-                                variant="outline"
                                 className="w-full"
-                                onClick={() => cancelRsvp(e.id)}
-                                disabled={cancelling === e.id}
+                                variant="outline"
+                                onClick={() => setViewingImage(e)}
                               >
-                                {cancelling === e.id && <Loader2 className="size-4 mr-2 animate-spin" />}
-                                Cancel registration
+                                View poster &amp; details
                               </Button>
-                            </div>
+                            );
+                          }
+                          if (isPast) {
+                            return (
+                              <Button className="w-full" variant="outline" disabled>
+                                Event Ended
+                              </Button>
+                            );
+                          }
+                          if (isConfirmed) {
+                            return (
+                              <div className="space-y-2">
+                                <div className="flex items-center justify-center gap-2 rounded-md bg-green-100 px-3 py-2 text-sm font-medium text-green-800 dark:bg-green-900/30 dark:text-green-200">
+                                  <CheckCircle2 className="size-4" />
+                                  You are registered
+                                </div>
+                                <Button
+                                  variant="outline"
+                                  className="w-full"
+                                  onClick={() => cancelRsvp(e.id)}
+                                  disabled={cancelling === e.id}
+                                >
+                                  {cancelling === e.id && (
+                                    <Loader2 className="size-4 mr-2 animate-spin" />
+                                  )}
+                                  Cancel registration
+                                </Button>
+                              </div>
+                            );
+                          }
+                          return (
+                            <Button
+                              className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                              onClick={() => setRegistering(e)}
+                            >
+                              {my?.status === "cancelled" ? "Re-register" : "Register"}
+                            </Button>
                           );
-                        }
-                        return (
-                          <Button
-                            className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-                            onClick={() => setRegistering(e)}
-                          >
-                            {my?.status === "cancelled" ? "Re-register" : "Register"}
-                          </Button>
-                        );
                         })()}
                       </div>
                     </CardContent>
@@ -422,8 +490,13 @@ function EventsPage() {
               <DialogHeader className="p-5 pb-0">
                 <DialogTitle className="font-serif text-xl">{viewingImage.title}</DialogTitle>
                 <DialogDescription className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-                  <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {formatDate(viewingImage.event_date)}{viewingImage.event_time && ` · ${viewingImage.event_time}`}</span>
-                  <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {viewingImage.location}</span>
+                  <span className="inline-flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5" /> {formatDate(viewingImage.event_date)}
+                    {viewingImage.event_time && ` · ${viewingImage.event_time}`}
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5" /> {viewingImage.location}
+                  </span>
                 </DialogDescription>
               </DialogHeader>
               <img
@@ -432,10 +505,13 @@ function EventsPage() {
                 className="mt-4 max-h-[55vh] w-full object-contain"
               />
               <div className="p-5 pt-4 space-y-3">
-                <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap"><LinkifiedText text={viewingImage.description} /></p>
+                <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                  <LinkifiedText text={viewingImage.description} />
+                </p>
                 {!viewingImage.is_awin_hosted && (
                   <p className="text-xs font-medium text-accent-deep">
-                    This is not an A-Win event. Ticket, stall and payment enquiries go directly to the host organiser. See the poster above.
+                    This is not an A-Win event. Ticket, stall and payment enquiries go directly to
+                    the host organiser. See the poster above.
                   </p>
                 )}
               </div>
@@ -446,23 +522,37 @@ function EventsPage() {
 
       <Dialog open={!!registering} onOpenChange={(o) => !o && setRegistering(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Register for {registering?.title}</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Register for {registering?.title}</DialogTitle>
+          </DialogHeader>
           <div className="space-y-3">
             <div className="grid gap-1.5">
               <Label className="text-xs">Full name</Label>
-              <Input value={reg.full_name} onChange={(e) => setReg({ ...reg, full_name: e.target.value })} />
+              <Input
+                value={reg.full_name}
+                onChange={(e) => setReg({ ...reg, full_name: e.target.value })}
+              />
             </div>
             <div className="grid gap-1.5">
               <Label className="text-xs">Email</Label>
-              <Input type="email" value={reg.email} onChange={(e) => setReg({ ...reg, email: e.target.value })} />
+              <Input
+                type="email"
+                value={reg.email}
+                onChange={(e) => setReg({ ...reg, email: e.target.value })}
+              />
             </div>
             <div className="grid gap-1.5">
               <Label className="text-xs">Phone (optional)</Label>
-              <Input value={reg.phone} onChange={(e) => setReg({ ...reg, phone: e.target.value })} />
+              <Input
+                value={reg.phone}
+                onChange={(e) => setReg({ ...reg, phone: e.target.value })}
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setRegistering(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setRegistering(null)}>
+              Cancel
+            </Button>
             <Button onClick={submitRegistration} disabled={submitting}>
               {submitting && <Loader2 className="size-4 mr-2 animate-spin" />}Confirm Registration
             </Button>
@@ -514,11 +604,15 @@ function NewsSection() {
     <section className="py-12">
       <div className="mx-auto max-w-6xl px-4">
         <h2 className="font-serif text-2xl text-foreground">News &amp; Insights</h2>
-        <p className="mt-2 text-sm text-muted-foreground">Member stories and investment insights from the network.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Member stories and investment insights from the network.
+        </p>
         <div className="mt-8">
           {articles === null ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {[0, 1, 2].map((i) => <Skeleton key={i} className="h-72 rounded-2xl" />)}
+              {[0, 1, 2].map((i) => (
+                <Skeleton key={i} className="h-72 rounded-2xl" />
+              ))}
             </div>
           ) : articles.length === 0 ? (
             <EmptyState
@@ -538,13 +632,25 @@ function NewsSection() {
                   <Card className="h-full overflow-hidden border-border/60 transition-transform hover:-translate-y-1 hover:shadow-[var(--shadow-elegant)]">
                     <div
                       className="aspect-video w-full bg-cover bg-center"
-                      style={{ background: a.cover_image ? `url(${a.cover_image}) center/cover` : "var(--gradient-hero)" }}
+                      style={{
+                        background: a.cover_image
+                          ? `url(${a.cover_image}) center/cover`
+                          : "var(--gradient-hero)",
+                      }}
                       aria-hidden="true"
                     />
                     <CardContent className="p-6">
-                      {a.category && <Badge variant="outline" className="mb-3">{a.category}</Badge>}
+                      {a.category && (
+                        <Badge variant="outline" className="mb-3">
+                          {a.category}
+                        </Badge>
+                      )}
                       <h3 className="font-serif text-xl text-foreground">{a.title}</h3>
-                      {a.excerpt && <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{a.excerpt}</p>}
+                      {a.excerpt && (
+                        <p className="mt-3 text-sm text-muted-foreground line-clamp-3">
+                          {a.excerpt}
+                        </p>
+                      )}
                       <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
                         <div className="flex items-center gap-1.5">
                           <Calendar className="h-3.5 w-3.5" />
@@ -580,7 +686,11 @@ function NewsSection() {
               )}
               <div className="p-6 sm:p-10">
                 <DialogHeader className="text-left">
-                  {reading.category && <Badge variant="outline" className="mb-3 self-start">{reading.category}</Badge>}
+                  {reading.category && (
+                    <Badge variant="outline" className="mb-3 self-start">
+                      {reading.category}
+                    </Badge>
+                  )}
                   <DialogTitle className="font-serif text-2xl sm:text-3xl leading-tight text-foreground">
                     {reading.title}
                   </DialogTitle>

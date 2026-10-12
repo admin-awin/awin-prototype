@@ -57,7 +57,8 @@ export function SiteLayout() {
           <Outlet />
         </main>
         <footer className="border-t border-border bg-card py-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} ThuthukaSA · Authorised Financial Services Provider (FSP No. 47992)
+          © {new Date().getFullYear()} ThuthukaSA · Authorised Financial Services Provider (FSP No.
+          47992)
         </footer>
         <ScrollToTop />
       </div>

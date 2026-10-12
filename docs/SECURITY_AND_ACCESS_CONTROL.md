@@ -46,9 +46,11 @@ their own `profiles` row, so there's no security reason to lock the flag
 down further with RLS.
 
 **Resetting the 5 real committee accounts:**
+
 ```bash
 node scripts/reset-committee-passwords.mjs
 ```
+
 Requires `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` in the environment.
 Sets one shared temp password (printed at the end — hand it to the
 committee out-of-band, never over email/Slack in plaintext) and flags all
@@ -57,14 +59,14 @@ committee out-of-band, never over email/Slack in plaintext) and flags all
 ## 3. Two-person approval (maker-checker)
 
 The highest-risk admin actions no longer execute immediately. Instead, one
-admin *requests* the action, and a **different** admin must *approve* it
+admin _requests_ the action, and a **different** admin must _approve_ it
 before it actually runs. Covered today:
 
-| Action | Request fn | Execute fn |
-|---|---|---|
-| Delete member account | `requestDeleteMember` | `executeDeleteMember` |
-| Delete application | `requestDeleteApplication` | `executeDeleteApplication` |
-| Grant/revoke admin role | `requestSetUserRole` | `executeUserRoleChange` |
+| Action                  | Request fn                 | Execute fn                 |
+| ----------------------- | -------------------------- | -------------------------- |
+| Delete member account   | `requestDeleteMember`      | `executeDeleteMember`      |
+| Delete application      | `requestDeleteApplication` | `executeDeleteApplication` |
+| Grant/revoke admin role | `requestSetUserRole`       | `executeUserRoleChange`    |
 
 All in `src/lib/admin-roles.functions.ts`. The approval workflow itself
 (`listPendingApprovals`, `decideApproval`) lives in
@@ -72,11 +74,12 @@ All in `src/lib/admin-roles.functions.ts`. The approval workflow itself
 table (migration `20260806020000_two_person_approval.sql`).
 
 **Flow:**
+
 1. Admin A takes the "Delete member" / "Delete application" / "Promote or
    revoke admin" action in the UI, same typed-confirmation dialogs as
    before. This now inserts a `pending_approvals` row (`status: pending`)
    instead of running the action.
-2. Any *other* admin sees it on **Admin → Approvals**
+2. Any _other_ admin sees it on **Admin → Approvals**
    (`src/routes/admin.approvals.tsx`), which lists every pending/decided
    request with who requested it, why, and (for pending ones) Approve/Reject
    buttons — hidden if you are the requester.

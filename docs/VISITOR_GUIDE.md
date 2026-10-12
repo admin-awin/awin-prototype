@@ -4,17 +4,17 @@ A quick tour of [awin.co.za](https://awin.co.za).
 
 ## Public pages
 
-| Page | URL | What's there |
-|---|---|---|
-| Home | `/` | Overview of A-Win, quick links to join and learn more. |
-| About | `/about` | Who A-Win is and what it does. |
-| Why A-Win | `/why-a-win` | The case for joining — benefits and rationale. |
-| Membership | `/membership` | How to become a member and what membership includes; this is also where you apply to join. |
-| Events & Gallery | `/events` | Upcoming and past events, with photos. |
-| Our Members | `/members` | Public member/committee directory. |
-| FAQ | `/info` | Frequently asked questions. |
-| Contact | `/contact` | Contact form — messages go to A-Win's inbox. |
-| News | `/news` | Announcements and news posts. |
+| Page             | URL           | What's there                                                                               |
+| ---------------- | ------------- | ------------------------------------------------------------------------------------------ |
+| Home             | `/`           | Overview of A-Win, quick links to join and learn more.                                     |
+| About            | `/about`      | Who A-Win is and what it does.                                                             |
+| Why A-Win        | `/why-a-win`  | The case for joining — benefits and rationale.                                             |
+| Membership       | `/membership` | How to become a member and what membership includes; this is also where you apply to join. |
+| Events & Gallery | `/events`     | Upcoming and past events, with photos.                                                     |
+| Our Members      | `/members`    | Public member/committee directory.                                                         |
+| FAQ              | `/info`       | Frequently asked questions.                                                                |
+| Contact          | `/contact`    | Contact form — messages go to A-Win's inbox.                                               |
+| News             | `/news`       | Announcements and news posts.                                                              |
 
 ## Joining A-Win
 
@@ -31,6 +31,7 @@ If you're asked to complete a Letter of Authority and/or Risk Profile Analysis, 
 - **`/loa-rpa`** — Letter of Authority **and** full Risk Profile Analysis. Takes about 5 minutes and includes questions about your investment goals, income, and risk appetite, used to guide ThuthukaSA's advice.
 
 Both forms:
+
 - Can be signed by typing your name or drawing your signature.
 - Require you to fill in every section before you can submit — if something's missing, the page will tell you exactly what and highlight it.
 - Are submitted directly and confidentially to ThuthukaSA, in line with FAIS and POPIA — not shared with A-Win beyond the fact that you submitted one.

@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 const BOX = 380; // the crop editor fits the image within this on-screen box (either dimension)
@@ -31,7 +37,10 @@ function centeredRectForAspect(ratio: number | null, boundsW: number, boundsH: n
   if (!ratio) return { x: 0, y: 0, w: boundsW, h: boundsH };
   let w = boundsW;
   let h = w / ratio;
-  if (h > boundsH) { h = boundsH; w = h * ratio; }
+  if (h > boundsH) {
+    h = boundsH;
+    w = h * ratio;
+  }
   return { x: (boundsW - w) / 2, y: (boundsH - h) / 2, w, h };
 }
 
@@ -101,14 +110,28 @@ export function ImageCropper({
   };
 
   const onRectPointerDown = (e: React.PointerEvent) => {
-    try { (e.target as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore */ }
+    try {
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {
+      /* ignore */
+    }
     dragRef.current = { mode: "move", startX: e.clientX, startY: e.clientY, startRect: rect };
   };
 
   const onHandlePointerDown = (corner: Corner) => (e: React.PointerEvent) => {
     e.stopPropagation();
-    try { (e.target as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore */ }
-    dragRef.current = { mode: "resize", corner, startX: e.clientX, startY: e.clientY, startRect: rect };
+    try {
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {
+      /* ignore */
+    }
+    dragRef.current = {
+      mode: "resize",
+      corner,
+      startX: e.clientX,
+      startY: e.clientY,
+      startRect: rect,
+    };
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
@@ -118,7 +141,13 @@ export function ImageCropper({
     const dy = e.clientY - drag.startY;
 
     if (drag.mode === "move") {
-      setRect(clampRect({ ...drag.startRect, x: drag.startRect.x + dx, y: drag.startRect.y + dy }, dispW, dispH));
+      setRect(
+        clampRect(
+          { ...drag.startRect, x: drag.startRect.x + dx, y: drag.startRect.y + dy },
+          dispW,
+          dispH,
+        ),
+      );
       return;
     }
 
@@ -134,13 +163,16 @@ export function ImageCropper({
     if (ratio) {
       // Whichever dimension moved more (relatively) drives the other, so the
       // handle tracks the cursor's dominant axis instead of fighting it.
-      if (Math.abs(dx) > Math.abs(dy)) newH = newW / ratio; else newW = newH * ratio;
+      if (Math.abs(dx) > Math.abs(dy)) newH = newW / ratio;
+      else newW = newH * ratio;
     }
     const newX = corner === "nw" || corner === "sw" ? fixedX - newW : fixedX;
     const newY = corner === "nw" || corner === "ne" ? fixedY - newH : fixedY;
     setRect(clampRect({ x: newX, y: newY, w: newW, h: newH }, dispW, dispH));
   };
-  const onPointerUp = () => { dragRef.current = null; };
+  const onPointerUp = () => {
+    dragRef.current = null;
+  };
 
   const confirm = () => {
     if (!img || !dispW || !dispH) return;
@@ -153,8 +185,13 @@ export function ImageCropper({
     let outW = sw;
     let outH = sh;
     if (outW > MAX_OUTPUT_DIM || outH > MAX_OUTPUT_DIM) {
-      if (outW >= outH) { outH = (outH / outW) * MAX_OUTPUT_DIM; outW = MAX_OUTPUT_DIM; }
-      else { outW = (outW / outH) * MAX_OUTPUT_DIM; outH = MAX_OUTPUT_DIM; }
+      if (outW >= outH) {
+        outH = (outH / outW) * MAX_OUTPUT_DIM;
+        outW = MAX_OUTPUT_DIM;
+      } else {
+        outW = (outW / outH) * MAX_OUTPUT_DIM;
+        outH = MAX_OUTPUT_DIM;
+      }
     }
 
     const canvas = canvasRef.current!;
@@ -162,7 +199,13 @@ export function ImageCropper({
     canvas.height = Math.round(outH);
     const ctx = canvas.getContext("2d")!;
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-    canvas.toBlob((blob) => { if (blob) onCropped(blob); }, "image/jpeg", 0.92);
+    canvas.toBlob(
+      (blob) => {
+        if (blob) onCropped(blob);
+      },
+      "image/jpeg",
+      0.92,
+    );
   };
 
   const handles: { corner: Corner; style: React.CSSProperties }[] = [
@@ -171,12 +214,19 @@ export function ImageCropper({
     { corner: "sw", style: { left: rect.x, top: rect.y + rect.h } },
     { corner: "se", style: { left: rect.x + rect.w, top: rect.y + rect.h } },
   ];
-  const cursorFor: Record<Corner, string> = { nw: "nwse-resize", se: "nwse-resize", ne: "nesw-resize", sw: "nesw-resize" };
+  const cursorFor: Record<Corner, string> = {
+    nw: "nwse-resize",
+    se: "nwse-resize",
+    ne: "nesw-resize",
+    sw: "nesw-resize",
+  };
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onCancel()}>
       <DialogContent className="max-w-md">
-        <DialogHeader><DialogTitle>Adjust crop</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Adjust crop</DialogTitle>
+        </DialogHeader>
         {img ? (
           <div className="space-y-4">
             <div className="flex justify-center gap-1.5">
@@ -210,7 +260,13 @@ export function ImageCropper({
                 {/* Dim everything outside the crop rect via a giant box-shadow */}
                 <div
                   className="pointer-events-none absolute"
-                  style={{ left: rect.x, top: rect.y, width: rect.w, height: rect.h, boxShadow: "0 0 0 9999px rgba(0,0,0,0.5)" }}
+                  style={{
+                    left: rect.x,
+                    top: rect.y,
+                    width: rect.w,
+                    height: rect.h,
+                    boxShadow: "0 0 0 9999px rgba(0,0,0,0.5)",
+                  }}
                 />
               </div>
               <div
@@ -235,16 +291,23 @@ export function ImageCropper({
               ))}
             </div>
             <p className="text-center text-xs text-muted-foreground">
-              Drag inside the box to move it, drag a corner to resize. Pick an aspect ratio above, or leave it Free.
+              Drag inside the box to move it, drag a corner to resize. Pick an aspect ratio above,
+              or leave it Free.
             </p>
           </div>
         ) : (
-          <div className="flex h-[320px] items-center justify-center text-sm text-muted-foreground">Loading…</div>
+          <div className="flex h-[320px] items-center justify-center text-sm text-muted-foreground">
+            Loading…
+          </div>
         )}
         <canvas ref={canvasRef} className="hidden" />
         <DialogFooter>
-          <Button variant="ghost" onClick={onCancel}>Cancel</Button>
-          <Button onClick={confirm} disabled={!img}>Use this crop</Button>
+          <Button variant="ghost" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button onClick={confirm} disabled={!img}>
+            Use this crop
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

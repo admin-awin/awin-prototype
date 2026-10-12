@@ -1,6 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Copy, Check, Pencil, Users, Loader2, Download, Sparkles, CloudUpload } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Copy,
+  Check,
+  Pencil,
+  Users,
+  Loader2,
+  Download,
+  Sparkles,
+  CloudUpload,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,8 +21,20 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/admin/events")({
   component: EventsAdminPage,
@@ -44,9 +67,19 @@ type Registration = {
 };
 
 const empty = (): Partial<EventRow> => ({
-  title: "", description: "", event_date: "", event_time: "", location: "",
-  image_url: "", max_attendees: null, registration_deadline: "", event_type: "in-person", published: false,
-  is_awin_hosted: true, live_link: "", host_website: "",
+  title: "",
+  description: "",
+  event_date: "",
+  event_time: "",
+  location: "",
+  image_url: "",
+  max_attendees: null,
+  registration_deadline: "",
+  event_type: "in-person",
+  published: false,
+  is_awin_hosted: true,
+  live_link: "",
+  host_website: "",
 });
 
 function EventsAdminPage() {
@@ -56,10 +89,15 @@ function EventsAdminPage() {
   const [regs, setRegs] = useState<Registration[]>([]);
 
   const load = async () => {
-    const { data } = await supabase.from("events").select("*").order("event_date", { ascending: false });
+    const { data } = await supabase
+      .from("events")
+      .select("*")
+      .order("event_date", { ascending: false });
     setEvents((data as EventRow[]) ?? []);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const loadRegs = async (eventId: string) => {
     const { data } = await supabase
@@ -89,8 +127,16 @@ function EventsAdminPage() {
   const exportRegsCsv = () => {
     if (!viewingRegs) return;
     const headers = ["Name", "Email", "Phone", "Status", "Registered"];
-    const rows = regs.map((r) => [r.full_name, r.email, r.phone ?? "", r.status, new Date(r.created_at).toLocaleString()]);
-    const csv = [headers, ...rows].map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const rows = regs.map((r) => [
+      r.full_name,
+      r.email,
+      r.phone ?? "",
+      r.status,
+      new Date(r.created_at).toLocaleString(),
+    ]);
+    const csv = [headers, ...rows]
+      .map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -120,7 +166,11 @@ function EventsAdminPage() {
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(10);
     pdf.setTextColor(90, 90, 90);
-    pdf.text(`${regs.filter((r) => r.status === "confirmed").length} confirmed of ${regs.length} total`, margin, 108);
+    pdf.text(
+      `${regs.filter((r) => r.status === "confirmed").length} confirmed of ${regs.length} total`,
+      margin,
+      108,
+    );
 
     let y = 140;
     pdf.setFont("helvetica", "bold");
@@ -137,7 +187,10 @@ function EventsAdminPage() {
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(20, 20, 20);
     for (const r of regs) {
-      if (y > 780) { pdf.addPage(); y = 60; }
+      if (y > 780) {
+        pdf.addPage();
+        y = 60;
+      }
       pdf.text(r.full_name.slice(0, 28), margin, y);
       pdf.text(r.email.slice(0, 32), margin + 150, y);
       pdf.text(r.status, margin + 340, y);
@@ -173,8 +226,8 @@ function EventsAdminPage() {
       event_type: editing.event_type ?? "in-person",
       published: editing.published ?? false,
       is_awin_hosted: editing.is_awin_hosted ?? true,
-      live_link: editing.event_type === "online" ? (editing.live_link || null) : null,
-      host_website: !(editing.is_awin_hosted ?? true) ? (editing.host_website || null) : null,
+      live_link: editing.event_type === "online" ? editing.live_link || null : null,
+      host_website: !(editing.is_awin_hosted ?? true) ? editing.host_website || null : null,
     };
 
     // Detect date/time/location changes on an existing event so registered
@@ -183,10 +236,14 @@ function EventsAdminPage() {
     const changeNotes: string[] = [];
     if (before) {
       if (before.event_date !== payload.event_date) {
-        changeNotes.push(`Date changed from ${new Date(before.event_date).toLocaleDateString()} to ${new Date(payload.event_date).toLocaleDateString()}`);
+        changeNotes.push(
+          `Date changed from ${new Date(before.event_date).toLocaleDateString()} to ${new Date(payload.event_date).toLocaleDateString()}`,
+        );
       }
       if ((before.event_time ?? "") !== (payload.event_time ?? "")) {
-        changeNotes.push(`Time changed from ${before.event_time || "TBC"} to ${payload.event_time || "TBC"}`);
+        changeNotes.push(
+          `Time changed from ${before.event_time || "TBC"} to ${payload.event_time || "TBC"}`,
+        );
       }
       if (before.location !== payload.location) {
         changeNotes.push(`Location changed from "${before.location}" to "${payload.location}"`);
@@ -224,7 +281,9 @@ function EventsAdminPage() {
   const duplicate = async (e: EventRow) => {
     const { id, ...rest } = e;
     void id;
-    const { error } = await supabase.from("events").insert({ ...rest, title: `${e.title} (copy)`, published: false });
+    const { error } = await supabase
+      .from("events")
+      .insert({ ...rest, title: `${e.title} (copy)`, published: false });
     if (error) return toast.error(error.message);
     toast.success("Duplicated");
     load();
@@ -243,9 +302,15 @@ function EventsAdminPage() {
       </div>
 
       {events === null ? (
-        <div className="py-8 flex justify-center"><Loader2 className="size-5 animate-spin" /></div>
+        <div className="py-8 flex justify-center">
+          <Loader2 className="size-5 animate-spin" />
+        </div>
       ) : events.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No events yet.</CardContent></Card>
+        <Card>
+          <CardContent className="py-12 text-center text-muted-foreground">
+            No events yet.
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid gap-3">
           {events.map((e) => (
@@ -261,7 +326,8 @@ function EventsAdminPage() {
                     {!e.is_awin_hosted && <Badge variant="outline">Community event</Badge>}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(e.event_date).toLocaleDateString()} {e.event_time && `· ${e.event_time}`} · {e.location}
+                    {new Date(e.event_date).toLocaleDateString()}{" "}
+                    {e.event_time && `· ${e.event_time}`} · {e.location}
                   </p>
                   <p className="text-sm mt-2 line-clamp-2 text-muted-foreground">{e.description}</p>
                 </div>
@@ -288,43 +354,87 @@ function EventsAdminPage() {
       {/* Editor dialog */}
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editing?.id ? "Edit Event" : "New Event"}</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>{editing?.id ? "Edit Event" : "New Event"}</DialogTitle>
+          </DialogHeader>
           {editing && (
             <div className="space-y-3">
               <Field label="Title">
-                <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} />
+                <Input
+                  value={editing.title ?? ""}
+                  onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+                />
               </Field>
               <Field label="Description">
-                <Textarea rows={3} value={editing.description ?? ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} />
+                <Textarea
+                  rows={3}
+                  value={editing.description ?? ""}
+                  onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+                />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Date">
-                  <Input type="date" value={editing.event_date ?? ""} onChange={(e) => setEditing({ ...editing, event_date: e.target.value })} />
+                  <Input
+                    type="date"
+                    value={editing.event_date ?? ""}
+                    onChange={(e) => setEditing({ ...editing, event_date: e.target.value })}
+                  />
                 </Field>
                 <Field label="Time">
-                  <Input type="time" value={editing.event_time ?? ""} onChange={(e) => setEditing({ ...editing, event_time: e.target.value })} />
+                  <Input
+                    type="time"
+                    value={editing.event_time ?? ""}
+                    onChange={(e) => setEditing({ ...editing, event_time: e.target.value })}
+                  />
                 </Field>
               </div>
               <Field label="Location">
-                <Input value={editing.location ?? ""} onChange={(e) => setEditing({ ...editing, location: e.target.value })} />
+                <Input
+                  value={editing.location ?? ""}
+                  onChange={(e) => setEditing({ ...editing, location: e.target.value })}
+                />
               </Field>
               <PosterUploadExtract
                 onUploaded={(imageUrl) => setEditing((cur) => ({ ...cur, image_url: imageUrl }))}
               />
               {editing.image_url && (
-                <img src={editing.image_url} alt="Event cover preview" className="h-24 w-auto rounded-md border object-cover" />
+                <img
+                  src={editing.image_url}
+                  alt="Event cover preview"
+                  className="h-24 w-auto rounded-md border object-cover"
+                />
               )}
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Max attendees">
-                  <Input type="number" value={editing.max_attendees ?? ""} onChange={(e) => setEditing({ ...editing, max_attendees: e.target.value ? Number(e.target.value) : null })} />
+                  <Input
+                    type="number"
+                    value={editing.max_attendees ?? ""}
+                    onChange={(e) =>
+                      setEditing({
+                        ...editing,
+                        max_attendees: e.target.value ? Number(e.target.value) : null,
+                      })
+                    }
+                  />
                 </Field>
                 <Field label="Registration deadline">
-                  <Input type="date" value={editing.registration_deadline ?? ""} onChange={(e) => setEditing({ ...editing, registration_deadline: e.target.value })} />
+                  <Input
+                    type="date"
+                    value={editing.registration_deadline ?? ""}
+                    onChange={(e) =>
+                      setEditing({ ...editing, registration_deadline: e.target.value })
+                    }
+                  />
                 </Field>
               </div>
               <Field label="Event type">
-                <Select value={editing.event_type ?? "in-person"} onValueChange={(v) => setEditing({ ...editing, event_type: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={editing.event_type ?? "in-person"}
+                  onValueChange={(v) => setEditing({ ...editing, event_type: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="in-person">In-person</SelectItem>
                     <SelectItem value="online">Online</SelectItem>
@@ -341,12 +451,21 @@ function EventsAdminPage() {
                 </Field>
               )}
               <div className="flex items-center gap-2 pt-2">
-                <Switch checked={editing.published ?? false} onCheckedChange={(v) => setEditing({ ...editing, published: v })} />
+                <Switch
+                  checked={editing.published ?? false}
+                  onCheckedChange={(v) => setEditing({ ...editing, published: v })}
+                />
                 <Label>Published (visible on public events page)</Label>
               </div>
               <div className="flex items-center gap-2">
-                <Switch checked={editing.is_awin_hosted ?? true} onCheckedChange={(v) => setEditing({ ...editing, is_awin_hosted: v })} />
-                <Label>A-Win hosts this event (off = a community/partner event; A-Win members are invited to attend, ticket &amp; payment handled by the host)</Label>
+                <Switch
+                  checked={editing.is_awin_hosted ?? true}
+                  onCheckedChange={(v) => setEditing({ ...editing, is_awin_hosted: v })}
+                />
+                <Label>
+                  A-Win hosts this event (off = a community/partner event; A-Win members are invited
+                  to attend, ticket &amp; payment handled by the host)
+                </Label>
               </div>
               {!(editing.is_awin_hosted ?? true) && (
                 <Field label="Host/organizer website">
@@ -360,7 +479,9 @@ function EventsAdminPage() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setEditing(null)}>
+              Cancel
+            </Button>
             <Button onClick={save}>Save</Button>
           </DialogFooter>
         </DialogContent>
@@ -399,16 +520,22 @@ function EventsAdminPage() {
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {regs.map((r) => (
-                <div key={r.id} className="flex justify-between items-center gap-3 text-sm border-b pb-2">
+                <div
+                  key={r.id}
+                  className="flex justify-between items-center gap-3 text-sm border-b pb-2"
+                >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="font-medium truncate">{r.full_name}</p>
                       {r.status === "cancelled" && (
-                        <Badge variant="outline" className="text-xs">Cancelled</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          Cancelled
+                        </Badge>
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground truncate">
-                      {r.email}{r.phone && ` · ${r.phone}`}
+                      {r.email}
+                      {r.phone && ` · ${r.phone}`}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -517,13 +644,17 @@ function PosterUploadExtract({ onUploaded }: { onUploaded: (imageUrl: string) =>
             <Sparkles className="size-3.5" /> Prompt to fill in the fields below
           </span>
           <Button size="sm" variant="outline" onClick={copyPrompt}>
-            {copied ? <Check className="size-3.5 mr-1.5 text-primary" /> : <Copy className="size-3.5 mr-1.5" />}
+            {copied ? (
+              <Check className="size-3.5 mr-1.5 text-primary" />
+            ) : (
+              <Copy className="size-3.5 mr-1.5" />
+            )}
             {copied ? "Copied" : "Copy"}
           </Button>
         </div>
         <p className="mt-1.5 text-xs text-muted-foreground">
-          Copy this, paste it into any AI chat along with the poster image, then type the results into the
-          fields below.
+          Copy this, paste it into any AI chat along with the poster image, then type the results
+          into the fields below.
         </p>
       </div>
     </div>

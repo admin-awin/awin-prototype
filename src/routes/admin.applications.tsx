@@ -10,7 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { requestDeleteApplication } from "@/lib/admin-roles.functions";
 
@@ -42,7 +49,9 @@ type Application = {
 
 function ApplicationsPage() {
   const [apps, setApps] = useState<Application[] | null>(null);
-  const [tab, setTab] = useState<"pending" | "under_review" | "approved" | "rejected" | "all">("pending");
+  const [tab, setTab] = useState<"pending" | "under_review" | "approved" | "rejected" | "all">(
+    "pending",
+  );
   const [viewing, setViewing] = useState<Application | null>(null);
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -60,7 +69,9 @@ function ApplicationsPage() {
     setApps((data as Application[]) ?? []);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   useEffect(() => {
     setNotes(viewing?.admin_notes ?? "");
@@ -101,7 +112,10 @@ function ApplicationsPage() {
   const saveNotes = async (a: Application) => {
     setBusy(a.id + "notes");
     const tId = toast.loading("Saving note…");
-    const { error } = await supabase.from("applications").update({ admin_notes: notes }).eq("id", a.id);
+    const { error } = await supabase
+      .from("applications")
+      .update({ admin_notes: notes })
+      .eq("id", a.id);
     setBusy(null);
     if (error) return toast.error(error.message, { id: tId });
     toast.success("Note saved", { id: tId });
@@ -114,7 +128,9 @@ function ApplicationsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-2xl md:text-3xl">Applications</h1>
-        <p className="text-sm text-muted-foreground">Review applications and update each applicant's status.</p>
+        <p className="text-sm text-muted-foreground">
+          Review applications and update each applicant's status.
+        </p>
       </div>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
@@ -130,7 +146,9 @@ function ApplicationsPage() {
       <Card>
         <CardContent className="pt-6">
           {apps === null ? (
-            <div className="py-8 flex justify-center"><Loader2 className="size-5 animate-spin" /></div>
+            <div className="py-8 flex justify-center">
+              <Loader2 className="size-5 animate-spin" />
+            </div>
           ) : filtered.length === 0 ? (
             <p className="text-sm text-muted-foreground py-8 text-center">No applications.</p>
           ) : (
@@ -154,7 +172,9 @@ function ApplicationsPage() {
                       <td className="py-3 pr-3 text-muted-foreground">
                         {new Date(a.submitted_at ?? a.created_at).toLocaleDateString()}
                       </td>
-                      <td className="py-3 pr-3"><StatusPill status={a.status} /></td>
+                      <td className="py-3 pr-3">
+                        <StatusPill status={a.status} />
+                      </td>
                       <td className="py-3">
                         <Button size="sm" variant="ghost" onClick={() => setViewing(a)}>
                           <Eye className="size-3.5 mr-1" /> Review
@@ -186,12 +206,16 @@ function ApplicationsPage() {
               <Row label="Experience" value={viewing.experience} />
 
               <div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Motivation</div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                  Motivation
+                </div>
                 <p className="bg-muted/40 rounded p-3 whitespace-pre-wrap">{viewing.motivation}</p>
               </div>
 
               <div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Timeline</div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+                  Timeline
+                </div>
                 <Timeline app={viewing} />
               </div>
 
@@ -212,14 +236,22 @@ function ApplicationsPage() {
                   disabled={busy === viewing.id + "notes"}
                   onClick={() => saveNotes(viewing)}
                 >
-                  {busy === viewing.id + "notes" ? <Loader2 className="size-3.5 mr-1 animate-spin" /> : <Save className="size-3.5 mr-1" />}
+                  {busy === viewing.id + "notes" ? (
+                    <Loader2 className="size-3.5 mr-1 animate-spin" />
+                  ) : (
+                    <Save className="size-3.5 mr-1" />
+                  )}
                   Save note
                 </Button>
               </div>
 
               <div className="flex flex-wrap gap-2 pt-2 border-t">
                 {viewing.status !== "under_review" && (
-                  <Button variant="outline" disabled={!!busy} onClick={() => setStatus(viewing, "under_review")}>
+                  <Button
+                    variant="outline"
+                    disabled={!!busy}
+                    onClick={() => setStatus(viewing, "under_review")}
+                  >
                     <Eye className="size-4 mr-1" /> Mark Under Review
                   </Button>
                 )}
@@ -229,12 +261,20 @@ function ApplicationsPage() {
                   </Button>
                 )}
                 {viewing.status !== "rejected" && (
-                  <Button variant="outline" disabled={!!busy} onClick={() => setStatus(viewing, "rejected")}>
+                  <Button
+                    variant="outline"
+                    disabled={!!busy}
+                    onClick={() => setStatus(viewing, "rejected")}
+                  >
                     <X className="size-4 mr-1" /> Reject
                   </Button>
                 )}
                 {viewing.status !== "pending" && (
-                  <Button variant="ghost" disabled={!!busy} onClick={() => setStatus(viewing, "pending")}>
+                  <Button
+                    variant="ghost"
+                    disabled={!!busy}
+                    onClick={() => setStatus(viewing, "pending")}
+                  >
                     Reset to Submitted
                   </Button>
                 )}
@@ -265,32 +305,46 @@ function ApplicationsPage() {
           <DialogHeader>
             <DialogTitle className="text-destructive">Delete Application</DialogTitle>
             <DialogDescription>
-              This permanently removes {deleting?.full_name}'s application. This cannot be undone. This
-              request needs approval from a different admin before it takes effect (see Admin → Approvals).
+              This permanently removes {deleting?.full_name}'s application. This cannot be undone.
+              This request needs approval from a different admin before it takes effect (see Admin →
+              Approvals).
             </DialogDescription>
           </DialogHeader>
           {deleting && (
             <div className="space-y-3">
               <div className="grid gap-1.5">
                 <Label className="text-xs">
-                  Type the applicant's name to confirm: <span className="font-medium">{deleting.full_name}</span>
+                  Type the applicant's name to confirm:{" "}
+                  <span className="font-medium">{deleting.full_name}</span>
                 </Label>
-                <Input value={deleteConfirmName} onChange={(e) => setDeleteConfirmName(e.target.value)} autoComplete="off" />
+                <Input
+                  value={deleteConfirmName}
+                  onChange={(e) => setDeleteConfirmName(e.target.value)}
+                  autoComplete="off"
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label className="text-xs">Reason (audit log, min 5 chars)</Label>
-                <Textarea value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} rows={2} placeholder="e.g. Duplicate submission, real one already approved" />
+                <Textarea
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                  rows={2}
+                  placeholder="e.g. Duplicate submission, real one already approved"
+                />
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDeleting(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setDeleting(null)}>
+              Cancel
+            </Button>
             <Button
               variant="destructive"
               disabled={
                 deleteBusy ||
                 !deleting ||
-                deleteConfirmName.trim().toLowerCase() !== (deleting?.full_name ?? "").trim().toLowerCase() ||
+                deleteConfirmName.trim().toLowerCase() !==
+                  (deleting?.full_name ?? "").trim().toLowerCase() ||
                 deleteReason.trim().length < 5
               }
               onClick={async () => {
@@ -298,9 +352,15 @@ function ApplicationsPage() {
                 setDeleteBusy(true);
                 try {
                   await callDeleteApplication({
-                    data: { application_id: deleting.id, confirm_name: deleteConfirmName.trim(), reason: deleteReason.trim() },
+                    data: {
+                      application_id: deleting.id,
+                      confirm_name: deleteConfirmName.trim(),
+                      reason: deleteReason.trim(),
+                    },
                   });
-                  toast.success("Deletion request submitted — needs approval from a different admin");
+                  toast.success(
+                    "Deletion request submitted — needs approval from a different admin",
+                  );
                   setDeleting(null);
                 } catch (e: any) {
                   toast.error(e.message ?? "Failed to submit deletion request");
@@ -309,7 +369,11 @@ function ApplicationsPage() {
                 }
               }}
             >
-              {deleteBusy ? <Loader2 className="size-4 mr-2 animate-spin" /> : <Trash2 className="size-4 mr-2" />}
+              {deleteBusy ? (
+                <Loader2 className="size-4 mr-2 animate-spin" />
+              ) : (
+                <Trash2 className="size-4 mr-2" />
+              )}
               Request deletion
             </Button>
           </DialogFooter>
@@ -329,7 +393,13 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 function labelFor(s: AppStatus) {
-  return s === "pending" ? "Submitted" : s === "under_review" ? "Under Review" : s === "approved" ? "Approved" : "Rejected";
+  return s === "pending"
+    ? "Submitted"
+    : s === "under_review"
+      ? "Under Review"
+      : s === "approved"
+        ? "Approved"
+        : "Rejected";
 }
 
 function StatusPill({ status }: { status: AppStatus }) {
@@ -339,11 +409,16 @@ function StatusPill({ status }: { status: AppStatus }) {
     approved: "bg-green-500/15 text-green-700 dark:text-green-400",
     rejected: "bg-destructive/15 text-destructive",
   };
-  return <Badge variant="outline" className={map[status] ?? ""}>{labelFor(status)}</Badge>;
+  return (
+    <Badge variant="outline" className={map[status] ?? ""}>
+      {labelFor(status)}
+    </Badge>
+  );
 }
 
 function Timeline({ app }: { app: Application }) {
-  const fmt = (d: string | null) => (d ? new Date(d).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : null);
+  const fmt = (d: string | null) =>
+    d ? new Date(d).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : null;
   const steps = [
     { label: "Submitted", at: fmt(app.submitted_at ?? app.created_at), Icon: Send, done: true },
     {
@@ -371,7 +446,11 @@ function Timeline({ app }: { app: Application }) {
             <s.Icon className="size-3" />
           </span>
           <div className="flex flex-wrap items-baseline gap-x-3">
-            <p className={`text-sm font-medium ${s.done ? "text-foreground" : "text-muted-foreground"}`}>{s.label}</p>
+            <p
+              className={`text-sm font-medium ${s.done ? "text-foreground" : "text-muted-foreground"}`}
+            >
+              {s.label}
+            </p>
             <p className="text-xs text-muted-foreground">{s.at ?? "Pending"}</p>
           </div>
         </li>

@@ -1,6 +1,17 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, FileCheck2, ShieldCheck, Upload, PenLine, Loader2, Stamp, Wallet } from "lucide-react";
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  FileCheck2,
+  ShieldCheck,
+  Upload,
+  PenLine,
+  Loader2,
+  Stamp,
+  Wallet,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,7 +29,11 @@ export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
       { title: "Onboarding | A-Win" },
-      { name: "description", content: "Complete your A-Win membership onboarding: personal details, consent, agreement and proof of payment." },
+      {
+        name: "description",
+        content:
+          "Complete your A-Win membership onboarding: personal details, consent, agreement and proof of payment.",
+      },
     ],
   }),
   component: OnboardingPage,
@@ -113,11 +128,16 @@ function OnboardingPage() {
       const email = data.user?.email ?? "";
       setUserId(uid);
       setUserEmail(email);
-      if (!uid) { setResuming(false); return; }
+      if (!uid) {
+        setResuming(false);
+        return;
+      }
 
       const { data: app } = await supabase
         .from("applications")
-        .select("id, full_name, phone, id_number, occupation, employer, motivation, popia_consent, proof_of_payment_path, payment_reference, signature_typed_name, agreement_accepted_at")
+        .select(
+          "id, full_name, phone, id_number, occupation, employer, motivation, popia_consent, proof_of_payment_path, payment_reference, signature_typed_name, agreement_accepted_at",
+        )
         .eq("user_id", uid)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -137,7 +157,13 @@ function OnboardingPage() {
         setAlreadyHasProof(!!app.proof_of_payment_path);
         setHadProofFromApply(!!app.proof_of_payment_path);
 
-        const detailsDone = !!(app.full_name && app.phone && app.id_number && app.occupation && (app.motivation?.length ?? 0) > 0);
+        const detailsDone = !!(
+          app.full_name &&
+          app.phone &&
+          app.id_number &&
+          app.occupation &&
+          (app.motivation?.length ?? 0) > 0
+        );
         const signDone = !!(app.signature_typed_name && app.agreement_accepted_at);
         if (signDone) {
           // The agreement is already signed and submitted — don't ask again.
@@ -162,18 +188,27 @@ function OnboardingPage() {
       }
       setResuming(false);
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const nameMatches = useMemo(
-    () => typedSignature.trim().toLowerCase() === fullName.trim().toLowerCase() && typedSignature.trim().length > 2,
+    () =>
+      typedSignature.trim().toLowerCase() === fullName.trim().toLowerCase() &&
+      typedSignature.trim().length > 2,
     [typedSignature, fullName],
   );
 
   // Fair-use validators
   const idValid = /^\d{13}$/.test(idNumber.replace(/\s+/g, ""));
   const phoneValid = /^[+\d\s()-]{8,}$/.test(phone);
-  const step0Valid = fullName.trim().length > 2 && phoneValid && idValid && occupation.trim().length > 1 && motivation.trim().length > 20;
+  const step0Valid =
+    fullName.trim().length > 2 &&
+    phoneValid &&
+    idValid &&
+    occupation.trim().length > 1 &&
+    motivation.trim().length > 20;
   const step1Valid = popia;
   const step2Valid = agree && nameMatches && drawnSignature.length > 0;
   const step3Valid = alreadyHasProof || (!!popFile && paymentRef.trim().length > 2);
@@ -236,7 +271,10 @@ function OnboardingPage() {
       }
 
       const { error } = applicationId
-        ? await supabase.from("applications").update(payload as never).eq("id", applicationId)
+        ? await supabase
+            .from("applications")
+            .update(payload as never)
+            .eq("id", applicationId)
         : await supabase.from("applications").insert(payload as never);
       if (error) throw error;
 
@@ -245,7 +283,9 @@ function OnboardingPage() {
       // Confirmation email — fire and forget, submission already succeeded.
       if (userEmail) {
         void import("@/lib/email.functions").then(({ sendApplicationReceivedEmail }) =>
-          sendApplicationReceivedEmail({ data: { email: userEmail, fullName: fullName.trim() } }).catch(() => {}),
+          sendApplicationReceivedEmail({
+            data: { email: userEmail, fullName: fullName.trim() },
+          }).catch(() => {}),
         );
       }
     } catch (err: any) {
@@ -260,7 +300,9 @@ function OnboardingPage() {
     <>
       <section className="page-header px-4 py-16 md:py-20">
         <div className="relative mx-auto max-w-5xl">
-          <Badge className="bg-accent/15 text-accent-deep hover:bg-accent/15">Membership Onboarding</Badge>
+          <Badge className="bg-accent/15 text-accent-deep hover:bg-accent/15">
+            Membership Onboarding
+          </Badge>
           <h1 className="mt-4 font-serif text-foreground">Join the sisterhood in one flow</h1>
           <p className="mt-3 max-w-2xl text-foreground/80">
             Just a couple of things left: sign the membership agreement and confirm your details.
@@ -288,12 +330,23 @@ function OnboardingPage() {
                   <div
                     className={cn(
                       "flex size-9 items-center justify-center rounded-full border-2 text-xs font-bold transition-colors",
-                      done ? "border-primary bg-primary text-white" : current ? "border-accent bg-accent text-accent-foreground" : "border-border bg-background text-muted-foreground",
+                      done
+                        ? "border-primary bg-primary text-white"
+                        : current
+                          ? "border-accent bg-accent text-accent-foreground"
+                          : "border-border bg-background text-muted-foreground",
                     )}
                   >
                     {done ? <Check className="size-4" /> : <Icon className="size-4" />}
                   </div>
-                  <span className={cn("text-[10px] uppercase tracking-widest", current ? "text-accent-deep font-semibold" : "text-muted-foreground")}>{s.label}</span>
+                  <span
+                    className={cn(
+                      "text-[10px] uppercase tracking-widest",
+                      current ? "text-accent-deep font-semibold" : "text-muted-foreground",
+                    )}
+                  >
+                    {s.label}
+                  </span>
                 </li>
               );
             })}
@@ -306,262 +359,369 @@ function OnboardingPage() {
                   <Loader2 className="size-6 animate-spin text-muted-foreground" />
                 </div>
               ) : (
-              <>
-              {!userId && step < 5 && (
-                <div className="rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm">
-                  You will need to <button className="font-semibold underline" onClick={requireLogin}>sign in</button> before submitting. You can fill everything in first.
-                </div>
-              )}
+                <>
+                  {!userId && step < 5 && (
+                    <div className="rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm">
+                      You will need to{" "}
+                      <button className="font-semibold underline" onClick={requireLogin}>
+                        sign in
+                      </button>{" "}
+                      before submitting. You can fill everything in first.
+                    </div>
+                  )}
 
-              {(applicationId && step > 0) && step < 5 && (
-                <div className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-xs text-foreground/80">
-                  <Check className="mt-0.5 size-4 shrink-0 text-primary" />
-                  <p>We've carried over what you already told us when you applied — just review and continue.</p>
-                </div>
-              )}
+                  {applicationId && step > 0 && step < 5 && (
+                    <div className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-xs text-foreground/80">
+                      <Check className="mt-0.5 size-4 shrink-0 text-primary" />
+                      <p>
+                        We've carried over what you already told us when you applied — just review
+                        and continue.
+                      </p>
+                    </div>
+                  )}
 
-              {step === 0 && (
-                <div className="space-y-4">
-                  <h2 className="font-serif text-2xl text-foreground">Your details</h2>
-                  <p className="text-sm text-muted-foreground">These details are stored securely and used only for membership administration.</p>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                      <Label>Full legal name *</Label>
-                      <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Jane Nokuthula Dlamini" />
-                    </div>
-                    <div>
-                      <Label>Phone *</Label>
-                      <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 82 123 4567" />
-                      {phone && !phoneValid && <p className="mt-1 text-xs text-destructive">Enter a valid phone number.</p>}
-                    </div>
-                    <div>
-                      <Label>SA ID number *</Label>
-                      <Input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} placeholder="13 digits" maxLength={13} />
-                      {idNumber && !idValid && <p className="mt-1 text-xs text-destructive">SA ID must be 13 digits.</p>}
-                    </div>
-                    <div>
-                      <Label>Occupation *</Label>
-                      <Input value={occupation} onChange={(e) => setOccupation(e.target.value)} placeholder="e.g. Attorney" />
-                    </div>
-                    <div className="md:col-span-2">
-                      <Label>Employer (optional)</Label>
-                      <Input value={employer} onChange={(e) => setEmployer(e.target.value)} />
-                    </div>
-                    <div className="md:col-span-2">
-                      <Label>Why do you want to join A-Win? *</Label>
-                      <Textarea value={motivation} onChange={(e) => setMotivation(e.target.value)} rows={4} placeholder="Share your goals and what you hope to contribute (min. 20 characters)." />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {step === 1 && (
-                <div className="space-y-4">
-                  <h2 className="font-serif text-2xl text-foreground">POPIA consent</h2>
-                  <div className="rounded-lg border border-border bg-secondary/30 p-4 text-sm leading-relaxed text-foreground/90">
-                    <p><strong>How we use your data.</strong> A-Win processes your personal information under the Protection of Personal Information Act (POPIA) for the purposes of: (a) member administration, (b) investment record keeping, (c) sending you A-Win updates, and (d) legal or regulatory compliance.</p>
-                    <p className="mt-3"><strong>Your rights.</strong> You may request access to, correction of, or deletion of your personal information at any time by emailing the Main Committee. We will not share your data with third parties without your consent, except where required by law.</p>
-                    <p className="mt-3"><strong>Retention.</strong> Membership records are retained for the duration of your membership plus 5 years, in line with FICA requirements.</p>
-                  </div>
-                  <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
-                    <Checkbox checked={popia} onCheckedChange={(v) => setPopia(!!v)} className="mt-0.5" />
-                    <span className="text-sm">
-                      I have read and I consent to A-Win processing my personal information for the purposes described above, in terms of POPIA.
-                    </span>
-                  </label>
-                </div>
-              )}
-
-              {step === 2 && (
-                <div className="space-y-4">
-                  <h2 className="font-serif text-2xl text-foreground">Membership agreement</h2>
-                  <div className="max-h-72 overflow-y-auto rounded-lg border border-border bg-secondary/20 p-4 text-sm leading-relaxed whitespace-pre-line">
-                    {AGREEMENT_TEXT}
-                  </div>
-                  <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
-                    <Checkbox checked={agree} onCheckedChange={(v) => setAgree(!!v)} className="mt-0.5" />
-                    <span className="text-sm">
-                      I have read the agreement in full and I agree to be bound by its terms.
-                    </span>
-                  </label>
-                  <div>
-                    <Label>Type your full legal name to sign *</Label>
-                    <Input
-                      value={typedSignature}
-                      onChange={(e) => setTypedSignature(e.target.value)}
-                      placeholder={fullName || "Type your full name exactly as above"}
-                      className="font-serif text-lg italic"
-                    />
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Your typed name must match the full legal name from step 1.
-                    </p>
-                    {typedSignature && !nameMatches && (
-                      <p className="mt-1 text-xs text-destructive">Signature does not match your full legal name.</p>
-                    )}
-                  </div>
-                  <div>
-                    <Label>Draw your signature *</Label>
-                    <SignaturePad value={drawnSignature} onChange={setDrawnSignature} />
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      We keep your typed name, drawn signature, timestamp, browser and agreement version as a full audit trail: the equivalent of a wet signature under the ECT Act.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div className="space-y-4">
-                  <h2 className="font-serif text-2xl text-foreground">Pay by EFT</h2>
-                  {alreadyHasProof && !popFile ? (
-                    <>
-                      <div className="flex items-start gap-3 rounded-lg border border-primary/40 bg-primary/5 p-4 text-sm">
-                        <Check className="mt-0.5 size-4 shrink-0 text-primary" />
+                  {step === 0 && (
+                    <div className="space-y-4">
+                      <h2 className="font-serif text-2xl text-foreground">Your details</h2>
+                      <p className="text-sm text-muted-foreground">
+                        These details are stored securely and used only for membership
+                        administration.
+                      </p>
+                      <div className="grid gap-4 md:grid-cols-2">
                         <div>
-                          <p className="font-medium text-foreground">Proof of payment already received</p>
-                          <p className="mt-0.5 text-muted-foreground">
-                            You uploaded this when you applied — no need to do it again. Reference: <span className="font-mono">{paymentRef || "—"}</span>
-                          </p>
+                          <Label>Full legal name *</Label>
+                          <Input
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            placeholder="Jane Nokuthula Dlamini"
+                          />
+                        </div>
+                        <div>
+                          <Label>Phone *</Label>
+                          <Input
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="+27 82 123 4567"
+                          />
+                          {phone && !phoneValid && (
+                            <p className="mt-1 text-xs text-destructive">
+                              Enter a valid phone number.
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <Label>SA ID number *</Label>
+                          <Input
+                            value={idNumber}
+                            onChange={(e) => setIdNumber(e.target.value)}
+                            placeholder="13 digits"
+                            maxLength={13}
+                          />
+                          {idNumber && !idValid && (
+                            <p className="mt-1 text-xs text-destructive">
+                              SA ID must be 13 digits.
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <Label>Occupation *</Label>
+                          <Input
+                            value={occupation}
+                            onChange={(e) => setOccupation(e.target.value)}
+                            placeholder="e.g. Attorney"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <Label>Employer (optional)</Label>
+                          <Input value={employer} onChange={(e) => setEmployer(e.target.value)} />
+                        </div>
+                        <div className="md:col-span-2">
+                          <Label>Why do you want to join A-Win? *</Label>
+                          <Textarea
+                            value={motivation}
+                            onChange={(e) => setMotivation(e.target.value)}
+                            rows={4}
+                            placeholder="Share your goals and what you hope to contribute (min. 20 characters)."
+                          />
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => setAlreadyHasProof(false)}>
-                        Upload a different proof of payment
-                      </Button>
-                    </>
-                  ) : (
-                    <>
+                    </div>
+                  )}
+
+                  {step === 1 && (
+                    <div className="space-y-4">
+                      <h2 className="font-serif text-2xl text-foreground">POPIA consent</h2>
+                      <div className="rounded-lg border border-border bg-secondary/30 p-4 text-sm leading-relaxed text-foreground/90">
+                        <p>
+                          <strong>How we use your data.</strong> A-Win processes your personal
+                          information under the Protection of Personal Information Act (POPIA) for
+                          the purposes of: (a) member administration, (b) investment record keeping,
+                          (c) sending you A-Win updates, and (d) legal or regulatory compliance.
+                        </p>
+                        <p className="mt-3">
+                          <strong>Your rights.</strong> You may request access to, correction of, or
+                          deletion of your personal information at any time by emailing the Main
+                          Committee. We will not share your data with third parties without your
+                          consent, except where required by law.
+                        </p>
+                        <p className="mt-3">
+                          <strong>Retention.</strong> Membership records are retained for the
+                          duration of your membership plus 5 years, in line with FICA requirements.
+                        </p>
+                      </div>
+                      <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
+                        <Checkbox
+                          checked={popia}
+                          onCheckedChange={(v) => setPopia(!!v)}
+                          className="mt-0.5"
+                        />
+                        <span className="text-sm">
+                          I have read and I consent to A-Win processing my personal information for
+                          the purposes described above, in terms of POPIA.
+                        </span>
+                      </label>
+                    </div>
+                  )}
+
+                  {step === 2 && (
+                    <div className="space-y-4">
+                      <h2 className="font-serif text-2xl text-foreground">Membership agreement</h2>
+                      <div className="max-h-72 overflow-y-auto rounded-lg border border-border bg-secondary/20 p-4 text-sm leading-relaxed whitespace-pre-line">
+                        {AGREEMENT_TEXT}
+                      </div>
+                      <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
+                        <Checkbox
+                          checked={agree}
+                          onCheckedChange={(v) => setAgree(!!v)}
+                          className="mt-0.5"
+                        />
+                        <span className="text-sm">
+                          I have read the agreement in full and I agree to be bound by its terms.
+                        </span>
+                      </label>
+                      <div>
+                        <Label>Type your full legal name to sign *</Label>
+                        <Input
+                          value={typedSignature}
+                          onChange={(e) => setTypedSignature(e.target.value)}
+                          placeholder={fullName || "Type your full name exactly as above"}
+                          className="font-serif text-lg italic"
+                        />
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Your typed name must match the full legal name from step 1.
+                        </p>
+                        {typedSignature && !nameMatches && (
+                          <p className="mt-1 text-xs text-destructive">
+                            Signature does not match your full legal name.
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <Label>Draw your signature *</Label>
+                        <SignaturePad value={drawnSignature} onChange={setDrawnSignature} />
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          We keep your typed name, drawn signature, timestamp, browser and agreement
+                          version as a full audit trail: the equivalent of a wet signature under the
+                          ECT Act.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 3 && (
+                    <div className="space-y-4">
+                      <h2 className="font-serif text-2xl text-foreground">Pay by EFT</h2>
+                      {alreadyHasProof && !popFile ? (
+                        <>
+                          <div className="flex items-start gap-3 rounded-lg border border-primary/40 bg-primary/5 p-4 text-sm">
+                            <Check className="mt-0.5 size-4 shrink-0 text-primary" />
+                            <div>
+                              <p className="font-medium text-foreground">
+                                Proof of payment already received
+                              </p>
+                              <p className="mt-0.5 text-muted-foreground">
+                                You uploaded this when you applied — no need to do it again.
+                                Reference: <span className="font-mono">{paymentRef || "—"}</span>
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setAlreadyHasProof(false)}
+                          >
+                            Upload a different proof of payment
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-sm text-muted-foreground">
+                            Copy the details below into your banking app, then upload your proof of
+                            payment. Your reference is generated automatically so the treasurer can
+                            auto-match your payment.
+                          </p>
+                          <EftPanel
+                            fullName={fullName}
+                            userSeed={userId ?? userEmail}
+                            purpose={purpose}
+                            onPurposeChange={setPurpose}
+                            file={popFile}
+                            onFileChange={setPopFile}
+                            onReferenceChange={setPaymentRef}
+                          />
+                          {hadProofFromApply && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setAlreadyHasProof(true);
+                                setPopFile(null);
+                              }}
+                            >
+                              Never mind, keep my original proof of payment
+                            </Button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {step === 4 && (
+                    <div className="space-y-4">
+                      <h2 className="font-serif text-2xl text-foreground">
+                        Stamped membership record
+                      </h2>
                       <p className="text-sm text-muted-foreground">
-                        Copy the details below into your banking app, then upload your proof of payment. Your reference is generated automatically so the treasurer can auto-match your payment.
+                        This is how your certified record will look once the Main Committee has
+                        reviewed your proof of payment. Sensitive information is blurred to protect
+                        your privacy.
                       </p>
-                      <EftPanel
+
+                      <StampedDocPreview
                         fullName={fullName}
-                        userSeed={userId ?? userEmail}
+                        idNumber={idNumber}
+                        phone={phone}
+                        occupation={occupation}
+                        motivation={motivation}
+                        typedSignature={typedSignature}
+                        drawnSignature={drawnSignature}
+                        reference={paymentRef}
                         purpose={purpose}
-                        onPurposeChange={setPurpose}
-                        file={popFile}
-                        onFileChange={setPopFile}
-                        onReferenceChange={setPaymentRef}
+                        docHash={docHash}
                       />
-                      {hadProofFromApply && (
-                        <Button variant="ghost" size="sm" onClick={() => { setAlreadyHasProof(true); setPopFile(null); }}>
-                          Never mind, keep my original proof of payment
+
+                      <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
+                        <Checkbox
+                          checked={stampAcknowledged}
+                          onCheckedChange={(v) => setStampAcknowledged(!!v)}
+                          className="mt-0.5"
+                        />
+                        <span className="text-sm">
+                          I confirm the details above are correct and I authorise the Main Committee
+                          to stamp and register my membership on verification.
+                        </span>
+                      </label>
+                    </div>
+                  )}
+
+                  {step === 5 && (
+                    <div className="space-y-4 text-center py-8">
+                      <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/15 text-primary">
+                        <Check className="size-8" />
+                      </div>
+                      <h2 className="font-serif text-2xl text-foreground">
+                        {alreadySigned ? "You've already completed this" : "You're all set"}
+                      </h2>
+                      <p className="mx-auto max-w-md text-sm text-muted-foreground">
+                        {alreadySigned
+                          ? "Your membership agreement is signed and on file. The Main Committee will verify your proof of payment and confirm your membership by email within 5 working days."
+                          : "Your onboarding has been submitted. The Main Committee will verify your proof of payment and confirm your membership by email within 5 working days."}
+                      </p>
+
+                      {loaRpaDone ? (
+                        <div className="mx-auto mt-4 max-w-md rounded-xl border border-primary/30 bg-primary/5 p-5 text-left">
+                          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
+                            <Check className="size-4" /> Also done
+                          </div>
+                          <h3 className="mt-2 font-serif text-lg text-foreground">
+                            Letter of Authority &amp; Risk Profile
+                          </h3>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            Already submitted — nothing more needed here.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="mx-auto mt-4 max-w-md rounded-xl border border-accent/40 bg-accent/10 p-5 text-left">
+                          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-accent">
+                            <ShieldCheck className="size-4" /> One more step
+                          </div>
+                          <h3 className="mt-2 font-serif text-lg text-foreground">
+                            Complete your Letter of Authority &amp; Risk Profile
+                          </h3>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            Required by ThuthukaSA (FSP No. 47992) so we can guide your investment
+                            appropriately. Takes about 5 minutes.
+                          </p>
+                          <Button
+                            asChild
+                            className="mt-4 w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                          >
+                            <Link to="/loa-rpa">
+                              Start LOA &amp; Risk Profile <ChevronRight className="ml-1 size-4" />
+                            </Link>
+                          </Button>
+                        </div>
+                      )}
+
+                      <div className="flex justify-center gap-3 pt-2">
+                        <Button asChild variant="outline">
+                          <Link to="/">Back to home</Link>
+                        </Button>
+                        <Button asChild variant="outline">
+                          <Link to="/portal">Go to my portal</Link>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Nav buttons */}
+                  {step < 5 && (
+                    <div className="flex items-center justify-between border-t border-border pt-4">
+                      <Button
+                        variant="ghost"
+                        onClick={() => setStep((s) => (s > 0 ? ((s - 1) as Step) : s))}
+                        disabled={step === 0 || submitting}
+                      >
+                        <ChevronLeft className="mr-1 size-4" /> Back
+                      </Button>
+                      {step < 4 ? (
+                        <Button
+                          onClick={() => setStep((s) => (s + 1) as Step)}
+                          disabled={!canGoNext}
+                          className="bg-accent text-accent-foreground hover:bg-accent/90"
+                        >
+                          Continue <ChevronRight className="ml-1 size-4" />
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={submit}
+                          disabled={!canGoNext || submitting}
+                          className="bg-accent text-accent-foreground hover:bg-accent/90"
+                        >
+                          {submitting ? (
+                            <>
+                              <Loader2 className="mr-1 size-4 animate-spin" /> Submitting…
+                            </>
+                          ) : (
+                            <>
+                              Submit onboarding <Check className="ml-1 size-4" />
+                            </>
+                          )}
                         </Button>
                       )}
-                    </>
-                  )}
-                </div>
-              )}
-
-              {step === 4 && (
-                <div className="space-y-4">
-                  <h2 className="font-serif text-2xl text-foreground">Stamped membership record</h2>
-                  <p className="text-sm text-muted-foreground">
-                    This is how your certified record will look once the Main Committee has reviewed your proof of payment. Sensitive information is blurred to protect your privacy.
-                  </p>
-
-                  <StampedDocPreview
-                    fullName={fullName}
-                    idNumber={idNumber}
-                    phone={phone}
-                    occupation={occupation}
-                    motivation={motivation}
-                    typedSignature={typedSignature}
-                    drawnSignature={drawnSignature}
-                    reference={paymentRef}
-                    purpose={purpose}
-                    docHash={docHash}
-                  />
-
-                  <label className="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer hover:bg-secondary/30">
-                    <Checkbox checked={stampAcknowledged} onCheckedChange={(v) => setStampAcknowledged(!!v)} className="mt-0.5" />
-                    <span className="text-sm">
-                      I confirm the details above are correct and I authorise the Main Committee to stamp and register my membership on verification.
-                    </span>
-                  </label>
-                </div>
-              )}
-
-              {step === 5 && (
-                <div className="space-y-4 text-center py-8">
-                  <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/15 text-primary">
-                    <Check className="size-8" />
-                  </div>
-                  <h2 className="font-serif text-2xl text-foreground">
-                    {alreadySigned ? "You've already completed this" : "You're all set"}
-                  </h2>
-                  <p className="mx-auto max-w-md text-sm text-muted-foreground">
-                    {alreadySigned
-                      ? "Your membership agreement is signed and on file. The Main Committee will verify your proof of payment and confirm your membership by email within 5 working days."
-                      : "Your onboarding has been submitted. The Main Committee will verify your proof of payment and confirm your membership by email within 5 working days."}
-                  </p>
-
-                  {loaRpaDone ? (
-                    <div className="mx-auto mt-4 max-w-md rounded-xl border border-primary/30 bg-primary/5 p-5 text-left">
-                      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
-                        <Check className="size-4" /> Also done
-                      </div>
-                      <h3 className="mt-2 font-serif text-lg text-foreground">Letter of Authority &amp; Risk Profile</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Already submitted — nothing more needed here.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="mx-auto mt-4 max-w-md rounded-xl border border-accent/40 bg-accent/10 p-5 text-left">
-                      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-accent">
-                        <ShieldCheck className="size-4" /> One more step
-                      </div>
-                      <h3 className="mt-2 font-serif text-lg text-foreground">Complete your Letter of Authority &amp; Risk Profile</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Required by ThuthukaSA (FSP No. 47992) so we can guide your investment appropriately. Takes about 5 minutes.
-                      </p>
-                      <Button asChild className="mt-4 w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                        <Link to="/loa-rpa">
-                          Start LOA &amp; Risk Profile <ChevronRight className="ml-1 size-4" />
-                        </Link>
-                      </Button>
                     </div>
                   )}
-
-                  <div className="flex justify-center gap-3 pt-2">
-                    <Button asChild variant="outline">
-                      <Link to="/">Back to home</Link>
-                    </Button>
-                    <Button asChild variant="outline">
-                      <Link to="/portal">Go to my portal</Link>
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Nav buttons */}
-              {step < 5 && (
-                <div className="flex items-center justify-between border-t border-border pt-4">
-                  <Button
-                    variant="ghost"
-                    onClick={() => setStep((s) => (s > 0 ? ((s - 1) as Step) : s))}
-                    disabled={step === 0 || submitting}
-                  >
-                    <ChevronLeft className="mr-1 size-4" /> Back
-                  </Button>
-                  {step < 4 ? (
-                    <Button
-                      onClick={() => setStep((s) => ((s + 1) as Step))}
-                      disabled={!canGoNext}
-                      className="bg-accent text-accent-foreground hover:bg-accent/90"
-                    >
-                      Continue <ChevronRight className="ml-1 size-4" />
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={submit}
-                      disabled={!canGoNext || submitting}
-                      className="bg-accent text-accent-foreground hover:bg-accent/90"
-                    >
-                      {submitting ? <><Loader2 className="mr-1 size-4 animate-spin" /> Submitting…</> : <>Submit onboarding <Check className="ml-1 size-4" /></>}
-                    </Button>
-                  )}
-                </div>
-              )}
-              </>
+                </>
               )}
             </CardContent>
           </Card>
@@ -598,7 +758,11 @@ function StampedDocPreview({
 }) {
   const stampedRef = reference || buildEftReference(fullName || "MEMBER");
   const now = new Date();
-  const dateStr = now.toLocaleDateString("en-ZA", { day: "2-digit", month: "long", year: "numeric" });
+  const dateStr = now.toLocaleDateString("en-ZA", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
   const timeStr = now.toLocaleTimeString("en-ZA", { hour: "2-digit", minute: "2-digit" });
 
   return (
@@ -607,14 +771,20 @@ function StampedDocPreview({
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
-        style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #000 1px, transparent 1px), radial-gradient(circle at 70% 80%, #000 1px, transparent 1px)", backgroundSize: "24px 24px, 32px 32px" }}
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 20% 30%, #000 1px, transparent 1px), radial-gradient(circle at 70% 80%, #000 1px, transparent 1px)",
+          backgroundSize: "24px 24px, 32px 32px",
+        }}
       />
 
       {/* Rotated stamp */}
       <div className="pointer-events-none absolute right-6 top-6 rotate-[-14deg] select-none md:right-8 md:top-8">
         <div className="rounded-md border-4 border-primary/70 px-4 py-2 text-center text-primary/80">
           <div className="font-serif text-xl font-black uppercase tracking-widest">Pending</div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.2em]">Verification · A-Win</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em]">
+            Verification · A-Win
+          </div>
           <div className="mt-1 text-[10px] tracking-wide">{dateStr}</div>
         </div>
       </div>
@@ -624,33 +794,52 @@ function StampedDocPreview({
         <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
           African Women Investment Network
         </div>
-        <h3 className="mt-1 font-serif text-2xl text-foreground">Membership Registration Certificate</h3>
-        <div className="mt-1 text-xs text-muted-foreground">Reference · <span className="font-mono font-semibold text-foreground">{stampedRef}</span></div>
+        <h3 className="mt-1 font-serif text-2xl text-foreground">
+          Membership Registration Certificate
+        </h3>
+        <div className="mt-1 text-xs text-muted-foreground">
+          Reference · <span className="font-mono font-semibold text-foreground">{stampedRef}</span>
+        </div>
       </div>
 
       {/* Body */}
       <dl className="relative mt-5 grid gap-4 text-sm md:grid-cols-2">
         <Field label="Full legal name" value={fullName || "—"} />
         <Field label="SA ID number" value={maskId(idNumber)} blurred />
-        <Field label="Phone" value={phone ? phone.replace(/(\d{3})\d+(\d{2})/, "$1 ••• $2") : "—"} blurred />
+        <Field
+          label="Phone"
+          value={phone ? phone.replace(/(\d{3})\d+(\d{2})/, "$1 ••• $2") : "—"}
+          blurred
+        />
         <Field label="Occupation" value={occupation || "—"} />
         <div className="md:col-span-2">
-          <dt className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Motivation</dt>
+          <dt className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            Motivation
+          </dt>
           <dd className="mt-0.5 line-clamp-3 text-sm text-foreground">{motivation || "—"}</dd>
         </div>
-        <Field label="Contribution" value={purpose === "entry" ? "R200 entry fee" : "R500 monthly"} />
+        <Field
+          label="Contribution"
+          value={purpose === "entry" ? "R200 entry fee" : "R500 monthly"}
+        />
         <Field label="Agreement version" value="v1.0-2026" />
       </dl>
 
       {/* Signatures */}
       <div className="relative mt-6 grid gap-6 border-t border-border pt-5 md:grid-cols-2">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Typed signature</div>
-          <div className="mt-1 font-serif text-xl italic text-foreground">{typedSignature || fullName || "—"}</div>
+          <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            Typed signature
+          </div>
+          <div className="mt-1 font-serif text-xl italic text-foreground">
+            {typedSignature || fullName || "—"}
+          </div>
           <div className="mt-1 border-t border-foreground/40" />
         </div>
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Drawn signature</div>
+          <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            Drawn signature
+          </div>
           <div className="mt-1 flex h-16 items-end">
             {drawnSignature ? (
               <img src={drawnSignature} alt="Signature" className="max-h-16" />
@@ -664,11 +853,20 @@ function StampedDocPreview({
 
       {/* Audit trail */}
       <div className="relative mt-5 rounded-lg bg-secondary/60 p-3 text-[10px] leading-relaxed text-muted-foreground">
-        <div className="font-semibold uppercase tracking-widest text-foreground/70">Digital audit trail</div>
+        <div className="font-semibold uppercase tracking-widest text-foreground/70">
+          Digital audit trail
+        </div>
         <div className="mt-1 grid gap-x-4 gap-y-0.5 md:grid-cols-2">
-          <div>Signed at · {dateStr} {timeStr} SAST</div>
-          <div>Reference · <span className="font-mono">{stampedRef}</span></div>
-          <div className="truncate">Doc hash · <span className="font-mono">{docHash ? docHash.slice(0, 20) + "…" : "computing"}</span></div>
+          <div>
+            Signed at · {dateStr} {timeStr} SAST
+          </div>
+          <div>
+            Reference · <span className="font-mono">{stampedRef}</span>
+          </div>
+          <div className="truncate">
+            Doc hash ·{" "}
+            <span className="font-mono">{docHash ? docHash.slice(0, 20) + "…" : "computing"}</span>
+          </div>
           <div>Method · ECT Act 25/2002 e-signature</div>
         </div>
       </div>
@@ -679,8 +877,17 @@ function StampedDocPreview({
 function Field({ label, value, blurred }: { label: string; value: string; blurred?: boolean }) {
   return (
     <div>
-      <dt className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</dt>
-      <dd className={cn("mt-0.5 text-sm text-foreground", blurred && "blur-[2px] hover:blur-0 transition-[filter]")}>{value}</dd>
+      <dt className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </dt>
+      <dd
+        className={cn(
+          "mt-0.5 text-sm text-foreground",
+          blurred && "blur-[2px] hover:blur-0 transition-[filter]",
+        )}
+      >
+        {value}
+      </dd>
     </div>
   );
 }

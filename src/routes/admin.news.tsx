@@ -36,7 +36,11 @@ type Article = {
 };
 
 const slugify = (s: string) =>
-  s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 
 const empty = (): Partial<Article> => ({
   title: "",
@@ -99,7 +103,8 @@ function NewsAdminPage() {
       .from("news_articles")
       .update({
         published: next,
-        published_at: next && !article.published_at ? new Date().toISOString() : article.published_at,
+        published_at:
+          next && !article.published_at ? new Date().toISOString() : article.published_at,
       })
       .eq("id", article.id);
     if (error) return toast.error(error.message);
@@ -159,11 +164,7 @@ function NewsAdminPage() {
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant="ghost" onClick={() => togglePublish(article)}>
-                    {article.published ? (
-                      <EyeOff className="size-4" />
-                    ) : (
-                      <Eye className="size-4" />
-                    )}
+                    {article.published ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => setEditing(article)}>
                     <Pencil className="size-4" />

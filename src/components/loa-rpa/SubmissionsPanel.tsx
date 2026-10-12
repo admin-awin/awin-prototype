@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Download, Eye, Loader2, MessageCircle, Globe2, FileDown, Search, Trash2 } from "lucide-react";
+import {
+  Download,
+  Eye,
+  Loader2,
+  MessageCircle,
+  Globe2,
+  FileDown,
+  Search,
+  Trash2,
+} from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { AnimateNumber } from "@/components/ui/animate-number";
 import { toast } from "sonner";
@@ -11,7 +20,14 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/lib/use-auth";
 import { requestDeleteLoaRpaSubmission } from "@/lib/admin-roles.functions";
 import { getErrorMessage } from "@/lib/errors";
@@ -64,7 +80,9 @@ export const RPA_LABELS: [keyof RpaData, string][] = [
 function Field({ label, value }: { label: string; value: string | undefined }) {
   return (
     <div>
-      <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </div>
       <div className="text-sm text-foreground">{value || "—"}</div>
     </div>
   );
@@ -74,7 +92,15 @@ function exportCsv(rows: Submission[]) {
   const header = ["Name", "Email", "Phone", "Source", "Status", "ID Number", "Submitted"];
   const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
   const lines = rows.map((r) =>
-    [r.full_name, r.email, r.phone ?? "", r.source, r.status, r.loa_data?.idNumber ?? "", new Date(r.created_at).toLocaleString()]
+    [
+      r.full_name,
+      r.email,
+      r.phone ?? "",
+      r.source,
+      r.status,
+      r.loa_data?.idNumber ?? "",
+      new Date(r.created_at).toLocaleString(),
+    ]
       .map((v) => escape(String(v)))
       .join(","),
   );
@@ -184,8 +210,13 @@ export function SubmissionsOverview({ stats }: { stats: Stats | null }) {
             ["Via website", stats.website],
           ] as const
         ).map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-tksa-orange/20 bg-tksa-dark px-4 pt-4 pb-3">
-            <div className="text-2xl font-semibold text-white"><AnimateNumber value={value} /></div>
+          <div
+            key={label}
+            className="rounded-xl border border-tksa-orange/20 bg-tksa-dark px-4 pt-4 pb-3"
+          >
+            <div className="text-2xl font-semibold text-white">
+              <AnimateNumber value={value} />
+            </div>
             <div className="text-xs text-white/50">{label}</div>
           </div>
         ))}
@@ -218,7 +249,9 @@ export function SubmissionsOverview({ stats }: { stats: Stats | null }) {
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-x-0 top-0 flex h-[150px] flex-col items-center justify-center">
-              <div className="text-2xl font-semibold text-white"><AnimateNumber value={stats.pending} /></div>
+              <div className="text-2xl font-semibold text-white">
+                <AnimateNumber value={stats.pending} />
+              </div>
               <div className="text-[10px] uppercase tracking-wide text-white/50">pending</div>
             </div>
           </div>
@@ -249,7 +282,9 @@ export function SubmissionsOverview({ stats }: { stats: Stats | null }) {
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-x-0 top-0 flex h-[150px] flex-col items-center justify-center">
-              <div className="text-2xl font-semibold text-white"><AnimateNumber value={stats.total} /></div>
+              <div className="text-2xl font-semibold text-white">
+                <AnimateNumber value={stats.total} />
+              </div>
               <div className="text-[10px] uppercase tracking-wide text-white/50">total</div>
             </div>
           </div>
@@ -284,7 +319,11 @@ export function SubmissionsList({
     const { data: userData } = await supabase.auth.getUser();
     const { error } = await supabase
       .from("loa_rpa_submissions")
-      .update({ status: "reviewed", reviewed_by: userData.user?.id ?? null, reviewed_at: new Date().toISOString() })
+      .update({
+        status: "reviewed",
+        reviewed_by: userData.user?.id ?? null,
+        reviewed_at: new Date().toISOString(),
+      })
       .eq("id", row.id);
     setBusy(null);
     if (error) return toast.error(error.message);
@@ -294,7 +333,9 @@ export function SubmissionsList({
 
   const downloadPdf = async (path: string | null, label: string) => {
     if (!path) return toast.error(`No ${label} on file for this submission`);
-    const { data, error } = await supabase.storage.from("loa-rpa-documents").createSignedUrl(path, 300);
+    const { data, error } = await supabase.storage
+      .from("loa-rpa-documents")
+      .createSignedUrl(path, 300);
     if (error || !data) return toast.error(error?.message ?? "Could not sign PDF URL");
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   };
@@ -303,7 +344,9 @@ export function SubmissionsList({
     if (!rows) return rows;
     const q = search.trim().toLowerCase();
     if (!q) return rows;
-    return rows.filter((r) => r.full_name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q));
+    return rows.filter(
+      (r) => r.full_name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q),
+    );
   }, [rows, search]);
 
   return (
@@ -345,28 +388,52 @@ export function SubmissionsList({
       ) : (
         <div className="grid gap-3">
           {(filtered ?? rows).map((row) => (
-            <div key={row.id} className="rounded-xl border border-tksa-orange/20 bg-tksa-dark p-4 flex flex-wrap items-start justify-between gap-4">
+            <div
+              key={row.id}
+              className="rounded-xl border border-tksa-orange/20 bg-tksa-dark p-4 flex flex-wrap items-start justify-between gap-4"
+            >
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h3 className="font-semibold text-white">{row.full_name}</h3>
                   <Badge
-                    className={row.status === "reviewed" ? "border-transparent bg-tksa-orange text-tksa-dark" : "border-white/25 bg-transparent text-white/70"}
+                    className={
+                      row.status === "reviewed"
+                        ? "border-transparent bg-tksa-orange text-tksa-dark"
+                        : "border-white/25 bg-transparent text-white/70"
+                    }
                     variant={row.status === "reviewed" ? "default" : "outline"}
                   >
                     {row.status}
                   </Badge>
                   <Badge className="gap-1 border-transparent bg-white/10 text-white/80">
-                    {row.source === "whatsapp" ? <MessageCircle className="size-3" /> : <Globe2 className="size-3" />}
+                    {row.source === "whatsapp" ? (
+                      <MessageCircle className="size-3" />
+                    ) : (
+                      <Globe2 className="size-3" />
+                    )}
                     {row.source}
                   </Badge>
-                  {row.loa_only && <Badge className="border-white/25 bg-transparent text-white/70" variant="outline">LOA only</Badge>}
+                  {row.loa_only && (
+                    <Badge
+                      className="border-white/25 bg-transparent text-white/70"
+                      variant="outline"
+                    >
+                      LOA only
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs text-white/50">
-                  {row.email} {row.phone && `· ${row.phone}`} · {new Date(row.created_at).toLocaleString()}
+                  {row.email} {row.phone && `· ${row.phone}`} ·{" "}
+                  {new Date(row.created_at).toLocaleString()}
                 </p>
               </div>
               <div className="flex gap-1">
-                <Button size="sm" variant="ghost" className="text-white/70 hover:bg-white/10 hover:text-white" onClick={() => setViewing(row)}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-white/70 hover:bg-white/10 hover:text-white"
+                  onClick={() => setViewing(row)}
+                >
                   <Eye className="size-4" />
                 </Button>
                 {!row.loa_only && (
@@ -397,7 +464,11 @@ export function SubmissionsList({
                     disabled={busy === row.id}
                     onClick={() => markReviewed(row)}
                   >
-                    {busy === row.id ? <Loader2 className="size-4 animate-spin" /> : "Mark reviewed"}
+                    {busy === row.id ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      "Mark reviewed"
+                    )}
                   </Button>
                 )}
                 {isAdmin && (
@@ -406,7 +477,11 @@ export function SubmissionsList({
                     variant="ghost"
                     title="Delete this submission"
                     className="text-destructive hover:text-destructive"
-                    onClick={() => { setDeleting(row); setDeleteConfirmName(""); setDeleteReason(""); }}
+                    onClick={() => {
+                      setDeleting(row);
+                      setDeleteConfirmName("");
+                      setDeleteReason("");
+                    }}
                   >
                     <Trash2 className="size-4" />
                   </Button>
@@ -422,13 +497,16 @@ export function SubmissionsList({
           <DialogHeader>
             <DialogTitle>{viewing?.full_name}</DialogTitle>
             <DialogDescription>
-              Submitted {viewing && new Date(viewing.created_at).toLocaleString()} via {viewing?.source}
+              Submitted {viewing && new Date(viewing.created_at).toLocaleString()} via{" "}
+              {viewing?.source}
             </DialogDescription>
           </DialogHeader>
           {viewing && (
             <div className="space-y-4 text-sm">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Letter of Authority</div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Letter of Authority
+                </div>
                 <div className="mt-1 grid grid-cols-2 gap-2">
                   <Field label="ID number" value={viewing.loa_data?.idNumber} />
                   <Field label="Telephone" value={viewing.loa_data?.telephone} />
@@ -436,7 +514,9 @@ export function SubmissionsList({
               </div>
               {!viewing.loa_only && (
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Risk Profile Analysis</div>
+                  <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Risk Profile Analysis
+                  </div>
                   <div className="mt-1 grid grid-cols-2 gap-2">
                     {RPA_LABELS.map(([key, label]) => (
                       <Field key={key} label={label} value={viewing.rpa_data?.[key]} />
@@ -445,12 +525,20 @@ export function SubmissionsList({
                 </div>
               )}
               <div>
-                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Signature</div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Signature
+                </div>
                 <p className="mt-1 text-xs text-muted-foreground">Type: {viewing.signature_type}</p>
                 {viewing.signature_type === "typed" ? (
-                  <div className="mt-1 font-serif text-lg italic">{viewing.signature_typed_name}</div>
+                  <div className="mt-1 font-serif text-lg italic">
+                    {viewing.signature_typed_name}
+                  </div>
                 ) : viewing.signature_drawn_data ? (
-                  <img src={viewing.signature_drawn_data} alt="Signature" className="mt-1 max-h-16" />
+                  <img
+                    src={viewing.signature_drawn_data}
+                    alt="Signature"
+                    className="mt-1 max-h-16"
+                  />
                 ) : null}
               </div>
             </div>
@@ -466,29 +554,44 @@ export function SubmissionsList({
           <DialogHeader>
             <DialogTitle className="text-destructive">Delete Submission</DialogTitle>
             <DialogDescription>
-              This permanently removes {deleting?.full_name}'s submission and its PDFs. This cannot be undone.
-              This request needs approval from a different admin before it takes effect (see Admin → Approvals).
+              This permanently removes {deleting?.full_name}'s submission and its PDFs. This cannot
+              be undone. This request needs approval from a different admin before it takes effect
+              (see Admin → Approvals).
             </DialogDescription>
           </DialogHeader>
           {deleting && (
             <div className="space-y-3">
               <div className="grid gap-1.5">
-                <Label className="text-xs">Type the exact name to confirm: {deleting.full_name}</Label>
-                <Input value={deleteConfirmName} onChange={(e) => setDeleteConfirmName(e.target.value)} autoComplete="off" />
+                <Label className="text-xs">
+                  Type the exact name to confirm: {deleting.full_name}
+                </Label>
+                <Input
+                  value={deleteConfirmName}
+                  onChange={(e) => setDeleteConfirmName(e.target.value)}
+                  autoComplete="off"
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label className="text-xs">Reason (audit log, min 5 chars)</Label>
-                <Textarea value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} rows={2} placeholder="e.g. Test/demo data, not a real submission" />
+                <Textarea
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                  rows={2}
+                  placeholder="e.g. Test/demo data, not a real submission"
+                />
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDeleting(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setDeleting(null)}>
+              Cancel
+            </Button>
             <Button
               variant="destructive"
               disabled={
                 deleteBusy ||
-                deleteConfirmName.trim().toLowerCase() !== (deleting?.full_name ?? "").trim().toLowerCase() ||
+                deleteConfirmName.trim().toLowerCase() !==
+                  (deleting?.full_name ?? "").trim().toLowerCase() ||
                 deleteReason.trim().length < 5
               }
               onClick={async () => {
@@ -496,9 +599,15 @@ export function SubmissionsList({
                 setDeleteBusy(true);
                 try {
                   await callDeleteSubmission({
-                    data: { submission_id: deleting.id, confirm_name: deleteConfirmName.trim(), reason: deleteReason.trim() },
+                    data: {
+                      submission_id: deleting.id,
+                      confirm_name: deleteConfirmName.trim(),
+                      reason: deleteReason.trim(),
+                    },
                   });
-                  toast.success("Deletion request submitted — needs approval from a different admin");
+                  toast.success(
+                    "Deletion request submitted — needs approval from a different admin",
+                  );
                   setDeleting(null);
                 } catch (e) {
                   toast.error(getErrorMessage(e));

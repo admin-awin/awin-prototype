@@ -1,14 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import {
-  Users,
-  ClipboardList,
-  Calendar,
-  Mail,
-  Plus,
-  ArrowRight,
-  FolderOpen,
-} from "lucide-react";
+import { Users, ClipboardList, Calendar, Mail, Plus, ArrowRight, FolderOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,26 +29,33 @@ function OverviewPage() {
 
   useEffect(() => {
     (async () => {
-      const [
-        members,
-        pending,
-        upcoming,
-        unread,
-        documents,
-        recentApps,
-        recentMsgs,
-      ] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact", head: true }),
-        supabase.from("applications").select("*", { count: "exact", head: true }).eq("status", "pending"),
-        supabase
-          .from("events")
-          .select("*", { count: "exact", head: true })
-          .gte("event_date", new Date().toISOString().slice(0, 10)),
-        supabase.from("contact_messages").select("*", { count: "exact", head: true }).eq("is_read", false),
-        supabase.from("documents").select("*", { count: "exact", head: true }),
-        supabase.from("applications").select("full_name, created_at").order("created_at", { ascending: false }).limit(3),
-        supabase.from("contact_messages").select("name, subject, created_at").order("created_at", { ascending: false }).limit(3),
-      ]);
+      const [members, pending, upcoming, unread, documents, recentApps, recentMsgs] =
+        await Promise.all([
+          supabase.from("profiles").select("*", { count: "exact", head: true }),
+          supabase
+            .from("applications")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "pending"),
+          supabase
+            .from("events")
+            .select("*", { count: "exact", head: true })
+            .gte("event_date", new Date().toISOString().slice(0, 10)),
+          supabase
+            .from("contact_messages")
+            .select("*", { count: "exact", head: true })
+            .eq("is_read", false),
+          supabase.from("documents").select("*", { count: "exact", head: true }),
+          supabase
+            .from("applications")
+            .select("full_name, created_at")
+            .order("created_at", { ascending: false })
+            .limit(3),
+          supabase
+            .from("contact_messages")
+            .select("name, subject, created_at")
+            .order("created_at", { ascending: false })
+            .limit(3),
+        ]);
 
       setStats({
         members: members.count ?? 0,
@@ -84,29 +83,61 @@ function OverviewPage() {
     })();
   }, []);
 
-
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl">Dashboard</h1>
           <p className="text-sm text-muted-foreground">
-            Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}. Here's what's happening today.
+            Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}. Here's what's
+            happening today.
           </p>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline" size="sm">
-            <Link to="/" target="_blank">View Site</Link>
+            <Link to="/" target="_blank">
+              View Site
+            </Link>
           </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        <Stat icon={Users} label="Members" value={stats?.members} to="/admin/members" accent="text-blue-600" />
-        <Stat icon={ClipboardList} label="Pending Apps" value={stats?.pending} to="/admin/applications" accent="text-amber-600" />
-        <Stat icon={Calendar} label="Upcoming Events" value={stats?.upcoming} to="/admin/events" accent="text-green-600" />
-        <Stat icon={Mail} label="Unread Msgs" value={stats?.unread} to="/admin/messages" accent="text-rose-600" />
-        <Stat icon={FolderOpen} label="Documents" value={stats?.documents} to="/admin/documents" accent="text-cyan-600" />
+        <Stat
+          icon={Users}
+          label="Members"
+          value={stats?.members}
+          to="/admin/members"
+          accent="text-blue-600"
+        />
+        <Stat
+          icon={ClipboardList}
+          label="Pending Apps"
+          value={stats?.pending}
+          to="/admin/applications"
+          accent="text-amber-600"
+        />
+        <Stat
+          icon={Calendar}
+          label="Upcoming Events"
+          value={stats?.upcoming}
+          to="/admin/events"
+          accent="text-green-600"
+        />
+        <Stat
+          icon={Mail}
+          label="Unread Msgs"
+          value={stats?.unread}
+          to="/admin/messages"
+          accent="text-rose-600"
+        />
+        <Stat
+          icon={FolderOpen}
+          label="Documents"
+          value={stats?.documents}
+          to="/admin/documents"
+          accent="text-cyan-600"
+        />
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
@@ -123,9 +154,14 @@ function OverviewPage() {
             ) : (
               <ul className="space-y-2.5">
                 {activity.map((a, i) => (
-                  <li key={i} className="flex items-start justify-between gap-3 text-sm pb-2.5 border-b last:border-0">
+                  <li
+                    key={i}
+                    className="flex items-start justify-between gap-3 text-sm pb-2.5 border-b last:border-0"
+                  >
                     <div>
-                      <span className="text-xs font-semibold text-accent uppercase tracking-wide">{a.type}</span>
+                      <span className="text-xs font-semibold text-accent uppercase tracking-wide">
+                        {a.type}
+                      </span>
                       <p>{a.title}</p>
                     </div>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
@@ -145,7 +181,11 @@ function OverviewPage() {
           <CardContent className="space-y-2">
             <QuickAction to="/admin/events" icon={Plus} label="Add Event" />
             <QuickAction to="/admin/documents" icon={FolderOpen} label="Upload Document" />
-            <QuickAction to="/admin/applications" icon={ClipboardList} label="Review Applications" />
+            <QuickAction
+              to="/admin/applications"
+              icon={ClipboardList}
+              label="Review Applications"
+            />
             <QuickAction to="/admin/members" icon={Users} label="Manage Members" />
           </CardContent>
         </Card>
@@ -165,7 +205,12 @@ function Stat({
   label: string;
   value: number | undefined;
   accent: string;
-  to: "/admin/members" | "/admin/applications" | "/admin/events" | "/admin/messages" | "/admin/documents";
+  to:
+    | "/admin/members"
+    | "/admin/applications"
+    | "/admin/events"
+    | "/admin/messages"
+    | "/admin/documents";
 }) {
   return (
     <Link to={to} className="block transition-transform hover:-translate-y-0.5">

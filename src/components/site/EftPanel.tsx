@@ -12,10 +12,11 @@ import { cn } from "@/lib/utils";
  * Same input → same output, so members can regenerate their reference at any time.
  */
 export function buildEftReference(fullName: string, seed?: string): string {
-  const surname = (fullName.trim().split(/\s+/).pop() || "MEMBER")
-    .toUpperCase()
-    .replace(/[^A-Z]/g, "")
-    .slice(0, 12) || "MEMBER";
+  const surname =
+    (fullName.trim().split(/\s+/).pop() || "MEMBER")
+      .toUpperCase()
+      .replace(/[^A-Z]/g, "")
+      .slice(0, 12) || "MEMBER";
   const input = `${surname}|${seed ?? ""}|awin-2026`;
   let hash = 0;
   for (let i = 0; i < input.length; i++) {
@@ -46,7 +47,8 @@ export function useBankDetails(): BankDetails {
       .eq("key", "eft_banking")
       .maybeSingle()
       .then(({ data }) => {
-        if (!cancelled && data?.value) setBank({ ...BANK_FALLBACK, ...(data.value as Partial<BankDetails>) });
+        if (!cancelled && data?.value)
+          setBank({ ...BANK_FALLBACK, ...(data.value as Partial<BankDetails>) });
       });
     return () => {
       cancelled = true;
@@ -118,7 +120,9 @@ export function EftPanel({
           onClick={() => onPurposeChange("entry")}
           className={cn(
             "rounded-full px-4 py-1.5 font-medium transition-colors",
-            purpose === "entry" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+            purpose === "entry"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           Entry fee · R200
@@ -128,7 +132,9 @@ export function EftPanel({
           onClick={() => onPurposeChange("monthly")}
           className={cn(
             "rounded-full px-4 py-1.5 font-medium transition-colors",
-            purpose === "monthly" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+            purpose === "monthly"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           Monthly · R500
@@ -143,7 +149,11 @@ export function EftPanel({
             <div className="text-sm font-semibold text-foreground">EFT payment details</div>
           </div>
           <Button size="sm" variant="outline" onClick={copyAll}>
-            {copied === "all" ? <Check className="mr-1.5 size-3.5" /> : <Copy className="mr-1.5 size-3.5" />}
+            {copied === "all" ? (
+              <Check className="mr-1.5 size-3.5" />
+            ) : (
+              <Copy className="mr-1.5 size-3.5" />
+            )}
             Copy all
           </Button>
         </div>
@@ -151,7 +161,9 @@ export function EftPanel({
           {rows.map((r) => (
             <div key={r.k} className="flex items-center justify-between gap-3 px-5 py-3">
               <div className="min-w-0">
-                <dt className="text-[11px] uppercase tracking-widest text-muted-foreground">{r.label}</dt>
+                <dt className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  {r.label}
+                </dt>
                 <dd
                   className={cn(
                     "truncate text-sm text-foreground",
@@ -168,7 +180,11 @@ export function EftPanel({
                 className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border bg-background px-2.5 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-secondary"
                 aria-label={`Copy ${r.label}`}
               >
-                {copied === r.k ? <Check className="size-3.5 text-primary" /> : <Copy className="size-3.5" />}
+                {copied === r.k ? (
+                  <Check className="size-3.5 text-primary" />
+                ) : (
+                  <Copy className="size-3.5" />
+                )}
                 {copied === r.k ? "Copied" : "Copy"}
               </button>
             </div>

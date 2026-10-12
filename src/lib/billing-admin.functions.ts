@@ -98,7 +98,9 @@ export const overrideMembership = createServerFn({ method: "POST" })
 
     const { data: prev } = await supabaseAdmin
       .from("profiles")
-      .select("email, full_name, membership_status, membership_tier, membership_expires_at, suspended")
+      .select(
+        "email, full_name, membership_status, membership_tier, membership_expires_at, suspended",
+      )
       .eq("id", data.user_id)
       .maybeSingle();
 
@@ -114,8 +116,7 @@ export const overrideMembership = createServerFn({ method: "POST" })
       patch.suspended = false;
       if (data.tier) patch.membership_tier = data.tier;
       patch.membership_expires_at =
-        data.expires_at ??
-        new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+        data.expires_at ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
       if (!prev?.membership_status || prev.membership_status !== "active") {
         patch.joined_at = new Date().toISOString();
       }
@@ -140,11 +141,16 @@ export const overrideMembership = createServerFn({ method: "POST" })
     // Notify the member — fail-soft, admin action already committed.
     if (prev?.email) {
       const { sendEmail } = await import("./email.server");
-      const { membershipActivatedEmail, membershipSuspendedEmail } = await import("./email-templates.server");
+      const { membershipActivatedEmail, membershipSuspendedEmail } =
+        await import("./email-templates.server");
       const name = prev.full_name ?? prev.email;
       const mail =
         data.action === "activate"
-          ? membershipActivatedEmail(name, patch.membership_tier ?? prev.membership_tier ?? "general", patch.membership_expires_at ?? null)
+          ? membershipActivatedEmail(
+              name,
+              patch.membership_tier ?? prev.membership_tier ?? "general",
+              patch.membership_expires_at ?? null,
+            )
           : membershipSuspendedEmail(name);
       await sendEmail({ to: prev.email, toName: name, ...mail });
     }

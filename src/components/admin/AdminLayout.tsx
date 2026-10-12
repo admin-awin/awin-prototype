@@ -90,7 +90,6 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-
 const FLAT_NAV: NavItem[] = NAV_GROUPS.flatMap((g) => g.items);
 
 export function AdminLayout() {
@@ -126,7 +125,9 @@ export function AdminLayout() {
   const navGroups = NAV_GROUPS;
 
   const isActive = (item: NavItem) => {
-    const pathMatches = item.exact ? path === item.to : path === item.to || path.startsWith(item.to + "/");
+    const pathMatches = item.exact
+      ? path === item.to
+      : path === item.to || path.startsWith(item.to + "/");
     if (!pathMatches) return false;
     if (item.search) return Object.entries(item.search).every(([k, v]) => search[k] === v);
     // ponytail: only /admin/settings has a sibling nav item keyed on a search param today
@@ -180,7 +181,10 @@ export function AdminLayout() {
         My Portal
       </Link>
       <button
-        onClick={() => { onNav?.(); signOut(); }}
+        onClick={() => {
+          onNav?.();
+          signOut();
+        }}
         className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white/85 hover:bg-white/10 hover:text-white min-h-11"
       >
         <LogOut className="size-4" /> Sign Out
@@ -196,7 +200,9 @@ export function AdminLayout() {
         style={{ background: "var(--primary-deep)", color: "#FFFFFF" }}
       >
         <div className="px-5 py-4 border-b border-white/10">
-          <div className="text-xs font-semibold uppercase tracking-widest text-[#E8960A]">A-Win</div>
+          <div className="text-xs font-semibold uppercase tracking-widest text-[#E8960A]">
+            A-Win
+          </div>
           <div className="text-sm font-medium text-white">Admin Console</div>
           <div className="text-xs text-white/70 truncate mt-0.5">{user.email}</div>
         </div>
@@ -226,7 +232,9 @@ export function AdminLayout() {
             >
               <SheetTitle className="sr-only">Admin navigation</SheetTitle>
               <div className="px-5 py-4 border-b border-white/10">
-                <div className="text-xs font-semibold uppercase tracking-widest text-[#E8960A]">A-Win</div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-[#E8960A]">
+                  A-Win
+                </div>
                 <div className="text-sm font-medium text-white">{currentLabel}</div>
                 <div className="text-xs text-white/70 truncate mt-0.5">{user.email}</div>
               </div>

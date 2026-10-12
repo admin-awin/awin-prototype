@@ -17,9 +17,30 @@ const pages: ExportPageDef[] = [
 ];
 
 const captures: CapturedExport[] = [
-  { page: "/", pageLabel: "Home", theme: "color", themeLabel: "Green", group: "Public", dataUrl: "data:image/jpeg;base64,AA==" },
-  { page: "/portal", pageLabel: "Member Portal Dashboard", theme: "color", themeLabel: "Green", group: "Member Portal", dataUrl: "data:image/jpeg;base64,AA==" },
-  { page: "/admin", pageLabel: "Dashboard", theme: "color", themeLabel: "Green", group: "Admin Console", dataUrl: "data:image/jpeg;base64,AA==" },
+  {
+    page: "/",
+    pageLabel: "Home",
+    theme: "color",
+    themeLabel: "Green",
+    group: "Public",
+    dataUrl: "data:image/jpeg;base64,AA==",
+  },
+  {
+    page: "/portal",
+    pageLabel: "Member Portal Dashboard",
+    theme: "color",
+    themeLabel: "Green",
+    group: "Member Portal",
+    dataUrl: "data:image/jpeg;base64,AA==",
+  },
+  {
+    page: "/admin",
+    pageLabel: "Dashboard",
+    theme: "color",
+    themeLabel: "Green",
+    group: "Admin Console",
+    dataUrl: "data:image/jpeg;base64,AA==",
+  },
 ];
 
 describe("runbook export helpers", () => {
@@ -54,6 +75,8 @@ describe("runbook export helpers", () => {
   });
 
   it("creates stable download filenames", () => {
-    expect(sanitizeExportFilename("Admin · Billing / White Ivory")).toBe("admin-billing-white-ivory");
+    expect(sanitizeExportFilename("Admin · Billing / White Ivory")).toBe(
+      "admin-billing-white-ivory",
+    );
   });
 });

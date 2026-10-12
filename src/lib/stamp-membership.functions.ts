@@ -28,7 +28,9 @@ export const generateStampedDocument = createServerFn({ method: "POST" })
 
     const { data: app } = await supabaseAdmin
       .from("applications")
-      .select("id, user_id, full_name, id_number, phone, occupation, motivation, tier, agreement_version, payment_reference, signature_typed_name, signature_doc_hash, agreement_accepted_at")
+      .select(
+        "id, user_id, full_name, id_number, phone, occupation, motivation, tier, agreement_version, payment_reference, signature_typed_name, signature_doc_hash, agreement_accepted_at",
+      )
       .eq("id", data.application_id)
       .maybeSingle();
     if (!app) throw new Error("Application not found");

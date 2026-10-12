@@ -5,7 +5,10 @@
  * object with no `.message`, which `toast.error(e.message)` would render as
  * an unhelpful "{}" or "undefined".
  */
-export function getErrorMessage(e: unknown, fallback = "Something went wrong. Please try again."): string {
+export function getErrorMessage(
+  e: unknown,
+  fallback = "Something went wrong. Please try again.",
+): string {
   if (e instanceof Error && e.message) return e.message;
   if (typeof e === "string" && e) return e;
   if (e && typeof e === "object") {

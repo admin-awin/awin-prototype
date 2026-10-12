@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Crown, HeartHandshake, GraduationCap, Gem, ChevronRight, Sprout, Globe2, BookOpen } from "lucide-react";
+import {
+  Crown,
+  HeartHandshake,
+  GraduationCap,
+  Gem,
+  ChevronRight,
+  Sprout,
+  Globe2,
+  BookOpen,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { signPortfolioUrls } from "@/lib/portfolio-storage.functions";
 import { Card, CardContent } from "@/components/ui/card";
@@ -90,7 +99,13 @@ function AboutPage() {
         }
       }
       const swap = (v: string | null) => (v && urlMap[v]) || v;
-      setTeam(rows.map((m) => ({ ...m, photo_url: swap(m.photo_url), profile_card_url: swap(m.profile_card_url) })));
+      setTeam(
+        rows.map((m) => ({
+          ...m,
+          photo_url: swap(m.photo_url),
+          profile_card_url: swap(m.profile_card_url),
+        })),
+      );
     })();
   }, [sign]);
 
@@ -103,7 +118,9 @@ function AboutPage() {
             aria-label="Breadcrumb"
             className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
           >
-            <Link to="/" className="hover:text-accent transition-colors">Home</Link>
+            <Link to="/" className="hover:text-accent transition-colors">
+              Home
+            </Link>
             <ChevronRight className="h-3 w-3" />
             <span className="font-medium text-accent">About</span>
           </nav>
@@ -117,7 +134,9 @@ function AboutPage() {
       {/* WHO WE ARE */}
       <section className="py-20">
         <div className="mx-auto max-w-5xl px-4">
-          <span className="text-xs font-semibold uppercase tracking-widest text-accent">Who We Are</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+            Who We Are
+          </span>
           <h2 className="mt-3 font-serif">A community of visionary African women</h2>
           <div className="mt-6 space-y-5 text-lg leading-relaxed text-muted-foreground">
             <p>
@@ -178,12 +197,17 @@ function AboutPage() {
       <section className="py-20">
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center">
-            <span className="text-xs font-semibold uppercase tracking-widest text-accent">What Drives Us</span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+              What Drives Us
+            </span>
             <h2 className="mt-3 font-serif">Our Values</h2>
           </div>
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((v) => (
-              <Card key={v.title} className="border-border/60 shadow-[var(--shadow-elegant)] hover-scale">
+              <Card
+                key={v.title}
+                className="border-border/60 shadow-[var(--shadow-elegant)] hover-scale"
+              >
                 <CardContent className="p-7">
                   <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15 text-accent">
                     <v.icon className="h-6 w-6" />
@@ -202,7 +226,9 @@ function AboutPage() {
         <div className="mx-auto max-w-5xl px-4">
           <div className="grid gap-10 md:grid-cols-2">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-accent">Who Can Join</span>
+              <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+                Who Can Join
+              </span>
               <h2 className="mt-3 font-serif">A-Win is open to any woman who…</h2>
               <ul className="mt-6 space-y-3 text-muted-foreground">
                 {[
@@ -218,18 +244,33 @@ function AboutPage() {
                 ))}
               </ul>
               <p className="mt-6 text-sm text-muted-foreground">
-                Women from all walks of life are welcome. <strong>We especially welcome women who are new to investing.</strong>
+                Women from all walks of life are welcome.{" "}
+                <strong>We especially welcome women who are new to investing.</strong>
               </p>
             </div>
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-accent">Member Benefits</span>
+              <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+                Member Benefits
+              </span>
               <h2 className="mt-3 font-serif">What you gain</h2>
               <div className="mt-6 space-y-4">
                 {[
-                  { t: "Investment Opportunities", b: "Exposure to offshore tax free investments and other carefully selected growth opportunities tailored for women investors." },
-                  { t: "Financial Advisory Support", b: "Consultation with a qualified financial advisor who assesses your risk appetite and recommends a portfolio aligned with your goals." },
-                  { t: "Business Support & Collaboration", b: "Connect with like-minded women; support each other's businesses through crowdfunding and referrals." },
-                  { t: "Community & Learning", b: "Workshops, networking and mentorship that strengthen your financial knowledge, money mindset and leadership capacity." },
+                  {
+                    t: "Investment Opportunities",
+                    b: "Exposure to offshore tax free investments and other carefully selected growth opportunities tailored for women investors.",
+                  },
+                  {
+                    t: "Financial Advisory Support",
+                    b: "Consultation with a qualified financial advisor who assesses your risk appetite and recommends a portfolio aligned with your goals.",
+                  },
+                  {
+                    t: "Business Support & Collaboration",
+                    b: "Connect with like-minded women; support each other's businesses through crowdfunding and referrals.",
+                  },
+                  {
+                    t: "Community & Learning",
+                    b: "Workshops, networking and mentorship that strengthen your financial knowledge, money mindset and leadership capacity.",
+                  },
                 ].map((x) => (
                   <div key={x.t}>
                     <div className="font-semibold text-foreground">{x.t}</div>
@@ -258,10 +299,19 @@ function AboutPage() {
             transforming Africa's economic landscape, one investment and one woman at a time.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button
+              asChild
+              size="lg"
+              className="bg-accent text-accent-foreground hover:bg-accent/90"
+            >
               <Link to="/membership">Apply for Membership</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-2 border-white bg-white text-primary-deep hover:bg-white/90 hover:text-primary-deep">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-2 border-white bg-white text-primary-deep hover:bg-white/90 hover:text-primary-deep"
+            >
               <Link to="/members">Meet the Team</Link>
             </Button>
           </div>
@@ -274,26 +324,36 @@ function AboutPage() {
           <div className="mx-auto max-w-6xl px-4">
             <div className="flex items-end justify-between mb-10">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-widest text-accent">The Team</span>
+                <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+                  The Team
+                </span>
                 <h2 className="mt-3 font-serif">Leadership</h2>
               </div>
-              <Button asChild variant="outline"><Link to="/members">View full team</Link></Button>
+              <Button asChild variant="outline">
+                <Link to="/members">View full team</Link>
+              </Button>
             </div>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {team.map((m) => (
-                <Card key={m.id} className="border-border/60 text-center shadow-[var(--shadow-elegant)]">
+                <Card
+                  key={m.id}
+                  className="border-border/60 text-center shadow-[var(--shadow-elegant)]"
+                >
                   <CardContent className="p-7">
                     <div
                       className="mx-auto h-24 w-24 rounded-full bg-cover bg-center"
                       style={{
-                        background: m.photo_url || m.profile_card_url
-                          ? `url(${m.photo_url || m.profile_card_url}) center/cover`
-                          : "var(--gradient-placeholder)",
+                        background:
+                          m.photo_url || m.profile_card_url
+                            ? `url(${m.photo_url || m.profile_card_url}) center/cover`
+                            : "var(--gradient-placeholder)",
                       }}
                       aria-hidden="true"
                     />
                     <h3 className="mt-5 font-serif text-lg text-foreground">{m.name}</h3>
-                    <div className="text-sm font-medium text-accent">{m.committee_position ?? m.title}</div>
+                    <div className="text-sm font-medium text-accent">
+                      {m.committee_position ?? m.title}
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -303,7 +363,8 @@ function AboutPage() {
       )}
 
       <footer className="border-t border-border py-10 text-center text-sm text-muted-foreground">
-        <strong className="text-foreground">A-Win</strong>, African Women Investment Network · Founded 2025
+        <strong className="text-foreground">A-Win</strong>, African Women Investment Network ·
+        Founded 2025
       </footer>
     </>
   );

@@ -40,7 +40,11 @@ export async function processItnPayload(
       .from("payments")
       .update({ status: "failed", raw_payload: payload, pf_payment_id: pfPaymentId })
       .eq("id", payment.id);
-    return { ok: false, error: `amount mismatch: expected ${payment.amount_cents} got ${grossCents}`, paymentId: payment.id };
+    return {
+      ok: false,
+      error: `amount mismatch: expected ${payment.amount_cents} got ${grossCents}`,
+      paymentId: payment.id,
+    };
   }
 
   // Post-back validation against PayFast (skip when admin retries)
@@ -116,9 +120,16 @@ export async function processItnPayload(
         .maybeSingle();
       if (profile?.email) {
         const { sendEmail } = await import("./email.server");
-        const { paymentReceiptEmail, membershipActivatedEmail } = await import("./email-templates.server");
+        const { paymentReceiptEmail, membershipActivatedEmail } =
+          await import("./email-templates.server");
         const name = profile.full_name ?? profile.email;
-        const receipt = paymentReceiptEmail(name, payment.amount_cents, payment.tier, mPaymentId, paidAt);
+        const receipt = paymentReceiptEmail(
+          name,
+          payment.amount_cents,
+          payment.tier,
+          mPaymentId,
+          paidAt,
+        );
         await sendEmail({ to: profile.email, toName: name, ...receipt });
         const welcome = membershipActivatedEmail(name, payment.tier, expiresAt);
         await sendEmail({ to: profile.email, toName: name, ...welcome });

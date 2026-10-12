@@ -61,7 +61,8 @@ function ForgotPasswordFlow({
   const sendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = z.string().trim().email("Invalid email").max(255).safeParse(email);
-    if (!parsed.success) return toast.error(parsed.error.issues[0]?.message ?? "Enter a valid email");
+    if (!parsed.success)
+      return toast.error(parsed.error.issues[0]?.message ?? "Enter a valid email");
     setBusy(true);
     try {
       await callReset({ data: { email: parsed.data } });
@@ -90,7 +91,11 @@ function ForgotPasswordFlow({
     // flagged force_password_change would land on /change-password asking
     // for a temp password they never had.
     onHoldRedirect(true);
-    const { error: otpError } = await supabase.auth.verifyOtp({ email: email.trim().toLowerCase(), token: cleanCode, type: "recovery" });
+    const { error: otpError } = await supabase.auth.verifyOtp({
+      email: email.trim().toLowerCase(),
+      token: cleanCode,
+      type: "recovery",
+    });
     if (otpError) {
       setBusy(false);
       onHoldRedirect(false);
@@ -101,8 +106,11 @@ function ForgotPasswordFlow({
       setBusy(false);
       return toast.error(updateError.message || "Could not set new password");
     }
-    const { data: { user: me } } = await supabase.auth.getUser();
-    if (me) await supabase.from("profiles").update({ force_password_change: false }).eq("id", me.id);
+    const {
+      data: { user: me },
+    } = await supabase.auth.getUser();
+    if (me)
+      await supabase.from("profiles").update({ force_password_change: false }).eq("id", me.id);
     toast.success("Password set — you're signed in");
     onDone();
     // Full reload so roles and the password-change flag are re-read fresh.
@@ -117,12 +125,25 @@ function ForgotPasswordFlow({
             Enter your account email — we'll send a code to reset your password.
           </p>
           <div className="space-y-1.5">
-            <Label htmlFor="fp-email" className="text-foreground">Email</Label>
-            <Input id="fp-email" type="email" required maxLength={255} value={email}
-              onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com"
-              className="bg-background text-foreground placeholder:text-muted-foreground" />
+            <Label htmlFor="fp-email" className="text-foreground">
+              Email
+            </Label>
+            <Input
+              id="fp-email"
+              type="email"
+              required
+              maxLength={255}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="bg-background text-foreground placeholder:text-muted-foreground"
+            />
           </div>
-          <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={busy}>
+          <Button
+            type="submit"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+            disabled={busy}
+          >
             {busy && <Loader2 className="size-4 animate-spin mr-2" />}
             Send code
           </Button>
@@ -144,27 +165,66 @@ function ForgotPasswordFlow({
       ) : (
         <form onSubmit={verifyAndSet} className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Enter the code sent to {email}, and your new password. Not there after a few minutes? Check spam/junk, or{" "}
-            <button type="button" className="underline" onClick={() => setStep("request")}>send another</button>.
+            Enter the code sent to {email}, and your new password. Not there after a few minutes?
+            Check spam/junk, or{" "}
+            <button type="button" className="underline" onClick={() => setStep("request")}>
+              send another
+            </button>
+            .
           </p>
           <div className="space-y-1.5">
-            <Label htmlFor="fp-code" className="text-foreground">Code from your email</Label>
-            <Input id="fp-code" required maxLength={12} inputMode="numeric" autoComplete="one-time-code" value={code} onChange={(e) => setCode(e.target.value)}
-              placeholder="12345678" className="bg-background text-foreground placeholder:text-muted-foreground" />
+            <Label htmlFor="fp-code" className="text-foreground">
+              Code from your email
+            </Label>
+            <Input
+              id="fp-code"
+              required
+              maxLength={12}
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="12345678"
+              className="bg-background text-foreground placeholder:text-muted-foreground"
+            />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="fp-password" className="text-foreground">New Password</Label>
-            <Input id="fp-password" type="password" required minLength={8} maxLength={72} value={password}
-              onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
-              className="bg-background text-foreground placeholder:text-muted-foreground" />
+            <Label htmlFor="fp-password" className="text-foreground">
+              New Password
+            </Label>
+            <Input
+              id="fp-password"
+              type="password"
+              required
+              minLength={8}
+              maxLength={72}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="bg-background text-foreground placeholder:text-muted-foreground"
+            />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="fp-confirm" className="text-foreground">Confirm New Password</Label>
-            <Input id="fp-confirm" type="password" required minLength={8} maxLength={72} value={confirm}
-              onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••"
-              className="bg-background text-foreground placeholder:text-muted-foreground" />
+            <Label htmlFor="fp-confirm" className="text-foreground">
+              Confirm New Password
+            </Label>
+            <Input
+              id="fp-confirm"
+              type="password"
+              required
+              minLength={8}
+              maxLength={72}
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="••••••••"
+              className="bg-background text-foreground placeholder:text-muted-foreground"
+            />
           </div>
-          <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={busy}>
+          <Button
+            type="submit"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+            disabled={busy}
+          >
             {busy && <Loader2 className="size-4 animate-spin mr-2" />}
             Set new password
           </Button>
@@ -215,7 +275,9 @@ function AuthPage() {
       if (error) {
         window.history.replaceState(null, "", "/auth");
         setRecovering(false);
-        toast.error("That link has expired or was already used. Use “Forgot password?” to get a fresh one.");
+        toast.error(
+          "That link has expired or was already used. Use “Forgot password?” to get a fresh one.",
+        );
         setTab("reset");
         return;
       }
@@ -247,7 +309,10 @@ function AuthPage() {
     if (!parsed.success) return toast.error(parsed.error.issues[0]?.message ?? "Check the form");
 
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ ...parsed.data, email: parsed.data.email.toLowerCase() });
+    const { error } = await supabase.auth.signInWithPassword({
+      ...parsed.data,
+      email: parsed.data.email.toLowerCase(),
+    });
     setBusy(false);
     if (error) {
       setResetEmail(parsed.data.email);
@@ -270,9 +335,14 @@ function AuthPage() {
     try {
       const res = await callSignUp({ data: parsed.data });
       if (res.status === "already_registered") {
-        toast.info("That email already has an account — sign in, or use “Forgot password?” if you don't know the password.", { duration: 10000 });
+        toast.info(
+          "That email already has an account — sign in, or use “Forgot password?” if you don't know the password.",
+          { duration: 10000 },
+        );
       } else {
-        toast.success("Check your email (and spam/junk) for a link to confirm your account.", { duration: 10000 });
+        toast.success("Check your email (and spam/junk) for a link to confirm your account.", {
+          duration: 10000,
+        });
       }
       setTab("signin");
     } catch (err) {
@@ -287,7 +357,9 @@ function AuthPage() {
       <div className="container mx-auto flex min-h-[80vh] items-center justify-center px-4 py-12">
         <Card className="w-full max-w-md border-border bg-card text-card-foreground">
           <CardHeader>
-            <CardTitle className="font-serif text-2xl text-center text-foreground">Set a new password</CardTitle>
+            <CardTitle className="font-serif text-2xl text-center text-foreground">
+              Set a new password
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form
@@ -297,19 +369,39 @@ function AuthPage() {
                 const fd = new FormData(e.currentTarget);
                 const pw = String(fd.get("pw") ?? "");
                 if (pw.length < 8) return toast.error("At least 8 characters");
-                if (pw !== String(fd.get("pw2") ?? "")) return toast.error("Passwords do not match");
+                if (pw !== String(fd.get("pw2") ?? ""))
+                  return toast.error("Passwords do not match");
                 setBusy(true);
                 const { error } = await supabase.auth.updateUser({ password: pw });
                 setBusy(false);
                 if (error) return toast.error(error.message);
-                await supabase.from("profiles").update({ force_password_change: false }).eq("id", user.id);
+                await supabase
+                  .from("profiles")
+                  .update({ force_password_change: false })
+                  .eq("id", user.id);
                 toast.success("Password set");
                 window.location.replace(isAdvisor ? "/tksa" : isAdmin ? "/admin" : "/portal");
               }}
             >
-              <p className="text-sm text-muted-foreground">Signed in as {user.email}. Choose your new password.</p>
-              <Input name="pw" type="password" required minLength={8} maxLength={72} placeholder="New password" />
-              <Input name="pw2" type="password" required minLength={8} maxLength={72} placeholder="Confirm new password" />
+              <p className="text-sm text-muted-foreground">
+                Signed in as {user.email}. Choose your new password.
+              </p>
+              <Input
+                name="pw"
+                type="password"
+                required
+                minLength={8}
+                maxLength={72}
+                placeholder="New password"
+              />
+              <Input
+                name="pw2"
+                type="password"
+                required
+                minLength={8}
+                maxLength={72}
+                placeholder="Confirm new password"
+              />
               <Button type="submit" className="w-full" disabled={busy}>
                 {busy && <Loader2 className="size-4 animate-spin mr-2" />}
                 Save password
@@ -325,15 +417,17 @@ function AuthPage() {
     <div className="container mx-auto flex min-h-[80vh] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md border-border bg-card text-card-foreground shadow-[var(--shadow-elegant)]">
         <CardHeader>
-          <CardTitle className="font-serif text-2xl text-center text-foreground">Member Portal</CardTitle>
+          <CardTitle className="font-serif text-2xl text-center text-foreground">
+            Member Portal
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {/* Helpful onboarding note */}
           <div className="mb-5 rounded-lg border border-accent/40 bg-accent/10 p-3 text-sm text-foreground">
             <p className="font-semibold mb-1">New here?</p>
             <p className="text-foreground/90">
-              Continue with Google for instant access, or create an email account on the
-              Sign Up tab.
+              Continue with Google for instant access, or create an email account on the Sign Up
+              tab.
             </p>
           </div>
 
@@ -359,16 +453,30 @@ function AuthPage() {
             }}
           >
             <svg className="size-4 mr-2" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09A6.6 6.6 0 0 1 5.47 12c0-.73.13-1.43.36-2.09V7.07H2.18A11 11 0 0 0 1 12c0 1.77.42 3.44 1.18 4.93l3.66-2.84z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09A6.6 6.6 0 0 1 5.47 12c0-.73.13-1.43.36-2.09V7.07H2.18A11 11 0 0 0 1 12c0 1.77.42 3.44 1.18 4.93l3.66-2.84z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"
+              />
             </svg>
             Continue with Google
           </Button>
 
           <div className="relative mb-4">
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
             </div>
@@ -377,9 +485,17 @@ function AuthPage() {
           {tab === "reset" ? (
             <>
               {/* The role-aware redirect effect above fires once `user` is set — no need to duplicate its admin/advisor/member logic here. */}
-              <ForgotPasswordFlow onDone={() => {}} onHoldRedirect={setHoldRedirect} initialEmail={resetEmail} />
+              <ForgotPasswordFlow
+                onDone={() => {}}
+                onHoldRedirect={setHoldRedirect}
+                initialEmail={resetEmail}
+              />
               <p className="text-center text-sm text-muted-foreground mt-4">
-                <button type="button" className="hover:text-primary underline-offset-2 hover:underline" onClick={() => setTab("signin")}>
+                <button
+                  type="button"
+                  className="hover:text-primary underline-offset-2 hover:underline"
+                  onClick={() => setTab("signin")}
+                >
                   ← Back to sign in
                 </button>
               </p>
@@ -394,23 +510,47 @@ function AuthPage() {
               <TabsContent value="signin">
                 <form onSubmit={handleSignIn} className="space-y-4 mt-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="si-email" className="text-foreground">Email</Label>
-                    <Input id="si-email" name="email" type="email" required maxLength={255}
+                    <Label htmlFor="si-email" className="text-foreground">
+                      Email
+                    </Label>
+                    <Input
+                      id="si-email"
+                      name="email"
+                      type="email"
+                      required
+                      maxLength={255}
                       placeholder="you@example.com"
-                      className="bg-background text-foreground placeholder:text-muted-foreground" />
+                      className="bg-background text-foreground placeholder:text-muted-foreground"
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="si-password" className="text-foreground">Password</Label>
-                      <button type="button" className="text-xs text-muted-foreground hover:text-primary underline-offset-2 hover:underline" onClick={() => setTab("reset")}>
+                      <Label htmlFor="si-password" className="text-foreground">
+                        Password
+                      </Label>
+                      <button
+                        type="button"
+                        className="text-xs text-muted-foreground hover:text-primary underline-offset-2 hover:underline"
+                        onClick={() => setTab("reset")}
+                      >
                         Forgot password?
                       </button>
                     </div>
-                    <Input id="si-password" name="password" type="password" required maxLength={72}
+                    <Input
+                      id="si-password"
+                      name="password"
+                      type="password"
+                      required
+                      maxLength={72}
                       placeholder="••••••••"
-                      className="bg-background text-foreground placeholder:text-muted-foreground" />
+                      className="bg-background text-foreground placeholder:text-muted-foreground"
+                    />
                   </div>
-                  <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={busy}>
+                  <Button
+                    type="submit"
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    disabled={busy}
+                  >
                     {busy && <Loader2 className="size-4 animate-spin mr-2" />}
                     Sign In
                   </Button>
@@ -420,21 +560,49 @@ function AuthPage() {
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4 mt-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="su-name" className="text-foreground">Full Name</Label>
-                    <Input id="su-name" name="full_name" required maxLength={120}
-                      className="bg-background text-foreground placeholder:text-muted-foreground" />
+                    <Label htmlFor="su-name" className="text-foreground">
+                      Full Name
+                    </Label>
+                    <Input
+                      id="su-name"
+                      name="full_name"
+                      required
+                      maxLength={120}
+                      className="bg-background text-foreground placeholder:text-muted-foreground"
+                    />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="su-email" className="text-foreground">Email</Label>
-                    <Input id="su-email" name="email" type="email" required maxLength={255}
-                      className="bg-background text-foreground placeholder:text-muted-foreground" />
+                    <Label htmlFor="su-email" className="text-foreground">
+                      Email
+                    </Label>
+                    <Input
+                      id="su-email"
+                      name="email"
+                      type="email"
+                      required
+                      maxLength={255}
+                      className="bg-background text-foreground placeholder:text-muted-foreground"
+                    />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="su-password" className="text-foreground">Password</Label>
-                    <Input id="su-password" name="password" type="password" required minLength={6} maxLength={72}
-                      className="bg-background text-foreground placeholder:text-muted-foreground" />
+                    <Label htmlFor="su-password" className="text-foreground">
+                      Password
+                    </Label>
+                    <Input
+                      id="su-password"
+                      name="password"
+                      type="password"
+                      required
+                      minLength={6}
+                      maxLength={72}
+                      className="bg-background text-foreground placeholder:text-muted-foreground"
+                    />
                   </div>
-                  <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={busy}>
+                  <Button
+                    type="submit"
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    disabled={busy}
+                  >
                     {busy && <Loader2 className="size-4 animate-spin mr-2" />}
                     Create Account
                   </Button>
@@ -444,11 +612,12 @@ function AuthPage() {
           )}
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            <Link to="/" className="hover:text-primary">← Back to home</Link>
+            <Link to="/" className="hover:text-primary">
+              ← Back to home
+            </Link>
           </p>
         </CardContent>
       </Card>
     </div>
   );
 }
-

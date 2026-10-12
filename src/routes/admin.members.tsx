@@ -8,12 +8,37 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter, SheetDescription } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { requestSetUserRole, requestDeleteMember, requestUpdateMemberEmail, resetAccountPassword } from "@/lib/admin-roles.functions";
+import {
+  requestSetUserRole,
+  requestDeleteMember,
+  requestUpdateMemberEmail,
+  resetAccountPassword,
+} from "@/lib/admin-roles.functions";
 import { getErrorMessage } from "@/lib/errors";
 import { AdvisorAccessSection } from "@/components/admin/AdvisorAccessSection";
 
@@ -45,10 +70,19 @@ function RoleBadges({ roles }: { roles: Set<string> | undefined }) {
   return (
     <span className="inline-flex gap-1 ml-2">
       {roles.has("admin") && (
-        <Badge variant="outline" className="border-blue-400/50 bg-blue-500/10 text-blue-700">Admin</Badge>
+        <Badge variant="outline" className="border-blue-400/50 bg-blue-500/10 text-blue-700">
+          Admin
+        </Badge>
       )}
       {roles.has("advisor") && (
-        <Badge variant="outline" style={{ borderColor: "rgba(232,150,10,0.5)", background: "rgba(232,150,10,0.1)", color: "#a16207" }}>
+        <Badge
+          variant="outline"
+          style={{
+            borderColor: "rgba(232,150,10,0.5)",
+            background: "rgba(232,150,10,0.1)",
+            color: "#a16207",
+          }}
+        >
           ThuthukaSA Advisor
         </Badge>
       )}
@@ -79,7 +113,10 @@ function MembersPage() {
   const callDeleteMember = useServerFn(requestDeleteMember);
   const callResetPassword = useServerFn(resetAccountPassword);
   const [resetPwBusy, setResetPwBusy] = useState(false);
-  const [resetPwResult, setResetPwResult] = useState<{ email: string | null; tempPassword: string } | null>(null);
+  const [resetPwResult, setResetPwResult] = useState<{
+    email: string | null;
+    tempPassword: string;
+  } | null>(null);
   const [changingEmail, setChangingEmail] = useState<Member | null>(null);
   const [newEmail, setNewEmail] = useState("");
   const [emailChangeReason, setEmailChangeReason] = useState("");
@@ -90,7 +127,9 @@ function MembersPage() {
     const [{ data, error }, { data: roleRows }] = await Promise.all([
       supabase
         .from("profiles")
-        .select("id, email, full_name, membership_tier, membership_status, joined_at, suspended, created_at")
+        .select(
+          "id, email, full_name, membership_tier, membership_status, joined_at, suspended, created_at",
+        )
         .order("created_at", { ascending: false }),
       supabase.from("user_roles").select("user_id, role").in("role", ["admin", "advisor"]),
     ]);
@@ -114,8 +153,7 @@ function MembersPage() {
     const matchesStatus = statusFilter === "all" || m.membership_status === statusFilter;
     const matchesTier = tierFilter === "all" || (m.membership_tier ?? "none") === tierFilter;
     const matchesSuspended =
-      suspendedFilter === "all" ||
-      (suspendedFilter === "yes" ? m.suspended : !m.suspended);
+      suspendedFilter === "all" || (suspendedFilter === "yes" ? m.suspended : !m.suspended);
     return matchesSearch && matchesStatus && matchesTier && matchesSuspended;
   });
 
@@ -153,7 +191,9 @@ function MembersPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl">Members</h1>
-          <p className="text-sm text-muted-foreground">{filtered.length} of {members?.length ?? 0}</p>
+          <p className="text-sm text-muted-foreground">
+            {filtered.length} of {members?.length ?? 0}
+          </p>
         </div>
         <Button variant="outline" onClick={exportCsv}>
           <Download className="size-4 mr-2" /> Export CSV
@@ -177,10 +217,17 @@ function MembersPage() {
           <div className="grid gap-3 sm:grid-cols-4">
             <div className="relative sm:col-span-2">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <Input placeholder="Search name or email…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+              <Input
+                placeholder="Search name or email…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All statuses</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
@@ -189,15 +236,23 @@ function MembersPage() {
               </SelectContent>
             </Select>
             <Select value={tierFilter} onValueChange={setTierFilter}>
-              <SelectTrigger><SelectValue placeholder="Payment type" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Payment type" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All payment types</SelectItem>
                 <SelectItem value="none">Not set</SelectItem>
-                {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABELS[t]}</SelectItem>)}
+                {TIERS.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    {TIER_LABELS[t]}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Select value={suspendedFilter} onValueChange={setSuspendedFilter}>
-              <SelectTrigger className="sm:col-start-3"><SelectValue placeholder="Suspended" /></SelectTrigger>
+              <SelectTrigger className="sm:col-start-3">
+                <SelectValue placeholder="Suspended" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All (active & suspended)</SelectItem>
                 <SelectItem value="no">Not suspended</SelectItem>
@@ -206,13 +261,22 @@ function MembersPage() {
             </Select>
             <Button
               variant="ghost"
-              onClick={() => { setSearch(""); setStatusFilter("all"); setTierFilter("all"); setSuspendedFilter("all"); }}
+              onClick={() => {
+                setSearch("");
+                setStatusFilter("all");
+                setTierFilter("all");
+                setSuspendedFilter("all");
+              }}
               className="sm:col-start-4"
-            >Clear filters</Button>
+            >
+              Clear filters
+            </Button>
           </div>
 
           {members === null ? (
-            <div className="py-8 flex justify-center"><Loader2 className="size-5 animate-spin" /></div>
+            <div className="py-8 flex justify-center">
+              <Loader2 className="size-5 animate-spin" />
+            </div>
           ) : filtered.length === 0 ? (
             <p className="text-sm text-muted-foreground py-8 text-center">No members found.</p>
           ) : (
@@ -240,14 +304,20 @@ function MembersPage() {
                         <RoleBadges roles={roleMap[m.id]} />
                       </td>
                       <td className="py-3 pr-3 text-muted-foreground">{m.email}</td>
-                      <td className="py-3 pr-3">{m.membership_tier ? TIER_LABELS[m.membership_tier] : "—"}</td>
-                      <td className="py-3 pr-3"><StatusPill status={m.membership_status} suspended={m.suspended} /></td>
+                      <td className="py-3 pr-3">
+                        {m.membership_tier ? TIER_LABELS[m.membership_tier] : "—"}
+                      </td>
+                      <td className="py-3 pr-3">
+                        <StatusPill status={m.membership_status} suspended={m.suspended} />
+                      </td>
                       <td className="py-3 pr-3 text-muted-foreground">
                         {m.joined_at ? new Date(m.joined_at).toLocaleDateString() : "—"}
                       </td>
                       <td className="py-3" onClick={(e) => e.stopPropagation()}>
                         <div className="flex gap-1">
-                          <Button size="sm" variant="ghost" onClick={() => setEditing(m)}>Edit</Button>
+                          <Button size="sm" variant="ghost" onClick={() => setEditing(m)}>
+                            Edit
+                          </Button>
                           <Button
                             size="sm"
                             variant="ghost"
@@ -255,7 +325,14 @@ function MembersPage() {
                           >
                             {m.suspended ? "Unsuspend" : "Suspend"}
                           </Button>
-                          <Button size="sm" variant="ghost" onClick={() => { setPromoting(m); setPromoteReason(""); }}>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setPromoting(m);
+                              setPromoteReason("");
+                            }}
+                          >
                             <Shield className="size-3.5 mr-1" /> Role
                           </Button>
                         </div>
@@ -282,25 +359,52 @@ function MembersPage() {
           {detail && (
             <div className="mt-6 space-y-4 px-4 text-sm">
               <div className="grid grid-cols-2 gap-3">
-                <Info label="Payment Type" value={detail.membership_tier ? TIER_LABELS[detail.membership_tier] : "—"} />
+                <Info
+                  label="Payment Type"
+                  value={detail.membership_tier ? TIER_LABELS[detail.membership_tier] : "—"}
+                />
                 <Info label="Status" value={detail.membership_status} />
                 <Info label="Suspended" value={detail.suspended ? "Yes" : "No"} />
-                <Info label="Joined" value={detail.joined_at ? new Date(detail.joined_at).toLocaleDateString() : "—"} />
+                <Info
+                  label="Joined"
+                  value={detail.joined_at ? new Date(detail.joined_at).toLocaleDateString() : "—"}
+                />
                 <Info label="Created" value={new Date(detail.created_at).toLocaleDateString()} />
               </div>
               <div className="flex flex-col gap-2 pt-4 border-t">
-                <Button onClick={() => { setEditing(detail); setDetail(null); }}>Edit membership</Button>
-                <Button variant="outline" onClick={() => updateMember(detail.id, { suspended: !detail.suspended })}>
+                <Button
+                  onClick={() => {
+                    setEditing(detail);
+                    setDetail(null);
+                  }}
+                >
+                  Edit membership
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => updateMember(detail.id, { suspended: !detail.suspended })}
+                >
                   {detail.suspended ? "Unsuspend member" : "Suspend member"}
                 </Button>
-                <Button variant="outline" onClick={() => { setPromoting(detail); setPromoteReason(""); setDetail(null); }}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setPromoting(detail);
+                    setPromoteReason("");
+                    setDetail(null);
+                  }}
+                >
                   <Shield className="size-4 mr-2" /> Manage admin role
                 </Button>
                 {roleMap[detail.id]?.has("advisor") && (
                   <Button
                     variant="outline"
                     className="text-amber-700 hover:text-amber-700"
-                    onClick={() => { setRevokingAdvisor(detail); setRevokeAdvisorReason(""); setDetail(null); }}
+                    onClick={() => {
+                      setRevokingAdvisor(detail);
+                      setRevokeAdvisorReason("");
+                      setDetail(null);
+                    }}
                   >
                     <ShieldOff className="size-4 mr-2" /> Revoke advisor
                   </Button>
@@ -309,7 +413,12 @@ function MembersPage() {
                   variant="outline"
                   disabled={resetPwBusy}
                   onClick={async () => {
-                    if (!confirm(`Reset ${detail.full_name || detail.email}'s password? A new temporary password is generated immediately and they'll be forced to set their own on next login.`)) return;
+                    if (
+                      !confirm(
+                        `Reset ${detail.full_name || detail.email}'s password? A new temporary password is generated immediately and they'll be forced to set their own on next login.`,
+                      )
+                    )
+                      return;
                     setResetPwBusy(true);
                     try {
                       const res = await callResetPassword({ data: { user_id: detail.id } });
@@ -322,13 +431,22 @@ function MembersPage() {
                     }
                   }}
                 >
-                  {resetPwBusy ? <Loader2 className="size-4 mr-2 animate-spin" /> : <Shield className="size-4 mr-2" />}
+                  {resetPwBusy ? (
+                    <Loader2 className="size-4 mr-2 animate-spin" />
+                  ) : (
+                    <Shield className="size-4 mr-2" />
+                  )}
                   Reset password
                 </Button>
                 <Button
                   variant="outline"
                   className="text-destructive hover:text-destructive"
-                  onClick={() => { setDeleting(detail); setDeleteConfirmEmail(""); setDeleteReason(""); setDetail(null); }}
+                  onClick={() => {
+                    setDeleting(detail);
+                    setDeleteConfirmEmail("");
+                    setDeleteReason("");
+                    setDetail(null);
+                  }}
                 >
                   <Trash2 className="size-4 mr-2" /> Delete member
                 </Button>
@@ -336,7 +454,9 @@ function MembersPage() {
             </div>
           )}
           <SheetFooter className="mt-6">
-            <Button variant="ghost" onClick={() => setDetail(null)}>Close</Button>
+            <Button variant="ghost" onClick={() => setDetail(null)}>
+              Close
+            </Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>
@@ -348,13 +468,16 @@ function MembersPage() {
           <DialogHeader>
             <DialogTitle>Password reset</DialogTitle>
             <DialogDescription>
-              Send this to {resetPwResult?.email ?? "the account owner"} now — it's shown once and isn't stored
-              anywhere. They'll be forced to set their own password on next login.
+              Send this to {resetPwResult?.email ?? "the account owner"} now — it's shown once and
+              isn't stored anywhere. They'll be forced to set their own password on next login.
             </DialogDescription>
           </DialogHeader>
           {resetPwResult && (
             <div className="rounded-lg border border-accent/50 bg-accent/10 p-3 text-sm">
-              Temp password: <code className="rounded bg-background px-1.5 py-0.5 font-mono">{resetPwResult.tempPassword}</code>
+              Temp password:{" "}
+              <code className="rounded bg-background px-1.5 py-0.5 font-mono">
+                {resetPwResult.tempPassword}
+              </code>
             </div>
           )}
           <DialogFooter>
@@ -380,24 +503,37 @@ function MembersPage() {
             <div className="space-y-3">
               <div className="grid gap-1.5">
                 <Label className="text-xs">
-                  Type the member's email to confirm: <span className="font-mono">{deleting.email}</span>
+                  Type the member's email to confirm:{" "}
+                  <span className="font-mono">{deleting.email}</span>
                 </Label>
-                <Input value={deleteConfirmEmail} onChange={(e) => setDeleteConfirmEmail(e.target.value)} autoComplete="off" />
+                <Input
+                  value={deleteConfirmEmail}
+                  onChange={(e) => setDeleteConfirmEmail(e.target.value)}
+                  autoComplete="off"
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label className="text-xs">Reason (audit log, min 5 chars)</Label>
-                <Textarea value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} rows={2} placeholder="e.g. Requested account closure, confirmed via email 2026-07-30" />
+                <Textarea
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                  rows={2}
+                  placeholder="e.g. Requested account closure, confirmed via email 2026-07-30"
+                />
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDeleting(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setDeleting(null)}>
+              Cancel
+            </Button>
             <Button
               variant="destructive"
               disabled={
                 deleteBusy ||
                 !deleting ||
-                deleteConfirmEmail.trim().toLowerCase() !== (deleting?.email ?? "").trim().toLowerCase() ||
+                deleteConfirmEmail.trim().toLowerCase() !==
+                  (deleting?.email ?? "").trim().toLowerCase() ||
                 deleteReason.trim().length < 5
               }
               onClick={async () => {
@@ -405,9 +541,15 @@ function MembersPage() {
                 setDeleteBusy(true);
                 try {
                   await callDeleteMember({
-                    data: { user_id: deleting.id, confirm_email: deleteConfirmEmail.trim(), reason: deleteReason.trim() },
+                    data: {
+                      user_id: deleting.id,
+                      confirm_email: deleteConfirmEmail.trim(),
+                      reason: deleteReason.trim(),
+                    },
                   });
-                  toast.success("Deletion request submitted — needs approval from a different admin");
+                  toast.success(
+                    "Deletion request submitted — needs approval from a different admin",
+                  );
                   setDeleting(null);
                 } catch (e: any) {
                   toast.error(getErrorMessage(e, "Failed to delete member"));
@@ -416,7 +558,11 @@ function MembersPage() {
                 }
               }}
             >
-              {deleteBusy ? <Loader2 className="size-4 mr-2 animate-spin" /> : <Trash2 className="size-4 mr-2" />}
+              {deleteBusy ? (
+                <Loader2 className="size-4 mr-2 animate-spin" />
+              ) : (
+                <Trash2 className="size-4 mr-2" />
+              )}
               Request deletion
             </Button>
           </DialogFooter>
@@ -432,9 +578,9 @@ function MembersPage() {
           <DialogHeader>
             <DialogTitle>Change Member Email</DialogTitle>
             <DialogDescription>
-              This changes {changingEmail?.full_name || changingEmail?.email}'s login email (they'll need to
-              use the new address to sign in). This request needs approval from a different admin before it
-              takes effect (see Admin → Approvals).
+              This changes {changingEmail?.full_name || changingEmail?.email}'s login email (they'll
+              need to use the new address to sign in). This request needs approval from a different
+              admin before it takes effect (see Admin → Approvals).
             </DialogDescription>
           </DialogHeader>
           {changingEmail && (
@@ -445,22 +591,36 @@ function MembersPage() {
               </div>
               <div className="grid gap-1.5">
                 <Label className="text-xs">New email</Label>
-                <Input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} autoComplete="off" placeholder="name@example.com" />
+                <Input
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  autoComplete="off"
+                  placeholder="name@example.com"
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label className="text-xs">Reason (audit log, min 5 chars)</Label>
-                <Textarea value={emailChangeReason} onChange={(e) => setEmailChangeReason(e.target.value)} rows={2} placeholder="e.g. Requested via WhatsApp 2026-09-15, old address inactive" />
+                <Textarea
+                  value={emailChangeReason}
+                  onChange={(e) => setEmailChangeReason(e.target.value)}
+                  rows={2}
+                  placeholder="e.g. Requested via WhatsApp 2026-09-15, old address inactive"
+                />
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setChangingEmail(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setChangingEmail(null)}>
+              Cancel
+            </Button>
             <Button
               disabled={
                 emailChangeBusy ||
                 !changingEmail ||
                 !newEmail.trim() ||
-                newEmail.trim().toLowerCase() === (changingEmail?.email ?? "").trim().toLowerCase() ||
+                newEmail.trim().toLowerCase() ===
+                  (changingEmail?.email ?? "").trim().toLowerCase() ||
                 emailChangeReason.trim().length < 5
               }
               onClick={async () => {
@@ -468,7 +628,11 @@ function MembersPage() {
                 setEmailChangeBusy(true);
                 try {
                   await callRequestEmailChange({
-                    data: { user_id: changingEmail.id, new_email: newEmail.trim(), reason: emailChangeReason.trim() },
+                    data: {
+                      user_id: changingEmail.id,
+                      new_email: newEmail.trim(),
+                      reason: emailChangeReason.trim(),
+                    },
                   });
                   toast.success("Email change requested — needs approval from a different admin");
                   setChangingEmail(null);
@@ -486,10 +650,11 @@ function MembersPage() {
         </DialogContent>
       </Dialog>
 
-
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Edit Member</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Edit Member</DialogTitle>
+          </DialogHeader>
           {editing && (
             <div className="space-y-4">
               <div>
@@ -513,12 +678,23 @@ function MembersPage() {
                 <label className="text-xs font-medium">Payment Type</label>
                 <Select
                   value={editing.membership_tier ?? "none"}
-                  onValueChange={(v) => setEditing({ ...editing, membership_tier: v === "none" ? null : (v as TierName) })}
+                  onValueChange={(v) =>
+                    setEditing({
+                      ...editing,
+                      membership_tier: v === "none" ? null : (v as TierName),
+                    })
+                  }
                 >
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">None</SelectItem>
-                    {TIERS.map((t) => <SelectItem key={t} value={t}>{TIER_LABELS[t]}</SelectItem>)}
+                    {TIERS.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {TIER_LABELS[t]}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -528,7 +704,9 @@ function MembersPage() {
                   value={editing.membership_status}
                   onValueChange={(v) => setEditing({ ...editing, membership_status: v })}
                 >
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
@@ -539,27 +717,34 @@ function MembersPage() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setEditing(null)}>
+              Cancel
+            </Button>
             <Button
               onClick={async () => {
                 if (!editing) return;
                 await updateMember(editing.id, {
                   membership_tier: editing.membership_tier,
                   membership_status: editing.membership_status,
-                  joined_at: editing.membership_status === "active" && !editing.joined_at
-                    ? new Date().toISOString()
-                    : editing.joined_at,
+                  joined_at:
+                    editing.membership_status === "active" && !editing.joined_at
+                      ? new Date().toISOString()
+                      : editing.joined_at,
                 });
                 setEditing(null);
               }}
-            >Save</Button>
+            >
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <Dialog open={!!promoting} onOpenChange={(o) => !o && setPromoting(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Manage Admin Role</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Manage Admin Role</DialogTitle>
+          </DialogHeader>
           {promoting && (
             <div className="space-y-3">
               <p className="text-sm">
@@ -568,16 +753,24 @@ function MembersPage() {
                 <span className="text-xs text-muted-foreground">{promoting.email}</span>
               </p>
               <p className="text-xs text-muted-foreground">
-                This requires approval from a different admin before it takes effect (see Admin → Approvals).
+                This requires approval from a different admin before it takes effect (see Admin →
+                Approvals).
               </p>
               <div className="grid gap-2">
                 <label className="text-xs font-medium">Reason (audit log, min 5 chars)</label>
-                <Textarea value={promoteReason} onChange={(e) => setPromoteReason(e.target.value)} rows={3} placeholder="e.g. New committee chair, onboarded 2026-06-24" />
+                <Textarea
+                  value={promoteReason}
+                  onChange={(e) => setPromoteReason(e.target.value)}
+                  rows={3}
+                  placeholder="e.g. New committee chair, onboarded 2026-06-24"
+                />
               </div>
             </div>
           )}
           <DialogFooter className="gap-2">
-            <Button variant="ghost" onClick={() => setPromoting(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setPromoting(null)}>
+              Cancel
+            </Button>
             <Button
               variant="outline"
               disabled={promoteBusy || promoteReason.trim().length < 5 || !promoting}
@@ -585,26 +778,54 @@ function MembersPage() {
                 if (!promoting) return;
                 setPromoteBusy(true);
                 try {
-                  await callSetRole({ data: { user_id: promoting.id, email: promoting.email ?? undefined, role: "admin", action: "revoke", reason: promoteReason.trim() } });
+                  await callSetRole({
+                    data: {
+                      user_id: promoting.id,
+                      email: promoting.email ?? undefined,
+                      role: "admin",
+                      action: "revoke",
+                      reason: promoteReason.trim(),
+                    },
+                  });
                   toast.success("Revoke request submitted — needs approval from a different admin");
                   setPromoting(null);
-                } catch (e: any) { toast.error(getErrorMessage(e, "Failed")); }
-                finally { setPromoteBusy(false); }
+                } catch (e: any) {
+                  toast.error(getErrorMessage(e, "Failed"));
+                } finally {
+                  setPromoteBusy(false);
+                }
               }}
-            >Revoke admin</Button>
+            >
+              Revoke admin
+            </Button>
             <Button
               disabled={promoteBusy || promoteReason.trim().length < 5 || !promoting}
               onClick={async () => {
                 if (!promoting) return;
                 setPromoteBusy(true);
                 try {
-                  await callSetRole({ data: { user_id: promoting.id, email: promoting.email ?? undefined, role: "admin", action: "grant", reason: promoteReason.trim() } });
-                  toast.success("Promotion request submitted — needs approval from a different admin");
+                  await callSetRole({
+                    data: {
+                      user_id: promoting.id,
+                      email: promoting.email ?? undefined,
+                      role: "admin",
+                      action: "grant",
+                      reason: promoteReason.trim(),
+                    },
+                  });
+                  toast.success(
+                    "Promotion request submitted — needs approval from a different admin",
+                  );
                   setPromoting(null);
-                } catch (e: any) { toast.error(getErrorMessage(e, "Failed")); }
-                finally { setPromoteBusy(false); }
+                } catch (e: any) {
+                  toast.error(getErrorMessage(e, "Failed"));
+                } finally {
+                  setPromoteBusy(false);
+                }
               }}
-            >{promoteBusy ? <Loader2 className="size-4 animate-spin" /> : "Promote to admin"}</Button>
+            >
+              {promoteBusy ? <Loader2 className="size-4 animate-spin" /> : "Promote to admin"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -614,40 +835,66 @@ function MembersPage() {
           just reachable without leaving this page. */}
       <Dialog open={!!revokingAdvisor} onOpenChange={(o) => !o && setRevokingAdvisor(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Revoke ThuthukaSA Advisor Access</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Revoke ThuthukaSA Advisor Access</DialogTitle>
+          </DialogHeader>
           {revokingAdvisor && (
             <div className="space-y-3">
               <p className="text-sm">
-                <span className="font-medium">{revokingAdvisor.full_name || revokingAdvisor.email}</span>
+                <span className="font-medium">
+                  {revokingAdvisor.full_name || revokingAdvisor.email}
+                </span>
                 <br />
                 <span className="text-xs text-muted-foreground">{revokingAdvisor.email}</span>
               </p>
               <p className="text-xs text-muted-foreground">
-                They will no longer be able to see LOA/RPA submissions. Requires approval from a different admin
-                before it takes effect (see Admin → Approvals).
+                They will no longer be able to see LOA/RPA submissions. Requires approval from a
+                different admin before it takes effect (see Admin → Approvals).
               </p>
               <div className="grid gap-2">
                 <label className="text-xs font-medium">Reason (audit log, min 5 chars)</label>
-                <Textarea value={revokeAdvisorReason} onChange={(e) => setRevokeAdvisorReason(e.target.value)} rows={3} placeholder="e.g. No longer with ThuthukaSA" />
+                <Textarea
+                  value={revokeAdvisorReason}
+                  onChange={(e) => setRevokeAdvisorReason(e.target.value)}
+                  rows={3}
+                  placeholder="e.g. No longer with ThuthukaSA"
+                />
               </div>
             </div>
           )}
           <DialogFooter className="gap-2">
-            <Button variant="ghost" onClick={() => setRevokingAdvisor(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setRevokingAdvisor(null)}>
+              Cancel
+            </Button>
             <Button
               variant="destructive"
-              disabled={revokeAdvisorBusy || revokeAdvisorReason.trim().length < 5 || !revokingAdvisor}
+              disabled={
+                revokeAdvisorBusy || revokeAdvisorReason.trim().length < 5 || !revokingAdvisor
+              }
               onClick={async () => {
                 if (!revokingAdvisor) return;
                 setRevokeAdvisorBusy(true);
                 try {
-                  await callSetRole({ data: { user_id: revokingAdvisor.id, email: revokingAdvisor.email ?? undefined, role: "advisor", action: "revoke", reason: revokeAdvisorReason.trim() } });
+                  await callSetRole({
+                    data: {
+                      user_id: revokingAdvisor.id,
+                      email: revokingAdvisor.email ?? undefined,
+                      role: "advisor",
+                      action: "revoke",
+                      reason: revokeAdvisorReason.trim(),
+                    },
+                  });
                   toast.success("Revoke request submitted — needs approval from a different admin");
                   setRevokingAdvisor(null);
-                } catch (e: any) { toast.error(getErrorMessage(e, "Failed")); }
-                finally { setRevokeAdvisorBusy(false); }
+                } catch (e: any) {
+                  toast.error(getErrorMessage(e, "Failed"));
+                } finally {
+                  setRevokeAdvisorBusy(false);
+                }
               }}
-            >{revokeAdvisorBusy ? <Loader2 className="size-4 animate-spin" /> : "Revoke advisor"}</Button>
+            >
+              {revokeAdvisorBusy ? <Loader2 className="size-4 animate-spin" /> : "Revoke advisor"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -656,13 +903,22 @@ function MembersPage() {
 }
 
 function StatusPill({ status, suspended }: { status: string; suspended: boolean }) {
-  if (suspended) return <Badge variant="outline" className="bg-destructive/15 text-destructive">Suspended</Badge>;
+  if (suspended)
+    return (
+      <Badge variant="outline" className="bg-destructive/15 text-destructive">
+        Suspended
+      </Badge>
+    );
   const map: Record<string, string> = {
     active: "bg-green-500/15 text-green-700 dark:text-green-400",
     pending: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
     expired: "bg-destructive/15 text-destructive",
   };
-  return <Badge variant="outline" className={map[status] ?? ""}>{status}</Badge>;
+  return (
+    <Badge variant="outline" className={map[status] ?? ""}>
+      {status}
+    </Badge>
+  );
 }
 
 function Info({ label, value }: { label: string; value: string }) {

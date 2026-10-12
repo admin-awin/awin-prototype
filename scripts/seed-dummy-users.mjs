@@ -20,8 +20,18 @@ if (!URL || !KEY) {
 const sb = createClient(URL, KEY, { auth: { persistSession: false } });
 
 const USERS = [
-  { email: "admin@awin.test",  password: "Awin!Admin#2026",  full_name: "A-WIN Admin",  role: "admin" },
-  { email: "member@awin.test", password: "Awin!Member#2026", full_name: "A-WIN Member", role: "member" },
+  {
+    email: "admin@awin.test",
+    password: "Awin!Admin#2026",
+    full_name: "A-WIN Admin",
+    role: "admin",
+  },
+  {
+    email: "member@awin.test",
+    password: "Awin!Member#2026",
+    full_name: "A-WIN Member",
+    role: "member",
+  },
 ];
 
 for (const u of USERS) {
@@ -34,7 +44,10 @@ for (const u of USERS) {
       email_confirm: true,
       user_metadata: { full_name: u.full_name },
     });
-    if (error) { console.error(u.email, error.message); continue; }
+    if (error) {
+      console.error(u.email, error.message);
+      continue;
+    }
     userId = existing.id;
     console.log(`updated ${u.email}`);
   } else {
@@ -44,11 +57,16 @@ for (const u of USERS) {
       email_confirm: true,
       user_metadata: { full_name: u.full_name },
     });
-    if (error) { console.error(u.email, error.message); continue; }
+    if (error) {
+      console.error(u.email, error.message);
+      continue;
+    }
     userId = data.user.id;
     console.log(`created ${u.email}`);
   }
-  await sb.from("user_roles").upsert({ user_id: userId, role: u.role }, { onConflict: "user_id,role" });
+  await sb
+    .from("user_roles")
+    .upsert({ user_id: userId, role: u.role }, { onConflict: "user_id,role" });
   console.log(`  role=${u.role}`);
 }
 

@@ -43,7 +43,10 @@ export function TksaHighlights() {
       {ITEMS.map(({ icon: Icon, title, body, color }) => (
         <div key={title} className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full" style={{ background: `${color}26` }}>
+            <span
+              className="flex size-6 shrink-0 items-center justify-center rounded-full"
+              style={{ background: `${color}26` }}
+            >
               <Icon className="size-3.5" style={{ color }} />
             </span>
             <h3 className="text-sm font-medium text-white">{title}</h3>

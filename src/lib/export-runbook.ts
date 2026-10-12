@@ -23,7 +23,10 @@ export type CapturedExport = {
 
 export const EXPORT_GROUP_ORDER: ExportGroup[] = ["Admin Console", "Member Portal", "Public"];
 
-export function sortCapturesForRunbook(captures: CapturedExport[], pages: readonly ExportPageDef[]) {
+export function sortCapturesForRunbook(
+  captures: CapturedExport[],
+  pages: readonly ExportPageDef[],
+) {
   const pageOrder = new Map(pages.map((page, index) => [page.path, index]));
   return [...captures].sort((a, b) => {
     const groupDiff = EXPORT_GROUP_ORDER.indexOf(a.group) - EXPORT_GROUP_ORDER.indexOf(b.group);
@@ -45,10 +48,12 @@ export function buildScreenshotCaption(item: CapturedExport, index: number) {
 }
 
 export function sanitizeExportFilename(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "") || "capture";
+  return (
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") || "capture"
+  );
 }
 
 const sharedExportTokens = {
@@ -100,7 +105,8 @@ export const EXPORT_SAFE_THEME_TOKENS: Record<string, Record<string, string>> = 
     "--gradient-hero": "linear-gradient(135deg, #226f40 0%, #143d27 100%)",
     "--gradient-gold": "linear-gradient(135deg, #dfa246 0%, #c98228 100%)",
     "--shadow-elegant": "0 10px 30px -10px rgba(47, 143, 87, 0.22)",
-    "--shadow-gold-glow": "0 0 0 1px rgba(217, 150, 56, 0.35), 0 10px 30px -10px rgba(217, 150, 56, 0.4)",
+    "--shadow-gold-glow":
+      "0 0 0 1px rgba(217, 150, 56, 0.35), 0 10px 30px -10px rgba(217, 150, 56, 0.4)",
   },
   orange: {
     ...sharedExportTokens,
@@ -138,7 +144,8 @@ export const EXPORT_SAFE_THEME_TOKENS: Record<string, Record<string, string>> = 
     "--gradient-hero": "linear-gradient(135deg, #a8501c 0%, #5d2716 100%)",
     "--gradient-gold": "linear-gradient(135deg, #dfa246 0%, #be5a22 100%)",
     "--shadow-elegant": "0 10px 30px -10px rgba(166, 80, 28, 0.3)",
-    "--shadow-gold-glow": "0 0 0 1px rgba(201, 93, 34, 0.4), 0 10px 30px -10px rgba(201, 93, 34, 0.45)",
+    "--shadow-gold-glow":
+      "0 0 0 1px rgba(201, 93, 34, 0.4), 0 10px 30px -10px rgba(201, 93, 34, 0.45)",
   },
   black: {
     ...sharedExportTokens,
@@ -214,7 +221,8 @@ export const EXPORT_SAFE_THEME_TOKENS: Record<string, Record<string, string>> = 
     "--gradient-hero": "linear-gradient(135deg, #d8cfbf 0%, #afa390 100%)",
     "--gradient-gold": "linear-gradient(135deg, #f1eadc 0%, #cdbfab 100%)",
     "--shadow-elegant": "0 10px 30px -10px rgba(120, 112, 100, 0.25)",
-    "--shadow-gold-glow": "0 0 0 1px rgba(184, 171, 152, 0.45), 0 10px 30px -10px rgba(120, 112, 100, 0.3)",
+    "--shadow-gold-glow":
+      "0 0 0 1px rgba(184, 171, 152, 0.45), 0 10px 30px -10px rgba(120, 112, 100, 0.3)",
   },
 };
 

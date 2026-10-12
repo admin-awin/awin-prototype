@@ -1,20 +1,35 @@
-
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, RotateCw, ShieldAlert, ShieldCheck, History, FileText, Landmark } from "lucide-react";
+import {
+  Loader2,
+  RotateCw,
+  ShieldAlert,
+  ShieldCheck,
+  History,
+  FileText,
+  Landmark,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle} from "@/components/ui/dialog";
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -23,16 +38,16 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue} from "@/components/ui/select";
+  SelectValue,
+} from "@/components/ui/select";
 import {
   listPayments,
   listWebhookEvents,
   listAuditLogs,
   listMembersBrief,
   retryWebhookEvent,
-  overrideMembership} from "@/lib/billing-admin.functions";
-
-
+  overrideMembership,
+} from "@/lib/billing-admin.functions";
 
 type Payment = {
   id: string;
@@ -91,7 +106,8 @@ function statusBadge(s: string) {
     pending: "bg-yellow-500 text-white",
     failed: "bg-destructive text-destructive-foreground",
     refunded: "bg-muted text-foreground",
-    cancelled: "bg-muted text-foreground"};
+    cancelled: "bg-muted text-foreground",
+  };
   return <Badge className={map[s] ?? ""}>{s}</Badge>;
 }
 
@@ -141,16 +157,33 @@ function BillingAdminPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-3xl md:text-4xl text-foreground">Billing Console</h1>
-        <p className="text-muted-foreground mt-1">Payments, webhook events, manual overrides, audit trail.</p>
+        <p className="text-muted-foreground mt-1">
+          Payments, webhook events, manual overrides, audit trail.
+        </p>
       </div>
 
       <Tabs defaultValue="payments">
         <TabsList className="grid grid-cols-5 w-full max-w-3xl">
-          <TabsTrigger value="payments"><FileText className="size-4 mr-1.5" />Payments</TabsTrigger>
-          <TabsTrigger value="events"><RotateCw className="size-4 mr-1.5" />Webhooks</TabsTrigger>
-          <TabsTrigger value="override"><ShieldAlert className="size-4 mr-1.5" />Overrides</TabsTrigger>
-          <TabsTrigger value="audit"><History className="size-4 mr-1.5" />Audit</TabsTrigger>
-          <TabsTrigger value="gateways"><Landmark className="size-4 mr-1.5" />Gateways</TabsTrigger>
+          <TabsTrigger value="payments">
+            <FileText className="size-4 mr-1.5" />
+            Payments
+          </TabsTrigger>
+          <TabsTrigger value="events">
+            <RotateCw className="size-4 mr-1.5" />
+            Webhooks
+          </TabsTrigger>
+          <TabsTrigger value="override">
+            <ShieldAlert className="size-4 mr-1.5" />
+            Overrides
+          </TabsTrigger>
+          <TabsTrigger value="audit">
+            <History className="size-4 mr-1.5" />
+            Audit
+          </TabsTrigger>
+          <TabsTrigger value="gateways">
+            <Landmark className="size-4 mr-1.5" />
+            Gateways
+          </TabsTrigger>
         </TabsList>
 
         {/* PAYMENTS */}
@@ -183,10 +216,18 @@ function BillingAdminPage() {
                         <TableRow key={p.id}>
                           <TableCell className="text-xs">{fmtDate(p.created_at)}</TableCell>
                           <TableCell className="text-sm">{p.email ?? "—"}</TableCell>
-                          <TableCell className="text-sm">{p.tier === "general" ? "Joining Fee" : p.tier === "active" ? "Monthly Contribution" : p.tier}</TableCell>
+                          <TableCell className="text-sm">
+                            {p.tier === "general"
+                              ? "Joining Fee"
+                              : p.tier === "active"
+                                ? "Monthly Contribution"
+                                : p.tier}
+                          </TableCell>
                           <TableCell className="text-sm">{fmtZar(p.amount_cents)}</TableCell>
                           <TableCell>{statusBadge(p.status)}</TableCell>
-                          <TableCell className="text-xs text-muted-foreground">{p.pf_payment_id ?? "—"}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {p.pf_payment_id ?? "—"}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -202,7 +243,9 @@ function BillingAdminPage() {
           <Card>
             <CardHeader>
               <CardTitle>Webhook events</CardTitle>
-              <CardDescription>Retry processes the stored payload again (bypasses post-back).</CardDescription>
+              <CardDescription>
+                Retry processes the stored payload again (bypasses post-back).
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {events === null ? (
@@ -243,7 +286,10 @@ function BillingAdminPage() {
                             )}
                           </TableCell>
                           <TableCell className="text-xs">{e.retry_count}</TableCell>
-                          <TableCell className="text-xs max-w-[220px] truncate" title={e.error ?? ""}>
+                          <TableCell
+                            className="text-xs max-w-[220px] truncate"
+                            title={e.error ?? ""}
+                          >
                             {e.error ?? "—"}
                           </TableCell>
                           <TableCell>
@@ -254,7 +300,11 @@ function BillingAdminPage() {
                                 disabled={busy === e.id}
                                 onClick={() => handleRetry(e.id)}
                               >
-                                {busy === e.id ? <Loader2 className="size-3 animate-spin" /> : "Retry"}
+                                {busy === e.id ? (
+                                  <Loader2 className="size-3 animate-spin" />
+                                ) : (
+                                  "Retry"
+                                )}
                               </Button>
                             )}
                           </TableCell>
@@ -276,7 +326,10 @@ function BillingAdminPage() {
                 <ShieldCheck className="size-5 text-accent" />
                 Override membership
               </CardTitle>
-              <CardDescription>Activate or suspend a member outside the payment flow. A reason is required and every change is logged.</CardDescription>
+              <CardDescription>
+                Activate or suspend a member outside the payment flow. A reason is required and
+                every change is logged.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={() => setOverrideOpen(true)}>New override</Button>
@@ -317,8 +370,12 @@ function BillingAdminPage() {
                     <div key={a.id} className="rounded-md border p-3 text-sm">
                       <div className="flex flex-wrap gap-2 items-center">
                         <Badge variant="outline">{a.action}</Badge>
-                        <span className="text-xs text-muted-foreground">{fmtDate(a.created_at)}</span>
-                        <span className="text-xs text-muted-foreground">by {a.actor_email ?? a.target_id ?? "—"}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {fmtDate(a.created_at)}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          by {a.actor_email ?? a.target_id ?? "—"}
+                        </span>
                       </div>
                       {a.reason && <div className="mt-1 text-foreground">"{a.reason}"</div>}
                       <div className="mt-1 text-xs text-muted-foreground break-all">
@@ -339,7 +396,10 @@ function BillingAdminPage() {
           <Card>
             <CardHeader>
               <CardTitle>Payment methods — status at a glance</CardTitle>
-              <CardDescription>From Lusandla's payment gateway briefing, 22 July 2026. Nothing here is blocking membership operations — direct EFT is live and free.</CardDescription>
+              <CardDescription>
+                From Lusandla's payment gateway briefing, 22 July 2026. Nothing here is blocking
+                membership operations — direct EFT is live and free.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -352,33 +412,57 @@ function BillingAdminPage() {
                 </TableHeader>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="font-medium">Direct EFT (ABSA + proof of payment)</TableCell>
-                    <TableCell><Badge className="bg-primary text-primary-foreground">Live — in use now</Badge></TableCell>
+                    <TableCell className="font-medium">
+                      Direct EFT (ABSA + proof of payment)
+                    </TableCell>
+                    <TableCell>
+                      <Badge className="bg-primary text-primary-foreground">
+                        Live — in use now
+                      </Badge>
+                    </TableCell>
                     <TableCell>R0</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">PayFast</TableCell>
-                    <TableCell><Badge variant="destructive">Declined — stokvel/investment-club merchant category, non-appealable</Badge></TableCell>
+                    <TableCell>
+                      <Badge variant="destructive">
+                        Declined — stokvel/investment-club merchant category, non-appealable
+                      </Badge>
+                    </TableCell>
                     <TableCell>—</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">PayGate</TableCell>
-                    <TableCell><Badge variant="outline">Offered by Network International — application in progress</Badge></TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        Offered by Network International — application in progress
+                      </Badge>
+                    </TableCell>
                     <TableCell>R4,338 (yr 1) / R4,088 ongoing</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">Ozow</TableCell>
-                    <TableCell><Badge variant="outline">Not yet applied — highest approval odds, recommended next</Badge></TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        Not yet applied — highest approval odds, recommended next
+                      </Badge>
+                    </TableCell>
                     <TableCell>R4,650</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">Peach Payments</TableCell>
-                    <TableCell><Badge variant="outline">Not yet applied — moderate odds, on hold</Badge></TableCell>
+                    <TableCell>
+                      <Badge variant="outline">Not yet applied — moderate odds, on hold</Badge>
+                    </TableCell>
                     <TableCell>R9,225</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">Yoco</TableCell>
-                    <TableCell><Badge variant="outline">Not yet applied — same card-scheme risk as PayFast, on hold</Badge></TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        Not yet applied — same card-scheme risk as PayFast, on hold
+                      </Badge>
+                    </TableCell>
                     <TableCell>R9,640</TableCell>
                   </TableRow>
                 </TableBody>
@@ -391,12 +475,26 @@ function BillingAdminPage() {
               <CardTitle>Recommended path</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-foreground/90">
-              <p>1. Keep direct EFT as the primary method — already working, zero cost, zero approval risk.</p>
+              <p>
+                1. Keep direct EFT as the primary method — already working, zero cost, zero approval
+                risk.
+              </p>
               <p>2. Let the PayGate application run its course — already in motion.</p>
-              <p>3. Apply to Ozow in parallel — highest approval odds of the independent options, and cheapest if approved.</p>
+              <p>
+                3. Apply to Ozow in parallel — highest approval odds of the independent options, and
+                cheapest if approved.
+              </p>
               <p>4. Hold off on Peach and Yoco unless both PayGate and Ozow are declined.</p>
-              <p>5. Longer-term: begin the NPC/Co-operative registration conversation — the only fix that removes the stokvel merchant-category restriction permanently, at any future gateway.</p>
-              <p className="text-xs text-muted-foreground pt-2">PayFast was declined over A-Win's merchant category (investment club/stokvel), not paperwork — Lusandla is a fully registered company and still got declined. Reapplying elsewhere with better documents won't fix it on its own.</p>
+              <p>
+                5. Longer-term: begin the NPC/Co-operative registration conversation — the only fix
+                that removes the stokvel merchant-category restriction permanently, at any future
+                gateway.
+              </p>
+              <p className="text-xs text-muted-foreground pt-2">
+                PayFast was declined over A-Win's merchant category (investment club/stokvel), not
+                paperwork — Lusandla is a fully registered company and still got declined.
+                Reapplying elsewhere with better documents won't fix it on its own.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -409,7 +507,8 @@ function OverrideDialog({
   open,
   onOpenChange,
   members,
-  onSubmit}: {
+  onSubmit,
+}: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   members: Member[];
@@ -435,7 +534,8 @@ function OverrideDialog({
       user_id: userId,
       action,
       tier: action === "activate" ? tier : undefined,
-      reason: reason.trim()});
+      reason: reason.trim(),
+    });
     setSubmitting(false);
     setUserId("");
     setReason("");
@@ -452,7 +552,9 @@ function OverrideDialog({
           <div>
             <Label>Member</Label>
             <Select value={userId} onValueChange={setUserId}>
-              <SelectTrigger><SelectValue placeholder="Choose member" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose member" />
+              </SelectTrigger>
               <SelectContent>
                 {members.map((m) => (
                   <SelectItem key={m.id} value={m.id}>
@@ -465,7 +567,9 @@ function OverrideDialog({
           <div>
             <Label>Action</Label>
             <Select value={action} onValueChange={(v) => setAction(v as "activate" | "suspend")}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="activate">Activate (12-month window)</SelectItem>
                 <SelectItem value="suspend">Suspend</SelectItem>
@@ -476,7 +580,9 @@ function OverrideDialog({
             <div>
               <Label>Payment Type</Label>
               <Select value={tier} onValueChange={(v) => setTier(v as "general" | "active")}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="general">Joining Fee</SelectItem>
                   <SelectItem value="active">Monthly Contribution</SelectItem>
@@ -486,11 +592,18 @@ function OverrideDialog({
           )}
           <div>
             <Label>Reason (required, logged)</Label>
-            <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} maxLength={500} />
+            <Textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={3}
+              maxLength={500}
+            />
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
           <Button onClick={submit} disabled={submitting}>
             {submitting && <Loader2 className="size-4 animate-spin mr-2" />}
             Apply override

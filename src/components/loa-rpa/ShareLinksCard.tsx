@@ -9,7 +9,15 @@ import { Button } from "@/components/ui/button";
  * The code box shows exactly what's copied, so there's no surprise between
  * what you see and what lands on the clipboard.
  */
-function CopyLinkRow({ label, icon, message }: { label: string; icon: React.ReactNode; message: string }) {
+function CopyLinkRow({
+  label,
+  icon,
+  message,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  message: string;
+}) {
   const [copied, setCopied] = useState(false);
   const [previewing, setPreviewing] = useState(false);
 
@@ -30,11 +38,26 @@ function CopyLinkRow({ label, icon, message }: { label: string; icon: React.Reac
           <code className="flex-1 min-w-0 whitespace-pre-wrap break-words rounded-md border border-white/10 bg-black/30 px-3 py-1.5 text-xs text-white/80">
             {message}
           </code>
-          <Button size="sm" variant="ghost" onClick={() => setPreviewing((v) => !v)} className="shrink-0 text-white/60 hover:bg-white/10 hover:text-white" title="Preview how this looks in a chat">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setPreviewing((v) => !v)}
+            className="shrink-0 text-white/60 hover:bg-white/10 hover:text-white"
+            title="Preview how this looks in a chat"
+          >
             <Eye className="size-3.5" />
           </Button>
-          <Button size="sm" variant="outline" onClick={copy} className="shrink-0 border-tksa-orange/40 bg-transparent text-white hover:bg-tksa-orange/15 hover:text-white">
-            {copied ? <Check className="size-3.5 mr-1.5 text-[#34d399]" /> : <Copy className="size-3.5 mr-1.5" />}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={copy}
+            className="shrink-0 border-tksa-orange/40 bg-transparent text-white hover:bg-tksa-orange/15 hover:text-white"
+          >
+            {copied ? (
+              <Check className="size-3.5 mr-1.5 text-[#34d399]" />
+            ) : (
+              <Copy className="size-3.5 mr-1.5" />
+            )}
             {copied ? "Copied" : "Copy"}
           </Button>
         </div>
@@ -53,17 +76,21 @@ function CopyLinkRow({ label, icon, message }: { label: string; icon: React.Reac
 /** Ready-to-send WhatsApp/website links for the LOA/RPA forms — ThuthukaSA's own outreach tool. */
 export function ShareLinksCard() {
   const [origin, setOrigin] = useState("");
-  useEffect(() => { setOrigin(window.location.origin); }, []);
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
   if (!origin) return null;
 
   return (
     <div className="rounded-xl border border-tksa-orange/20 bg-tksa-dark p-5 space-y-4">
       <div>
-        <h3 className="text-sm font-semibold text-white">Share the full LOA &amp; Risk Profile form</h3>
+        <h3 className="text-sm font-semibold text-white">
+          Share the full LOA &amp; Risk Profile form
+        </h3>
         <p className="mt-1 text-xs text-white/50">
-          For new A-Win members — includes the Risk Profile Analysis. Copy the WhatsApp version straight into a
-          chat — it's a ready-to-send message, not just a bare link, and it tags the submission's source so you
-          can tell WhatsApp applicants apart from website applicants.
+          For new A-Win members — includes the Risk Profile Analysis. Copy the WhatsApp version
+          straight into a chat — it's a ready-to-send message, not just a bare link, and it tags the
+          submission's source so you can tell WhatsApp applicants apart from website applicants.
         </p>
         <div className="mt-2 space-y-2">
           <CopyLinkRow
@@ -81,8 +108,8 @@ export function ShareLinksCard() {
       <div className="border-t border-white/10 pt-4">
         <h3 className="text-sm font-semibold text-white">Share the LOA-only form</h3>
         <p className="mt-1 text-xs text-white/50">
-          For anyone who isn't joining A-Win, or just needs Astute-facing paperwork — skips the Risk Profile
-          questions entirely.
+          For anyone who isn't joining A-Win, or just needs Astute-facing paperwork — skips the Risk
+          Profile questions entirely.
         </p>
         <div className="mt-2 space-y-2">
           <CopyLinkRow

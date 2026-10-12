@@ -33,7 +33,11 @@ export function emailConfigured(): boolean {
  * call is allowed. Fails OPEN (returns true) on any error so a DB hiccup never
  * blocks a legitimate email.
  */
-export async function rateLimitOk(key: string, max: number, windowSeconds: number): Promise<boolean> {
+export async function rateLimitOk(
+  key: string,
+  max: number,
+  windowSeconds: number,
+): Promise<boolean> {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin.rpc("rate_limit_hit", {
@@ -54,7 +58,12 @@ export async function rateLimitOk(key: string, max: number, windowSeconds: numbe
  * the setting can't be read, so admin alerts are never silently lost.
  */
 export async function adminNotifyEnabled(
-  key: "new_application" | "new_message" | "event_registration" | "new_loa_rpa" | "new_approval_request",
+  key:
+    | "new_application"
+    | "new_message"
+    | "event_registration"
+    | "new_loa_rpa"
+    | "new_approval_request",
 ): Promise<boolean> {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -91,10 +100,14 @@ export async function getNotifyRecipients(
       .select("value")
       .eq("key", "notify_recipients")
       .maybeSingle();
-    const cfg = (data?.value as Record<string, { emails?: string[]; whatsapp?: string[] }> | null)?.[notifyKey];
+    const cfg = (
+      data?.value as Record<string, { emails?: string[]; whatsapp?: string[] }> | null
+    )?.[notifyKey];
     if (!cfg) return fallback;
-    const emails = Array.isArray(cfg.emails) && cfg.emails.length > 0 ? cfg.emails : fallback.emails;
-    const whatsapp = Array.isArray(cfg.whatsapp) && cfg.whatsapp.length > 0 ? cfg.whatsapp : fallback.whatsapp;
+    const emails =
+      Array.isArray(cfg.emails) && cfg.emails.length > 0 ? cfg.emails : fallback.emails;
+    const whatsapp =
+      Array.isArray(cfg.whatsapp) && cfg.whatsapp.length > 0 ? cfg.whatsapp : fallback.whatsapp;
     return { emails, whatsapp };
   } catch {
     return fallback;
@@ -105,7 +118,10 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
   const token = process.env.ZOHO_ZEPTOMAIL_TOKEN;
   const from = process.env.ZOHO_MAIL_FROM;
   if (!token || !from) {
-    console.warn("[email] ZOHO_ZEPTOMAIL_TOKEN / ZOHO_MAIL_FROM not set — skipping send:", input.subject);
+    console.warn(
+      "[email] ZOHO_ZEPTOMAIL_TOKEN / ZOHO_MAIL_FROM not set — skipping send:",
+      input.subject,
+    );
     return { ok: false, error: "email not configured" };
   }
 
@@ -128,7 +144,9 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
 
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      console.error(`[email] ZeptoMail ${res.status} sending "${input.subject}" to ${input.to}: ${body}`);
+      console.error(
+        `[email] ZeptoMail ${res.status} sending "${input.subject}" to ${input.to}: ${body}`,
+      );
       return { ok: false, error: `zeptomail ${res.status}` };
     }
     return { ok: true };
@@ -142,7 +160,10 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
 /** ThuthukaSA's own alert list (set on /tksa → Settings), with the shared-inbox fallback. */
 export async function getThuthukaRecipients() {
   const { THUTHUKA_WHATSAPP_NUMBER } = await import("./whatsapp.server");
-  return getNotifyRecipients("loa_rpa", { emails: ["info@thuthuka-sa.co.za"], whatsapp: [THUTHUKA_WHATSAPP_NUMBER] });
+  return getNotifyRecipients("loa_rpa", {
+    emails: ["info@thuthuka-sa.co.za"],
+    whatsapp: [THUTHUKA_WHATSAPP_NUMBER],
+  });
 }
 
 /**
@@ -150,7 +171,11 @@ export async function getThuthukaRecipients() {
  * function can be frozen the moment the handler returns, so an un-awaited
  * send is a send that may never happen. Never throws.
  */
-export async function emailAll(to: string[], toName: string, mail: { subject: string; html: string; text?: string }) {
+export async function emailAll(
+  to: string[],
+  toName: string,
+  mail: { subject: string; html: string; text?: string },
+) {
   const unique = [...new Set(to.map((e) => e.trim().toLowerCase()).filter(Boolean))];
   await Promise.allSettled(unique.map((addr) => sendEmail({ to: addr, toName, ...mail })));
 }

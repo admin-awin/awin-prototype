@@ -16,10 +16,14 @@ export const Route = createFileRoute("/info")({
       { title: "FAQ & Privacy | A-Win" },
       {
         name: "description",
-        content: "Frequently asked questions about A-Win membership, dues and investments, plus our privacy and data policies.",
+        content:
+          "Frequently asked questions about A-Win membership, dues and investments, plus our privacy and data policies.",
       },
       { property: "og:title", content: "A-Win · FAQ & Privacy" },
-      { property: "og:description", content: "Answers about membership, dues, investing, and how we handle your data." },
+      {
+        property: "og:description",
+        content: "Answers about membership, dues, investing, and how we handle your data.",
+      },
     ],
   }),
   component: InfoPage,
@@ -74,8 +78,13 @@ function InfoPage() {
     <>
       <section className="page-header px-4 py-24">
         <div className="relative mx-auto max-w-5xl">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65">
-            <Link to="/" className="hover:text-accent">Home</Link>
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/65"
+          >
+            <Link to="/" className="hover:text-accent">
+              Home
+            </Link>
             <ChevronRight className="h-3 w-3" />
             <span className="font-medium text-accent">FAQ &amp; Privacy</span>
           </nav>
@@ -155,7 +164,11 @@ function InfoPage() {
                 <div className="font-semibold text-foreground">Your rights</div>
                 <p className="mt-1">
                   You may request a copy of the data we hold on you, ask us to correct inaccuracies,
-                  or request deletion of your account. Email <a className="text-accent underline" href="mailto:info@awin.africa">info@awin.africa</a>.
+                  or request deletion of your account. Email{" "}
+                  <a className="text-accent underline" href="mailto:info@awin.africa">
+                    info@awin.africa
+                  </a>
+                  .
                 </p>
               </div>
               <div>
@@ -166,7 +179,9 @@ function InfoPage() {
                   investment decisions, with the advisor's guidance.
                 </p>
               </div>
-              <p className="text-xs">Last updated: this page is editable by A-Win administrators in the admin console.</p>
+              <p className="text-xs">
+                Last updated: this page is editable by A-Win administrators in the admin console.
+              </p>
             </CardContent>
           </Card>
         </div>
